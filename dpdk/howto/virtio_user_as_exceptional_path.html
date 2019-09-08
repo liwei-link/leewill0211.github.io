@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7. Virtio_user as Exceptional Path &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="DPDK Tools User Guides" href="../tools/index.html" />
+    <link rel="prev" title="6. Virtio_user for Container Networking" href="virtio_user_for_container_networking.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">HowTo Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="lm_bond_virtio_sriov.html">1. Live Migration of VM with SR-IOV VF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lm_virtio_vhost_user.html">2. Live Migration of VM with Virtio on host running vhost_user</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_bifurcation.html">3. Flow Bifurcation How-to Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pvp_reference_benchmark.html">4. PVP reference benchmark setup using testpmd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vfd.html">5. VF daemon (VFd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio_user_for_container_networking.html">6. Virtio_user for Container Networking</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7. Virtio_user as Exceptional Path</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sample-usage">7.1. Sample Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">7.2. Limitations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">HowTo Guides</a> &raquo;</li>
+        
+      <li>7. Virtio_user as Exceptional Path</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/howto/virtio_user_as_exceptional_path.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="virtio-user-as-exceptional-path">
+<span id="virtio-user-as-excpetional-path"></span><h1>7. Virtio_user as Exceptional Path</h1>
+<p>The virtual device, virtio-user, was originally introduced with vhost-user
+backend, as a high performance solution for IPC (Inter-Process Communication)
+and user space container networking.</p>
+<p>Virtio_user with vhost-kernel backend is a solution for exceptional path,
+such as KNI which exchanges packets with kernel networking stack. This
+solution is very promising in:</p>
+<ul>
+<li><p class="first">Maintenance</p>
+<p>All kernel modules needed by this solution, vhost and vhost-net (kernel),
+are upstreamed and extensively used kernel module.</p>
+</li>
+<li><p class="first">Features</p>
+<p>vhost-net is born to be a networking solution, which has lots of networking
+related featuers, like multi queue, tso, multi-seg mbuf, etc.</p>
+</li>
+<li><p class="first">Performance</p>
+<p>similar to KNI, this solution would use one or more kthreads to
+send/receive packets from user space DPDK applications, which has little
+impact on user space polling thread (except that it might enter into kernel
+space to wake up those kthreads if necessary).</p>
+</li>
+</ul>
+<p>The overview of an application using virtio-user as exceptional path is shown
+in <a class="reference internal" href="#figure-virtio-user-as-exceptional-path"><span class="std std-numref">图 7.2</span></a>.</p>
+<div class="figure" id="id1">
+<span id="figure-virtio-user-as-exceptional-path"></span><img alt="../_images/virtio_user_as_exceptional_path.svg" src="../_images/virtio_user_as_exceptional_path.svg" /><p class="caption"><span class="caption-number">图 7.2 </span><span class="caption-text">Overview of a DPDK app using virtio-user as excpetional path</span></p>
+</div>
+<div class="section" id="sample-usage">
+<h2>7.1. Sample Usage</h2>
+<p>As a prerequisite, the vhost/vhost-net kernel CONFIG should be chosen before
+compiling the kernel and those kernel modules should be inserted.</p>
+<ol class="arabic">
+<li><p class="first">Compile DPDK and bind a physical NIC to igb_uio/uio_pci_generic/vfio-pci.</p>
+<p>This physical NIC is for communicating with outside.</p>
+</li>
+<li><p class="first">Run testpmd.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span><span class="o">(</span>testpmd<span class="o">)</span> -l <span class="m">2</span>-3 -n <span class="m">4</span> <span class="se">\</span>
+        --vdev<span class="o">=</span>virtio_user0,path<span class="o">=</span>/dev/vhost-net,queue_size<span class="o">=</span><span class="m">1024</span> <span class="se">\</span>
+        -- -i --txqflags<span class="o">=</span>0x0 --disable-hw-vlan --enable-lro <span class="se">\</span>
+        --enable-rx-cksum --rxd<span class="o">=</span><span class="m">1024</span> --txd<span class="o">=</span><span class="m">1024</span>
+</pre></div>
+</div>
+<p>This command runs testpmd with two ports, one physical NIC to communicate
+with outside, and one virtio-user to communicate with kernel.</p>
+</li>
+</ol>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--enable-lro</span></code></p>
+<blockquote>
+<div><p>This is used to negotiate VIRTIO_NET_F_GUEST_TSO4 and
+VIRTIO_NET_F_GUEST_TSO6 feature so that large packets from kernel can be
+transmitted DPDK application and further TSOed by physical NIC.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--enable-rx-cksum</span></code></p>
+<blockquote>
+<div><p>This is used to negotiate VIRTIO_NET_F_GUEST_CSUM so that packets from
+kernel can be deemed as valid Rx checksumed.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">queue_size</span></code></p>
+<blockquote>
+<div><p>256 by default. To avoid shortage of descriptors, we can increase it to 1024.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">queues</span></code></p>
+<blockquote>
+<div><p>Number of multi-queues. Each qeueue will be served by a kthread. For example:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span><span class="o">(</span>testpmd<span class="o">)</span> -l <span class="m">2</span>-3 -n <span class="m">4</span> <span class="se">\</span>
+        --vdev<span class="o">=</span>virtio_user0,path<span class="o">=</span>/dev/vhost-net,queues<span class="o">=</span><span class="m">2</span>,queue_size<span class="o">=</span><span class="m">1024</span> <span class="se">\</span>
+        -- -i --txqflags<span class="o">=</span>0x0 --disable-hw-vlan --enable-lro <span class="se">\</span>
+        --enable-rx-cksum --txq<span class="o">=</span><span class="m">2</span> --rxq<span class="o">=</span><span class="m">2</span> --rxd<span class="o">=</span><span class="m">1024</span> <span class="se">\</span>
+        --txd<span class="o">=</span><span class="m">1024</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<ol class="arabic">
+<li><p class="first">Start testpmd:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">(testpmd) start</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Configure IP address and start tap:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ifconfig tap0 1.1.1.1/24 up</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The tap device will be named tap0, tap1, etc, by kernel.</p>
+</div>
+<p>Then, all traffic from physical NIC can be forwarded into kernel stack, and all
+traffic on the tap0 can be sent out from physical NIC.</p>
+</div>
+<div class="section" id="limitations">
+<h2>7.2. Limitations</h2>
+<p>This solution is only available on Linux systems.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../tools/index.html" class="btn btn-neutral float-right" title="DPDK Tools User Guides" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="virtio_user_for_container_networking.html" class="btn btn-neutral" title="6. Virtio_user for Container Networking" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

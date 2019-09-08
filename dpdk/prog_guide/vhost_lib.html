@@ -1,0 +1,453 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>27. vhost库 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="28. Metrics Library" href="metrics_lib.html" />
+    <link rel="prev" title="26. 包框架" href="packet_framework.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">27. vhost库</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vhost-api-overview">27.1. Vhost API Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vhost-user-implementations">27.2. Vhost-user Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vhost-supported-vswitch-reference">27.3. Vhost supported vSwitch reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>27. vhost库</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/vhost_lib.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vhost">
+<h1>27. vhost库</h1>
+<p>The vhost library implements a user space virtio net server allowing the user
+to manipulate the virtio ring directly. In another words, it allows the user
+to fetch/put packets from/to the VM virtio net device. To achieve this, a
+vhost library should be able to:</p>
+<ul>
+<li><p class="first">Access the guest memory:</p>
+<p>For QEMU, this is done by using the <code class="docutils literal notranslate"><span class="pre">-object</span> <span class="pre">memory-backend-file,share=on,...</span></code>
+option. Which means QEMU will create a file to serve as the guest RAM.
+The <code class="docutils literal notranslate"><span class="pre">share=on</span></code> option allows another process to map that file, which
+means it can access the guest RAM.</p>
+</li>
+<li><p class="first">Know all the necessary information about the vring:</p>
+<p>Information such as where the available ring is stored. Vhost defines some
+messages (passed through a Unix domain socket file) to tell the backend all
+the information it needs to know how to manipulate the vring.</p>
+</li>
+</ul>
+<div class="section" id="vhost-api-overview">
+<h2>27.1. Vhost API Overview</h2>
+<p>The following is an overview of some key Vhost API functions:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_register(path,</span> <span class="pre">flags)</span></code></p>
+<p>This function registers a vhost driver into the system. <code class="docutils literal notranslate"><span class="pre">path</span></code> specifies
+the Unix domain socket file path.</p>
+<p>Currently supported flags are:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">RTE_VHOST_USER_CLIENT</span></code></p>
+<p>DPDK vhost-user will act as the client when this flag is given. See below
+for an explanation.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">RTE_VHOST_USER_NO_RECONNECT</span></code></p>
+<p>When DPDK vhost-user acts as the client it will keep trying to reconnect
+to the server (QEMU) until it succeeds. This is useful in two cases:</p>
+<ul class="simple">
+<li>When QEMU is not started yet.</li>
+<li>When QEMU restarts (for example due to a guest OS reboot).</li>
+</ul>
+<p>This reconnect option is enabled by default. However, it can be turned off
+by setting this flag.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">RTE_VHOST_USER_DEQUEUE_ZERO_COPY</span></code></p>
+<p>Dequeue zero copy will be enabled when this flag is set. It is disabled by
+default.</p>
+<p>There are some truths (including limitations) you might want to know while
+setting this flag:</p>
+<ul>
+<li><p class="first">zero copy is not good for small packets (typically for packet size below
+512).</p>
+</li>
+<li><p class="first">zero copy is really good for VM2VM case. For iperf between two VMs, the
+boost could be above 70% (when TSO is enableld).</p>
+</li>
+<li><p class="first">for VM2NIC case, the <code class="docutils literal notranslate"><span class="pre">nb_tx_desc</span></code> has to be small enough: &lt;= 64 if virtio
+indirect feature is not enabled and &lt;= 128 if it is enabled.</p>
+<p>This is because when dequeue zero copy is enabled, guest Tx used vring will
+be updated only when corresponding mbuf is freed. Thus, the nb_tx_desc
+has to be small enough so that the PMD driver will run out of available
+Tx descriptors and free mbufs timely. Otherwise, guest Tx vring would be
+starved.</p>
+</li>
+<li><p class="first">Guest memory should be backended with huge pages to achieve better
+performance. Using 1G page size is the best.</p>
+<p>When dequeue zero copy is enabled, the guest phys address and host phys
+address mapping has to be established. Using non-huge pages means far
+more page segments. To make it simple, DPDK vhost does a linear search
+of those segments, thus the fewer the segments, the quicker we will get
+the mapping. NOTE: we may speed it by using tree searching in future.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_set_features(path,</span> <span class="pre">features)</span></code></p>
+<p>This function sets the feature bits the vhost-user driver supports. The
+vhost-user driver could be vhost-user net, yet it could be something else,
+say, vhost-user SCSI.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_callback_register(path,</span> <span class="pre">vhost_device_ops)</span></code></p>
+<p>This function registers a set of callbacks, to let DPDK applications take
+the appropriate action when some events happen. The following events are
+currently supported:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">new_device(int</span> <span class="pre">vid)</span></code></p>
+<p>This callback is invoked when a virtio device becomes ready. <code class="docutils literal notranslate"><span class="pre">vid</span></code>
+is the vhost device ID.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">destroy_device(int</span> <span class="pre">vid)</span></code></p>
+<p>This callback is invoked when a virtio device shuts down (or when the
+vhost connection is broken).</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">vring_state_changed(int</span> <span class="pre">vid,</span> <span class="pre">uint16_t</span> <span class="pre">queue_id,</span> <span class="pre">int</span> <span class="pre">enable)</span></code></p>
+<p>This callback is invoked when a specific queue's state is changed, for
+example to enabled or disabled.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">features_changed(int</span> <span class="pre">vid,</span> <span class="pre">uint64_t</span> <span class="pre">features)</span></code></p>
+<p>This callback is invoked when the features is changed. For example,
+<code class="docutils literal notranslate"><span class="pre">VHOST_F_LOG_ALL</span></code> will be set/cleared at the start/end of live
+migration, respectively.</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_disable/enable_features(path,</span> <span class="pre">features))</span></code></p>
+<p>This function disables/enables some features. For example, it can be used to
+disable mergeable buffers and TSO features, which both are enabled by
+default.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_start(path)</span></code></p>
+<p>This function triggers the vhost-user negotiation. It should be invoked at
+the end of initializing a vhost-user driver.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">rte_vhost_enqueue_burst(vid,</span> <span class="pre">queue_id,</span> <span class="pre">pkts,</span> <span class="pre">count)</span></code></p>
+<p>Transmits (enqueues) <code class="docutils literal notranslate"><span class="pre">count</span></code> packets from host to guest.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">rte_vhost_dequeue_burst(vid,</span> <span class="pre">queue_id,</span> <span class="pre">mbuf_pool,</span> <span class="pre">pkts,</span> <span class="pre">count)</span></code></p>
+<p>Receives (dequeues) <code class="docutils literal notranslate"><span class="pre">count</span></code> packets from guest, and stored them at <code class="docutils literal notranslate"><span class="pre">pkts</span></code>.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="vhost-user-implementations">
+<h2>27.2. Vhost-user Implementations</h2>
+<p>Vhost-user uses Unix domain sockets for passing messages. This means the DPDK
+vhost-user implementation has two options:</p>
+<ul>
+<li><p class="first">DPDK vhost-user acts as the server.</p>
+<p>DPDK will create a Unix domain socket server file and listen for
+connections from the frontend.</p>
+<p>Note, this is the default mode, and the only mode before DPDK v16.07.</p>
+</li>
+<li><p class="first">DPDK vhost-user acts as the client.</p>
+<p>Unlike the server mode, this mode doesn't create the socket file;
+it just tries to connect to the server (which responses to create the
+file instead).</p>
+<p>When the DPDK vhost-user application restarts, DPDK vhost-user will try to
+connect to the server again. This is how the &quot;reconnect&quot; feature works.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>The &quot;reconnect&quot; feature requires <strong>QEMU v2.7</strong> (or above).</li>
+<li>The vhost supported features must be exactly the same before and
+after the restart. For example, if TSO is disabled and then enabled,
+nothing will work and issues undefined might happen.</li>
+</ul>
+</div>
+</li>
+</ul>
+<p>No matter which mode is used, once a connection is established, DPDK
+vhost-user will start receiving and processing vhost messages from QEMU.</p>
+<p>For messages with a file descriptor, the file descriptor can be used directly
+in the vhost process as it is already installed by the Unix domain socket.</p>
+<p>The supported vhost messages are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">VHOST_SET_MEM_TABLE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">VHOST_SET_VRING_KICK</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">VHOST_SET_VRING_CALL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">VHOST_SET_LOG_FD</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">VHOST_SET_VRING_ERR</span></code></li>
+</ul>
+<p>For <code class="docutils literal notranslate"><span class="pre">VHOST_SET_MEM_TABLE</span></code> message, QEMU will send information for each
+memory region and its file descriptor in the ancillary data of the message.
+The file descriptor is used to map that region.</p>
+<p><code class="docutils literal notranslate"><span class="pre">VHOST_SET_VRING_KICK</span></code> is used as the signal to put the vhost device into
+the data plane, and <code class="docutils literal notranslate"><span class="pre">VHOST_GET_VRING_BASE</span></code> is used as the signal to remove
+the vhost device from the data plane.</p>
+<p>When the socket connection is closed, vhost will destroy the device.</p>
+</div>
+<div class="section" id="vhost-supported-vswitch-reference">
+<h2>27.3. Vhost supported vSwitch reference</h2>
+<p>For more vhost details and how to support vhost in vSwitch, please refer to
+the vhost example in the DPDK Sample Applications Guide.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="metrics_lib.html" class="btn btn-neutral float-right" title="28. Metrics Library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="packet_framework.html" class="btn btn-neutral" title="26. 包框架" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

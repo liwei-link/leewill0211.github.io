@@ -1,0 +1,699 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. DPDK Release 17.05 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="3. DPDK Release 17.02" href="release_17_02.html" />
+    <link rel="prev" title="1. Description of Release" href="rel_description.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Release Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="rel_description.html">1. Description of Release</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. DPDK Release 17.05</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#new-features">2.1. New Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resolved-issues">2.2. Resolved Issues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#eal">2.2.1. EAL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#drivers">2.2.2. Drivers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libraries">2.2.3. Libraries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">2.2.4. Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other">2.2.5. Other</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#known-issues">2.3. Known Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#api-changes">2.4. API Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#abi-changes">2.5. ABI Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#removed-items">2.6. Removed Items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shared-library-versions">2.7. Shared Library Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tested-platforms">2.8. Tested Platforms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="release_17_02.html">3. DPDK Release 17.02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_16_11.html">4. DPDK Release 16.11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_16_07.html">5. DPDK Release 16.07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_16_04.html">6. DPDK Release 16.04</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_2.html">7. DPDK Release 2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_1.html">8. DPDK Release 2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_0.html">9. DPDK Release 2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_1_8.html">10. DPDK Release 1.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="supported_os.html">11. Supported Operating Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="known_issues.html">12. Known Issues and Limitations in Legacy Releases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecation.html">13. ABI and API Deprecation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Release Notes</a> &raquo;</li>
+        
+      <li>2. DPDK Release 17.05</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rel_notes/release_17_05.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dpdk-release-17-05">
+<h1>2. DPDK Release 17.05</h1>
+<div class="section" id="new-features">
+<h2>2.1. New Features</h2>
+<ul>
+<li><p class="first"><strong>Reorganized the mbuf structure.</strong></p>
+<ul class="simple">
+<li>Align fields to facilitate the writing of <code class="docutils literal notranslate"><span class="pre">data_off</span></code>, <code class="docutils literal notranslate"><span class="pre">refcnt</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">nb_segs</span></code> in one operation.</li>
+<li>Use 2 bytes for port and number of segments.</li>
+<li>Move the sequence number in the second cache line.</li>
+<li>Add a timestamp field.</li>
+<li>Set default value for <code class="docutils literal notranslate"><span class="pre">refcnt</span></code>, <code class="docutils literal notranslate"><span class="pre">next</span></code> and <code class="docutils literal notranslate"><span class="pre">nb_segs</span></code> at mbuf free.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added mbuf raw free API</strong></p>
+<p>Moved <code class="docutils literal notranslate"><span class="pre">rte_mbuf_raw_free()</span></code> and <code class="docutils literal notranslate"><span class="pre">rte_pktmbuf_prefree_seg()</span></code> functions to
+the public API.</p>
+</li>
+<li><p class="first"><strong>Added free Tx mbuf on demand API.</strong></p>
+<p>Added a new function <code class="docutils literal notranslate"><span class="pre">rte_eth_tx_done_cleanup()</span></code> which allows an application
+to request the driver to release mbufs from their Tx ring that are no longer
+in use, independent of whether or not the <code class="docutils literal notranslate"><span class="pre">tx_rs_thresh</span></code> has been crossed.</p>
+</li>
+<li><p class="first"><strong>Added device removal interrupt.</strong></p>
+<p>Added a new ethdev event <code class="docutils literal notranslate"><span class="pre">RTE_ETH_DEV_INTR_RMV</span></code> to signify
+the sudden removal of a device.
+This event can be advertized by PCI drivers and enabled accordingly.</p>
+</li>
+<li><p class="first"><strong>Added EAL dynamic log framework.</strong></p>
+<p>Added new APIs to dynamically register named log types, and control
+the level of each type independently.</p>
+</li>
+<li><p class="first"><strong>Added descriptor status ethdev API.</strong></p>
+<p>Added a new API to get the status of a descriptor.</p>
+<p>For Rx, it is almost similar to the <code class="docutils literal notranslate"><span class="pre">rx_descriptor_done</span></code> API, except
+it differentiates descriptors which are hold by the driver and not
+returned to the hardware. For Tx, it is a new API.</p>
+</li>
+<li><p class="first"><strong>Increased number of next hops for LPM IPv6 to 2^21.</strong></p>
+<p>The next_hop field is extended from 8 bits to 21 bits for IPv6.</p>
+</li>
+<li><p class="first"><strong>Added VFIO hotplug support.</strong></p>
+<p>How hotplug supported with UIO and VFIO drivers.</p>
+</li>
+<li><p class="first"><strong>Added powerpc support in pci probing for vfio-pci devices.</strong></p>
+<p>sPAPR IOMMU based pci probing enabled for vfio-pci devices.</p>
+</li>
+<li><p class="first"><strong>Kept consistent PMD batching behaviour.</strong></p>
+<p>Removed the limit of fm10k/i40e/ixgbe TX burst size and vhost RX/TX burst size
+in order to support the same policy of &quot;make an best effort to RX/TX pkts&quot;
+for PMDs.</p>
+</li>
+<li><p class="first"><strong>Updated the ixgbe base driver.</strong></p>
+<p>Updated the ixgbe base driver, including the following changes:</p>
+<ul class="simple">
+<li>Add link block check for KR.</li>
+<li>Complete HW initialization even if SFP is not present.</li>
+<li>Add VF xcast promiscuous mode.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added powerpc support for i40e and its vector PMD .</strong></p>
+<p>i40e PMD and its vector PMD enabled by default in powerpc.</p>
+</li>
+<li><p class="first"><strong>Added VF max bandwidth setting on i40e.</strong></p>
+<p>i40e HW supports to set the max bandwidth for a VF. Enable this capability.</p>
+</li>
+<li><p class="first"><strong>Added VF TC min bandwidth setting on i40e.</strong></p>
+<p>i40e HW supports to set the allocated bandwidth for a TC on a VF. Enable this
+capability.</p>
+</li>
+<li><p class="first"><strong>Added VF TC max bandwidth setting on i40e.</strong></p>
+<p>i40e HW supports to set the max bandwidth for a TC on a VF. Enable this
+capability.</p>
+</li>
+<li><p class="first"><strong>Added TC strict priority mode setting on i40e.</strong></p>
+<p>There're 2 TX scheduling modes supported for TCs by i40e HW, round ribon mode
+and strict priority mode. By default it's round robin mode. Enable the
+capability to change the TX scheduling mode for a TC. It's a global setting
+on a physical port.</p>
+</li>
+<li><p class="first"><strong>Added i40e dynamic device personalization support.</strong></p>
+<ul class="simple">
+<li>Added dynamic device personalization processing to i40e FW.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added Cloud Filter for QinQ steering to i40e.</strong></p>
+<ul class="simple">
+<li>Added a QinQ cloud filter on the i40e PMD, for steering traffic to a VM
+using both VLAN tags.</li>
+<li>QinQ is not supported in Vector Mode on the i40e PMD.</li>
+<li>Vector Mode must be disabled when using the QinQ Cloud Filter.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Updated mlx5 PMD.</strong></p>
+<ul class="simple">
+<li>Supported ether type in flow item.</li>
+<li>Extended IPv6 flow item with Vtc flow, Protocol and Hop limit.</li>
+<li>Supported flag flow action.</li>
+<li>Supported RSS action flow rule.</li>
+<li>Supported TSO for tunneled and non-tunneled packets.</li>
+<li>Supported hardware checksum offloads for tunneled packets.</li>
+<li>Supported user space Rx interrupt event.</li>
+<li>Enhanced multi-packet send function for ConnectX-5.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Updated mlx4 PMD.</strong></p>
+<ul class="simple">
+<li>Supported basic flow items and actions.</li>
+<li>Supported device removal event.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Updated the sfc_efx driver.</strong></p>
+<ul class="simple">
+<li>Generic flow API support for Ethernet, VLAN, IPv4, IPv6, UDP and TCP
+pattern items with QUEUE action for ingress traffic.</li>
+<li>Support virtual functions (VFs)</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added LiquidIO network PMD.</strong></p>
+<p>Added poll mode driver support for Cavium LiquidIO II server adapter VFs.</p>
+</li>
+<li><p class="first"><strong>Added Atomic Rules Arkville PMD.</strong></p>
+<p>Added a new poll mode driver for the Arkville family of
+devices from Atomic Rules.   The net/ark PMD supports line-rate
+agnostic, multi-queue data movement on Arkville core FPGA instances.</p>
+</li>
+<li><p class="first"><strong>Added support for NXP DPAA2 - FSLMC bus.</strong></p>
+<p>Added the new bus &quot;fslmc&quot; driver for NXP DPAA2 devices. See the
+&quot;Network Interface Controller Drivers&quot; document for more details on this new
+driver.</p>
+</li>
+<li><p class="first"><strong>Added support for NXP DPAA2 Network PMD.</strong></p>
+<p>Added the new &quot;dpaa2&quot; net driver for NXP DPAA2 devices. See the
+&quot;Network Interface Controller Drivers&quot; document for more details on this new
+driver.</p>
+</li>
+<li><p class="first"><strong>Added support for the Wind River Systems AVP PMD.</strong></p>
+<p>Added a new networking driver for the AVP device type. Theses devices are
+specific to the Wind River Systems virtualization platforms.</p>
+</li>
+<li><p class="first"><strong>Added vmxnet3 version 3 support.</strong></p>
+<p>Added support for vmxnet3 version 3 which includes several
+performance enhancements viz. configurable TX data ring, Receive
+Data Ring, ability to register memory regions.</p>
+</li>
+<li><p class="first"><strong>Updated the tap driver.</strong></p>
+<ul class="simple">
+<li>Support MTU modification.</li>
+<li>Support packet type for Rx.</li>
+<li>Support segmented packets on Rx and Tx.</li>
+<li>Speed up Rx on tap when no packets are available.</li>
+<li>Support capturing traffic from another netdevice.</li>
+<li>Dynamically change link status when the underlying interface state changes.</li>
+<li>Generic flow API support for Ethernet, VLAN, IPv4, IPv6, UDP and TCP pattern
+items with DROP, QUEUE and PASSTHRU actions for ingress traffic.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added MTU feature support to Virtio and Vhost.</strong></p>
+<p>Implemented new Virtio MTU feature into Vhost and Virtio:</p>
+<ul class="simple">
+<li>Add <code class="docutils literal notranslate"><span class="pre">rte_vhost_mtu_get()</span></code> API to Vhost library.</li>
+<li>Enable Vhost PMD's MTU get feature.</li>
+<li>Get max MTU value from host in Virtio PMD</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added interrupt mode support for virtio-user.</strong></p>
+<p>Implemented Rxq interrupt mode and LSC support for virtio-user as a virtual
+device. Supported cases:</p>
+<ul class="simple">
+<li>Rxq interrupt for virtio-user + vhost-user as the backend.</li>
+<li>Rxq interrupt for virtio-user + vhost-kernel as the backend.</li>
+<li>LSC interrupt for virtio-user + vhost-user as the backend.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added event driven programming model library (rte_eventdev).</strong></p>
+<p>This API introduces event driven programming model.</p>
+<p>In a polling model, lcores poll ethdev ports and associated
+rx queues directly to look for packet. In an event driven model,
+by contrast, lcores call the scheduler that selects packets for
+them based on programmer-specified criteria. Eventdev library
+added support for event driven programming model, which offer
+applications automatic multicore scaling, dynamic load balancing,
+pipelining, packet ingress order maintenance and
+synchronization services to simplify application packet processing.</p>
+<p>By introducing event driven programming model, DPDK can support
+both polling and event driven programming models for packet processing,
+and applications are free to choose whatever model
+(or combination of the two) that best suits their needs.</p>
+</li>
+<li><p class="first"><strong>Added Software Eventdev PMD.</strong></p>
+<p>Added support for the software eventdev PMD. The software eventdev is a
+software based scheduler device that implements the eventdev API. This
+PMD allows an application to configure a pipeline using the eventdev
+library, and run the scheduling workload on a CPU core.</p>
+</li>
+<li><p class="first"><strong>Added Cavium OCTEONTX Eventdev PMD.</strong></p>
+<p>Added the new octeontx ssovf eventdev driver for OCTEONTX devices. See the
+&quot;Event Device Drivers&quot; document for more details on this new driver.</p>
+</li>
+<li><p class="first"><strong>Added information metric library.</strong></p>
+<p>A library that allows information metrics to be added and updated
+by producers, typically other libraries, for later retrieval by
+consumers such as applications. It is intended to provide a
+reporting mechanism that is independent of other libraries such
+as ethdev.</p>
+</li>
+<li><p class="first"><strong>Added bit-rate calculation library.</strong></p>
+<p>A library that can be used to calculate device bit-rates. Calculated
+bitrates are reported using the metrics library.</p>
+</li>
+<li><p class="first"><strong>Added latency stats library.</strong></p>
+<p>A library that measures packet latency. The collected statistics are jitter
+and latency. For latency the minimum, average, and maximum is measured.</p>
+</li>
+<li><p class="first"><strong>Added NXP DPAA2 SEC crypto PMD.</strong></p>
+<p>A new &quot;dpaa2_sec&quot; hardware based crypto PMD for NXP DPAA2 devices has been
+added. See the &quot;Crypto Device Drivers&quot; document for more details on this
+driver.</p>
+</li>
+<li><p class="first"><strong>Updated the Cryptodev Scheduler PMD.</strong></p>
+<ul class="simple">
+<li>Added packet-size based distribution mode, which distributes the enqueued
+crypto operations among two slaves, based on their data lengths.</li>
+<li>Added fail-over scheduling mode, which enqueues crypto operations to a
+primary slave first. Then, any operation that cannot be enqueued is
+enqueued to a secondary slave.</li>
+<li>Added mode specific option support, so each scheduleing mode can
+now be configured individually by the new added API.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Updated the QAT PMD.</strong></p>
+<p>The QAT PMD has been updated with additional support for:</p>
+<ul class="simple">
+<li>AES DOCSIS BPI algorithm.</li>
+<li>DES DOCSIS BPI algorithm.</li>
+<li>ZUC EEA3/EIA3 algorithms.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Updated the AESNI MB PMD.</strong></p>
+<p>The AESNI MB PMD has been updated with additional support for:</p>
+<ul class="simple">
+<li>AES DOCSIS BPI algorithm.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Updated the OpenSSL PMD.</strong></p>
+<p>The OpenSSL PMD has been updated with additional support for:</p>
+<ul class="simple">
+<li>DES DOCSIS BPI algorithm.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="resolved-issues">
+<h2>2.2. Resolved Issues</h2>
+<div class="section" id="eal">
+<h3>2.2.1. EAL</h3>
+</div>
+<div class="section" id="drivers">
+<h3>2.2.2. Drivers</h3>
+</div>
+<div class="section" id="libraries">
+<h3>2.2.3. Libraries</h3>
+</div>
+<div class="section" id="examples">
+<h3>2.2.4. Examples</h3>
+<ul>
+<li><p class="first"><strong>l2fwd-keepalive: Fixed unclean shutdowns.</strong></p>
+<p>Added clean shutdown to l2fwd-keepalive so that it can free up
+stale resources used for inter-process communication.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="other">
+<h3>2.2.5. Other</h3>
+</div>
+</div>
+<div class="section" id="known-issues">
+<h2>2.3. Known Issues</h2>
+<ul>
+<li><p class="first"><strong>LSC interrupt cannot work for virtio-user + vhost-kernel.</strong></p>
+<p>LSC interrupt cannot be detected when setting the backend, tap device,
+up/down as we fail to find a way to monitor such event.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="api-changes">
+<h2>2.4. API Changes</h2>
+<ul>
+<li><p class="first">The LPM <code class="docutils literal notranslate"><span class="pre">next_hop</span></code> field is extended from 8 bits to 21 bits for IPv6
+while keeping ABI compatibility.</p>
+</li>
+<li><p class="first"><strong>Reworked rte_ring library</strong></p>
+<p>The rte_ring library has been reworked and updated. The following changes
+have been made to it:</p>
+<ul>
+<li><p class="first">removed the build-time setting <code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_RING_SPLIT_PROD_CONS</span></code></p>
+</li>
+<li><p class="first">removed the build-time setting <code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_RING_DEBUG</span></code></p>
+</li>
+<li><p class="first">removed the build-time setting <code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_RING_PAUSE_REP_COUNT</span></code></p>
+</li>
+<li><p class="first">removed the function <code class="docutils literal notranslate"><span class="pre">rte_ring_set_water_mark</span></code> as part of a general
+removal of watermarks support in the library.</p>
+</li>
+<li><p class="first">added an extra parameter to the burst/bulk enqueue functions to
+return the number of free spaces in the ring after enqueue. This can
+be used by an application to implement its own watermark functionality.</p>
+</li>
+<li><p class="first">added an extra parameter to the burst/bulk dequeue functions to return
+the number elements remaining in the ring after dequeue.</p>
+</li>
+<li><p class="first">changed the return value of the enqueue and dequeue bulk functions to
+match that of the burst equivalents. In all cases, ring functions which
+operate on multiple packets now return the number of elements enqueued
+or dequeued, as appropriate. The updated functions are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">rte_ring_mp_enqueue_bulk</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_ring_sp_enqueue_bulk</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_ring_enqueue_bulk</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_ring_mc_dequeue_bulk</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_ring_sc_dequeue_bulk</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_ring_dequeue_bulk</span></code></li>
+</ul>
+<p>NOTE: the above functions all have different parameters as well as
+different return values, due to the other listed changes above. This
+means that all instances of the functions in existing code will be
+flagged by the compiler. The return value usage should be checked
+while fixing the compiler error due to the extra parameter.</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><strong>Reworked rte_vhost library</strong></p>
+<p>The rte_vhost library has been reworked to make it generic enough so that
+user could build other vhost-user drivers on top of it. To achieve that,
+following changes have been made:</p>
+<ul class="simple">
+<li>The following vhost-pmd APIs are removed:<ul>
+<li><code class="docutils literal notranslate"><span class="pre">rte_eth_vhost_feature_disable</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_eth_vhost_feature_enable</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_eth_vhost_feature_get</span></code></li>
+</ul>
+</li>
+<li>The vhost API <code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_callback_register(ops)</span></code> is reworked to
+be per vhost-user socket file. Thus, it takes one more argument:
+<code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_callback_register(path,</span> <span class="pre">ops)</span></code>.</li>
+<li>The vhost API <code class="docutils literal notranslate"><span class="pre">rte_vhost_get_queue_num</span></code> is deprecated, instead,
+<code class="docutils literal notranslate"><span class="pre">rte_vhost_get_vring_num</span></code> should be used.</li>
+<li>Following macros are removed in <code class="docutils literal notranslate"><span class="pre">rte_virtio_net.h</span></code><ul>
+<li><code class="docutils literal notranslate"><span class="pre">VIRTIO_RXQ</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">VIRTIO_TXQ</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">VIRTIO_QNUM</span></code></li>
+</ul>
+</li>
+<li>Following net specific header files are removed in <code class="docutils literal notranslate"><span class="pre">rte_virtio_net.h</span></code><ul>
+<li><code class="docutils literal notranslate"><span class="pre">linux/virtio_net.h</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">sys/socket.h</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">linux/if.h</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_ether.h</span></code></li>
+</ul>
+</li>
+<li>The vhost struct <code class="docutils literal notranslate"><span class="pre">virtio_net_device_ops</span></code> is renamed to
+<code class="docutils literal notranslate"><span class="pre">vhost_device_ops</span></code></li>
+<li>The vhost API <code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_session_start</span></code> is removed. Instead,
+<code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_start</span></code> should be used, and no need to create a
+thread to call it.</li>
+<li>The vhost public header file <code class="docutils literal notranslate"><span class="pre">rte_virtio_net.h</span></code> is renamed to
+<code class="docutils literal notranslate"><span class="pre">rte_vhost.h</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="abi-changes">
+<h2>2.5. ABI Changes</h2>
+<ul>
+<li><p class="first"><strong>Reorganized the mbuf structure.</strong></p>
+<p>The order and size of the fields in the <code class="docutils literal notranslate"><span class="pre">mbuf</span></code> structure changed,
+as described in the <a class="reference internal" href="#new-features">New Features</a> section.</p>
+</li>
+<li><p class="first">The <code class="docutils literal notranslate"><span class="pre">rte_cryptodev_info.sym</span></code> structure has new field <code class="docutils literal notranslate"><span class="pre">max_nb_sessions_per_qp</span></code>
+to support drivers which may support limited number of sessions per queue_pair.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="removed-items">
+<h2>2.6. Removed Items</h2>
+<ul class="simple">
+<li>KNI vhost support removed.</li>
+<li>dpdk_qat sample application removed.</li>
+</ul>
+</div>
+<div class="section" id="shared-library-versions">
+<h2>2.7. Shared Library Versions</h2>
+<p>The libraries prepended with a plus sign were incremented in this version.</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>  librte_acl.so.2
+<span class="gi">+ librte_bitratestats.so.1</span>
+  librte_cfgfile.so.2
+  librte_cmdline.so.2
+  librte_cryptodev.so.2
+  librte_distributor.so.1
+<span class="gi">+ librte_eal.so.4</span>
+  librte_ethdev.so.6
+  librte_hash.so.2
+  librte_ip_frag.so.1
+  librte_jobstats.so.1
+  librte_kni.so.2
+  librte_kvargs.so.1
+<span class="gi">+ librte_latencystats.so.1</span>
+  librte_lpm.so.2
+<span class="gi">+ librte_mbuf.so.3</span>
+  librte_mempool.so.2
+  librte_meter.so.1
+<span class="gi">+ librte_metrics.so.1</span>
+  librte_net.so.1
+  librte_pdump.so.1
+  librte_pipeline.so.3
+  librte_pmd_bond.so.1
+  librte_pmd_ring.so.2
+  librte_port.so.3
+  librte_power.so.1
+  librte_reorder.so.1
+  librte_ring.so.1
+  librte_sched.so.1
+  librte_table.so.2
+  librte_timer.so.1
+  librte_vhost.so.3
+</pre></div>
+</div>
+</div>
+<div class="section" id="tested-platforms">
+<h2>2.8. Tested Platforms</h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="release_17_02.html" class="btn btn-neutral float-right" title="3. DPDK Release 17.02" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rel_description.html" class="btn btn-neutral" title="1. Description of Release" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,415 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>24. Tun/Tap Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="25. ThunderX NICVF Poll Mode Driver" href="thunderx.html" />
+    <link rel="prev" title="23. SZEDATA2 poll mode driver library" href="szedata2.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Network Interface Controller Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Overview of Networking Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_and_test.html">2. Compiling and testing a PMD for a NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ark.html">3. ARK Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="avp.html">4. AVP Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnx2x.html">5. BNX2X Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnxt.html">6. BNXT Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cxgbe.html">7. CXGBE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2.html">8. DPAA2 Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e1000em.html">9. Driver for VM Emulated Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ena.html">10. ENA Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enic.html">11. ENIC Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fm10k.html">12. FM10K Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i40e.html">13. I40E Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ixgbe.html">14. IXGBE Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intel_vf.html">15. I40E/IXGBE/IGB Virtual Function Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kni.html">16. KNI Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquidio.html">17. LiquidIO VF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx4.html">18. MLX4 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx5.html">19. MLX5 poll mode driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nfp.html">20. NFP poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qede.html">21. QEDE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sfc_efx.html">22. Solarflare libefx-based Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="szedata2.html">23. SZEDATA2 poll mode driver library</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">24. Tun/Tap Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flow-api-support">24.1. Flow API support</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-testpmd-flow-rules">24.1.1. Examples of testpmd flow rules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#example">24.2. Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="thunderx.html">25. ThunderX NICVF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio.html">26. Poll Mode Driver for Emulated Virtio NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost.html">27. Poll Mode Driver that wraps vhost library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmxnet3.html">28. Poll Mode Driver for Paravirtual VMXNET3 NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcap_ring.html">29. Libpcap and Ring Based Poll Mode Drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Network Interface Controller Drivers</a> &raquo;</li>
+        
+      <li>24. Tun/Tap Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/nics/tap.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tun-tap-poll-mode-driver">
+<h1>24. Tun/Tap Poll Mode Driver</h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">rte_eth_tap.c</span></code> PMD creates a device using TUN/TAP interfaces on the
+local host. The PMD allows for DPDK and the host to communicate using a raw
+device interface on the host and in the DPDK application.</p>
+<p>The device created is a TAP device, which sends/receives packet in a raw
+format with a L2 header. The usage for a TAP PMD is for connectivity to the
+local host using a TAP interface. When the TAP PMD is initialized it will
+create a number of tap devices in the host accessed via <code class="docutils literal notranslate"><span class="pre">ifconfig</span> <span class="pre">-a</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ip</span></code> command. The commands can be used to assign and query the virtual like
+device.</p>
+<p>These TAP interfaces can be used with Wireshark or tcpdump or Pktgen-DPDK
+along with being able to be used as a network connection to the DPDK
+application. The method enable one or more interfaces is to use the
+<code class="docutils literal notranslate"><span class="pre">--vdev=net_tap0</span></code> option on the DPDK application command line. Each
+<code class="docutils literal notranslate"><span class="pre">--vdev=net_tap1</span></code> option give will create an interface named dtap0, dtap1,
+and so on.</p>
+<p>The interface name can be changed by adding the <code class="docutils literal notranslate"><span class="pre">iface=foo0</span></code>, for example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--vdev=net_tap0,iface=foo0 --vdev=net_tap1,iface=foo1, ...
+</pre></div>
+</div>
+<p>Also the speed of the interface can be changed from 10G to whatever number
+needed, but the interface does not enforce that speed, for example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--vdev=net_tap0,iface=foo0,speed=25000
+</pre></div>
+</div>
+<p>It is possible to specify a remote netdevice to capture packets from by adding
+<code class="docutils literal notranslate"><span class="pre">remote=foo1</span></code>, for example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--vdev=net_tap,iface=tap0,remote=foo1
+</pre></div>
+</div>
+<p>If a <code class="docutils literal notranslate"><span class="pre">remote</span></code> is set, the tap MAC address will be set to match the remote one
+just after netdevice creation. Using TC rules, traffic from the remote netdevice
+will be redirected to the tap. If the tap is in promiscuous mode, then all
+packets will be redirected. In allmulti mode, all multicast packets will be
+redirected.</p>
+<p>Using the remote feature is especially useful for capturing traffic from a
+netdevice that has no support in the DPDK. It is possible to add explicit
+rte_flow rules on the tap PMD to capture specific traffic (see next section for
+examples).</p>
+<p>After the DPDK application is started you can send and receive packets on the
+interface using the standard rx_burst/tx_burst APIs in DPDK. From the host
+point of view you can use any host tool like tcpdump, Wireshark, ping, Pktgen
+and others to communicate with the DPDK application. The DPDK application may
+not understand network protocols like IPv4/6, UDP or TCP unless the
+application has been written to understand these protocols.</p>
+<p>If you need the interface as a real network interface meaning running and has
+a valid IP address then you can do this with the following commands:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sudo ip link set dtap0 up; sudo ip addr add 192.168.0.250/24 dev dtap0
+sudo ip link set dtap1 up; sudo ip addr add 192.168.1.250/24 dev dtap1
+</pre></div>
+</div>
+<p>Please change the IP addresses as you see fit.</p>
+<p>If routing is enabled on the host you can also communicate with the DPDK App
+over the internet via a standard socket layer application as long as you
+account for the protocol handing in the application.</p>
+<p>If you have a Network Stack in your DPDK application or something like it you
+can utilize that stack to handle the network protocols. Plus you would be able
+to address the interface using an IP address assigned to the internal
+interface.</p>
+<div class="section" id="flow-api-support">
+<h2>24.1. Flow API support</h2>
+<p>The tap PMD supports major flow API pattern items and actions, when running on
+linux kernels above 4.2 (&quot;Flower&quot; classifier required). Supported items:</p>
+<ul class="simple">
+<li>eth: src and dst (with variable masks), and eth_type (0xffff mask).</li>
+<li>vlan: vid, pcp, tpid, but not eid. (requires kernel 4.9)</li>
+<li>ipv4/6: src and dst (with variable masks), and ip_proto (0xffff mask).</li>
+<li>udp/tcp: src and dst port (0xffff) mask.</li>
+</ul>
+<p>Supported actions:</p>
+<ul class="simple">
+<li>DROP</li>
+<li>QUEUE</li>
+<li>PASSTHRU</li>
+</ul>
+<p>It is generally not possible to provide a &quot;last&quot; item. However, if the &quot;last&quot;
+item, once masked, is identical to the masked spec, then it is supported.</p>
+<p>Only IPv4/6 and MAC addresses can use a variable mask. All other items need a
+full mask (exact match).</p>
+<p>As rules are translated to TC, it is possible to show them with something like:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>tc -s filter show dev tap1 parent 1:
+</pre></div>
+</div>
+<div class="section" id="examples-of-testpmd-flow-rules">
+<h3>24.1.1. Examples of testpmd flow rules</h3>
+<p>Drop packets for destination IP 192.168.0.1:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>testpmd&gt; flow create 0 priority 1 ingress pattern eth / ipv4 dst is 1.1.1.1 \
+         / end actions drop / end
+</pre></div>
+</div>
+<p>Ensure packets from a given MAC address are received on a queue 2:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>testpmd&gt; flow create 0 priority 2 ingress pattern eth src is 06:05:04:03:02:01 \
+         / end actions queue index 2 / end
+</pre></div>
+</div>
+<p>Drop UDP packets in vlan 3:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>testpmd&gt; flow create 0 priority 3 ingress pattern eth / vlan vid is 3 / \
+         ipv4 proto is 17 / end actions drop / end
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="example">
+<h2>24.2. Example</h2>
+<p>The following is a simple example of using the TUN/TAP PMD with the Pktgen
+packet generator. It requires that the <code class="docutils literal notranslate"><span class="pre">socat</span></code> utility is installed on the
+test system.</p>
+<p>Build DPDK, then pull down Pktgen and build pktgen using the DPDK SDK/Target
+used to build the dpdk you pulled down.</p>
+<p>Run pktgen from the pktgen directory in a terminal with a commandline like the
+following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sudo ./app/app/x86_64-native-linuxapp-gcc/app/pktgen -l 1-5 -n 4        \
+ --proc-type auto --log-level 8 --socket-mem 512,512 --file-prefix pg   \
+ --vdev=net_tap0 --vdev=net_tap1 -b 05:00.0 -b 05:00.1                  \
+ -b 04:00.0 -b 04:00.1 -b 04:00.2 -b 04:00.3                            \
+ -b 81:00.0 -b 81:00.1 -b 81:00.2 -b 81:00.3                            \
+ -b 82:00.0 -b 83:00.0 -- -T -P -m [2:3].0 -m [4:5].1                   \
+ -f themes/black-yellow.theme
+</pre></div>
+</div>
+<p>Verify with <code class="docutils literal notranslate"><span class="pre">ifconfig</span> <span class="pre">-a</span></code> command in a different xterm window, should have a
+<code class="docutils literal notranslate"><span class="pre">dtap0</span></code> and <code class="docutils literal notranslate"><span class="pre">dtap1</span></code> interfaces created.</p>
+<p>Next set the links for the two interfaces to up via the commands below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sudo ip link set dtap0 up; sudo ip addr add 192.168.0.250/24 dev dtap0
+sudo ip link set dtap1 up; sudo ip addr add 192.168.1.250/24 dev dtap1
+</pre></div>
+</div>
+<p>Then use socat to create a loopback for the two interfaces:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sudo socat interface:dtap0 interface:dtap1
+</pre></div>
+</div>
+<p>Then on the Pktgen command line interface you can start sending packets using
+the commands <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">1</span></code> or you can start both at the same
+time with <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">all</span></code>. The command <code class="docutils literal notranslate"><span class="pre">str</span></code> is an alias for <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">all</span></code> and
+<code class="docutils literal notranslate"><span class="pre">stp</span></code> is an alias for <code class="docutils literal notranslate"><span class="pre">stop</span> <span class="pre">all</span></code>.</p>
+<p>While running you should see the 64 byte counters increasing to verify the
+traffic is being looped back. You can use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">all</span> <span class="pre">size</span> <span class="pre">XXX</span></code> to change the
+size of the packets after you stop the traffic. Use pktgen <code class="docutils literal notranslate"><span class="pre">help</span></code>
+command to see a list of all commands. You can also use the <code class="docutils literal notranslate"><span class="pre">-f</span></code> option to
+load commands at startup in command line or Lua script in pktgen.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="thunderx.html" class="btn btn-neutral float-right" title="25. ThunderX NICVF Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="szedata2.html" class="btn btn-neutral" title="23. SZEDATA2 poll mode driver library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

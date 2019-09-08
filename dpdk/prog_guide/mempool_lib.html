@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. 内存池库 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="6. Mbuf库" href="mbuf_lib.html" />
+    <link rel="prev" title="4. Ring库" href="ring_lib.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. 内存池库</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cookies">5.1. Cookies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">5.2. 统计</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">5.3. 内存对齐限制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mempool-local-cache">5.4. 本地缓存</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mempool-handlers">5.5. Mempool Handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">5.6. 使用案例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>5. 内存池库</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/mempool_lib.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mempool-library">
+<span id="id1"></span><h1>5. 内存池库</h1>
+<p>内存池是固定大小对象的分配器。
+在DPDK中使用名称标识内存池，使用mempool处理器存储空闲对象。默认的mempool处理器基于ring。
+其提供一些可选服务，如per-core对象缓存和对齐辅助（alignment helper，保证对象在所有RAM通道上均匀分布）。</p>
+<p>该库由 <a class="reference internal" href="mbuf_lib.html#mbuf-library"><span class="std std-ref">Mbuf 库</span></a> 引用。</p>
+<div class="section" id="cookies">
+<h2>5.1. Cookies</h2>
+<p>在调试模式(启用 CONFIG_RTE_LIBRTE_MEMPOOL_DEBUG)中，所申请内存块的首尾会增加额外信息（cookies）。
+然后申请的对象包含覆写保护字段用于调试缓冲区溢出。</p>
+</div>
+<div class="section" id="id2">
+<h2>5.2. 统计</h2>
+<p>在调试模式(启用 CONFIG_RTE_LIBRTE_MEMPOOL_DEBUG)中,
+对象的get/put统计信息存储在mempool结构中。
+统计信息是per-lcore的，避免了统计计数器的并行访问。</p>
+</div>
+<div class="section" id="id3">
+<h2>5.3. 内存对齐限制</h2>
+<p>根据硬件内存配置，可以通过给对象之间增加填充提高性能。
+目的是确保每个对象起始地址分布在内存的不同通道(channel)和rank，使得内存通道负载均衡。</p>
+<p>这对L3转发和流量分类时的包缓存性能提升尤其显著。
+由于仅需要处理前64字节，所以可以通过把缓存包对象起始地址分布在不同内存通道上来提升性能。</p>
+<p>The number of ranks on any DIMM is the number of independent sets of DRAMs that can be accessed for the full data bit-width of the DIMM.
+The ranks cannot be accessed simultaneously since they share the same data path.
+The physical layout of the DRAM chips on the DIMM itself does not necessarily relate to the number of ranks.</p>
+<p>运行应用时，通过EAL提供的参数配置可以增加内存通道和rank的数量。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">命令行必须为处理器提供内存通道数量。</p>
+</div>
+<p><a class="reference internal" href="#figure-memory-management"><span class="std std-numref">图 5.1</span></a> 和 <a class="reference internal" href="#figure-memory-management2"><span class="std std-numref">图 5.2</span></a> 是不同DIMM架构的对齐示例。</p>
+<div class="figure" id="id6">
+<span id="figure-memory-management"></span><img alt="../_images/memory-management.svg" src="../_images/memory-management.svg" /><p class="caption"><span class="caption-number">图 5.1 </span><span class="caption-text">Two Channels and Quad-ranked DIMM Example</span></p>
+</div>
+<p>该示例中，假设一个包由16个64字节块组成(现实情况并非如此)。</p>
+<p>Intel® 5520芯片组有三个通道，因此大部分情况对象之间不需要填充(除非对象的大小是 n x 3 x 64 字节块)。</p>
+<div class="figure" id="id7">
+<span id="figure-memory-management2"></span><img alt="../_images/memory-management2.svg" src="../_images/memory-management2.svg" /><p class="caption"><span class="caption-number">图 5.2 </span><span class="caption-text">Three Channels and Two Dual-ranked DIMM Example</span></p>
+</div>
+<p>创建新内存池时，用户可以选择是否使用对齐特性。</p>
+</div>
+<div class="section" id="mempool-local-cache">
+<span id="id4"></span><h2>5.4. 本地缓存</h2>
+<p>在CPU使用方面，多核访问内存池ring的代价可能很高，因为每次都需要compare-and-set (CAS)操作。
+为了减少内存池ring的访问，内存池分配器维护一个per-core缓存并对内存池ring做批量请求(批量出入队),
+在实际的内存池结构中使用的是带有很少锁的缓存。每个核可以自由地访问自己的空闲对象缓存(有锁),
+在缓存满的时候把部分空闲对象刷回内存池ring中，缓存空时会从内存池ring中获取一些对象放在缓存中。</p>
+<p>虽然这会导致对象在核的缓存中闲置，暂时无法被其他核利用，但当前核心访问自己缓存的速度很快，这会提供更好的性能。</p>
+<p>该缓存由一个小per-core指针表和长度构成，并且作为一个栈来使用。在创建池的时候可以选择启用或关闭。</p>
+<p>缓存大小是固定的，在编译时由 CONFIG_RTE_MEMPOOL_CACHE_MAX_SIZE 定义。</p>
+<p><a class="reference internal" href="#figure-mempool"><span class="std std-numref">图 5.3</span></a> 展示了缓存操作.</p>
+<div class="figure" id="id8">
+<span id="figure-mempool"></span><img alt="../_images/mempool.svg" src="../_images/mempool.svg" /><p class="caption"><span class="caption-number">图 5.3 </span><span class="caption-text">内存中的mempool和相关的Ring</span></p>
+</div>
+<p>除了内部默认的per-lcore本地缓存，应用也可以通过 <code class="docutils literal notranslate"><span class="pre">rte_mempool_cache_create()</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_mempool_cache_free()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">rte_mempool_cache_flush()</span></code> 创建和管理额外的缓存。
+通过 <code class="docutils literal notranslate"><span class="pre">rte_mempool_generic_put()</span></code> and <code class="docutils literal notranslate"><span class="pre">rte_mempool_generic_get()</span></code> 存取对象。 <code class="docutils literal notranslate"><span class="pre">rte_mempool_default_cache()</span></code> 调用返回默认的内部缓存(如果有的话)。
+与默认缓存相比，用户自己的缓存可以用于非EAL线程。</p>
+</div>
+<div class="section" id="mempool-handlers">
+<h2>5.5. Mempool Handlers</h2>
+<p>DPDK可以使用外部内存子系统，如硬件内存管理系统和基于内存分配器的软内存系统。</p>
+<p>mempool handler 的两个方面</p>
+<ul class="simple">
+<li>使用宏 <code class="docutils literal notranslate"><span class="pre">MEMPOOL_REGISTER_OPS</span></code> 增加新的内存池操作(ops)代码。</li>
+<li>使用新API  <code class="docutils literal notranslate"><span class="pre">rte_mempool_create_empty()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">rte_mempool_set_ops_byname()</span></code>
+创建mempool并指定ops。</li>
+</ul>
+<p>相同应用中可能会使用多个不同的mempool handler。使用函数 <code class="docutils literal notranslate"><span class="pre">rte_mempool_create_empty()</span></code>
+创建mempool，然后使用 <code class="docutils literal notranslate"><span class="pre">rte_mempool_set_ops_byname()</span></code> 设置相关的mempool handler回调(ops)结构。</p>
+<p>遗留的(Legacy)应用中可能仍使用旧的API <code class="docutils literal notranslate"><span class="pre">rte_mempool_create()</span></code> ，这个API默认使用基于mempool handler的ring。
+这些应用需要改成使用新的mempool handler。</p>
+<p>在使用 <code class="docutils literal notranslate"><span class="pre">rte_pktmbuf_create()</span></code> 的应用中，有个配置项(<code class="docutils literal notranslate"><span class="pre">RTE_MBUF_DEFAULT_MEMPOOL_OPS</span></code>)，通过它可以选择mempool handler</p>
+</div>
+<div class="section" id="id5">
+<h2>5.6. 使用案例</h2>
+<p>需要高性能内存申请的地方都应该使用基于池的内存分配器。
+如以下案例:</p>
+<ul class="simple">
+<li><a class="reference internal" href="mbuf_lib.html#mbuf-library"><span class="std std-ref">Mbuf 库</span></a></li>
+<li><a class="reference internal" href="env_abstraction_layer.html#environment-abstraction-layer"><span class="std std-ref">环境抽象层EAL</span></a> , 的日志服务</li>
+<li>需要在数据平面上频繁处理大小固定对象的应用</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mbuf_lib.html" class="btn btn-neutral float-right" title="6. Mbuf库" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ring_lib.html" class="btn btn-neutral" title="4. Ring库" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

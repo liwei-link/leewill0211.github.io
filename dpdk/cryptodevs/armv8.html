@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. ARMv8 Crypto Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="5. NXP DPAA2 CAAM (DPAA2_SEC)" href="dpaa2_sec.html" />
+    <link rel="prev" title="3. AES-NI GCM Crypto Poll Mode Driver" href="aesni_gcm.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Crypto Device Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Crypto Device Supported Functionality Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_mb.html">2. AESN-NI Multi Buffer Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_gcm.html">3. AES-NI GCM Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4. ARMv8 Crypto Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features">4.1. Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">4.2. Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialization">4.3. Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">4.4. Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2_sec.html">5. NXP DPAA2 CAAM (DPAA2_SEC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kasumi.html">6. KASUMI Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openssl.html">7. OpenSSL Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="null.html">8. Null Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scheduler.html">9. Cryptodev Scheduler Poll Mode Driver Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snow3g.html">10. SNOW 3G Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qat.html">11. Intel(R) QuickAssist (QAT) Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zuc.html">12. ZUC Crypto Poll Mode Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Crypto Device Drivers</a> &raquo;</li>
+        
+      <li>4. ARMv8 Crypto Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cryptodevs/armv8.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="armv8-crypto-poll-mode-driver">
+<h1>4. ARMv8 Crypto Poll Mode Driver</h1>
+<p>This code provides the initial implementation of the ARMv8 crypto PMD.
+The driver uses ARMv8 cryptographic extensions to process chained crypto
+operations in an optimized way. The core functionality is provided by
+a low-level library, written in the assembly code.</p>
+<div class="section" id="features">
+<h2>4.1. Features</h2>
+<p>ARMv8 Crypto PMD has support for the following algorithm pairs:</p>
+<p>Supported cipher algorithms:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_AES_CBC</span></code></li>
+</ul>
+<p>Supported authentication algorithms:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA1_HMAC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA256_HMAC</span></code></li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>4.2. Installation</h2>
+<p>In order to enable this virtual crypto PMD, user must:</p>
+<ul class="simple">
+<li>Download ARMv8 crypto library source code from
+<a class="reference external" href="https://github.com/caviumnetworks/armv8_crypto">here</a></li>
+<li>Export the environmental variable ARMV8_CRYPTO_LIB_PATH with
+the path where the <code class="docutils literal notranslate"><span class="pre">armv8_crypto</span></code> library was downloaded
+or cloned.</li>
+<li>Build the library by invoking:</li>
+</ul>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">make -C $ARMV8_CRYPTO_LIB_PATH/</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Set CONFIG_RTE_LIBRTE_PMD_ARMV8_CRYPTO=y in
+config/defconfig_arm64-armv8a-linuxapp-gcc</li>
+</ul>
+<p>The corresponding device can be created only if the following features
+are supported by the CPU:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CPUFLAG_AES</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CPUFLAG_SHA1</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CPUFLAG_SHA2</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CPUFLAG_NEON</span></code></li>
+</ul>
+</div>
+<div class="section" id="initialization">
+<h2>4.3. Initialization</h2>
+<p>User can use app/test application to check how to use this PMD and to verify
+crypto processing.</p>
+<p>Test name is cryptodev_sw_armv8_autotest.
+For performance test cryptodev_sw_armv8_perftest can be used.</p>
+</div>
+<div class="section" id="limitations">
+<h2>4.4. Limitations</h2>
+<ul class="simple">
+<li>Maximum number of sessions is 2048.</li>
+<li>Only chained operations are supported.</li>
+<li>AES-128-CBC is the only supported cipher variant.</li>
+<li>Cipher input data has to be a multiple of 16 bytes.</li>
+<li>Digest input data has to be a multiple of 8 bytes.</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dpaa2_sec.html" class="btn btn-neutral float-right" title="5. NXP DPAA2 CAAM (DPAA2_SEC)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="aesni_gcm.html" class="btn btn-neutral" title="3. AES-NI GCM Crypto Poll Mode Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

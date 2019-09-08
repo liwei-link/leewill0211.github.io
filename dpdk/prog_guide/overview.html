@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. 概述 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="3. 环境抽象层" href="env_abstraction_layer.html" />
+    <link rel="prev" title="1. 介绍" href="intro.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. 概述</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">2.1. 开发环境</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">2.2. 环境抽象层</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">2.3. 核心组件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ring-librte-ring">2.3.1. Ring管理 (librte_ring)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#librte-mempool">2.3.2. 内存池管理 (librte_mempool)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#librte-mbuf">2.3.3. 网络包缓存管理 (librte_mbuf)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#librte-timer">2.3.4. 定时器管理 (librte_timer)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">2.4. 以太网轮询模式驱动架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">2.5. 数据包转发算法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#librte-net">2.6. librte_net</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>2. 概述</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/overview.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <p><strong>Part 1: Architecture Overview</strong></p>
+<div class="section" id="id1">
+<h1>2. 概述</h1>
+<p>本节将给予读者DPDK的全局总览。</p>
+<p>DPDK主要的目的是提供一个简单的计算框架，用于数据平面应用的包处理。
+用户可以通过示例代码理解其中的技术、构建应用原型或者增加自己的协议栈。
+Alternative ecosystem options that use the DPDK are available.</p>
+<p>DPDK框架通过环境抽象层（EAL）为指定环境创建了一组功能库，EAL可能被绑定到Intel架构(32位或64位)、
+Linux用户态编译器或者一种特定平台。环境的创建是通过Makefile和配置文件完成的。
+一旦EAL创建完成，用户可以通过链接EAL的库创建自己的应用。
+DPDK也提供EAL之外其他的库，包括Hash、Longest Prefix Match（LPM）和Ring库。
+示例应用展示了DPDK各种特性的使用方法。</p>
+<p>DPDK为数据包处理实现了一种run-to-completion模型，这种模型在调用数据平面应用之前，
+就需要预先申请所有资源。run-to-completion模型在逻辑处理核心上运行执行单元。
+这个模型没有调度器，所有设备的访问都是通过轮询的方式。不使用中断的主要原因是中断处理的性能损耗。</p>
+<p>除了run-to-completion模型，流水线（pipeline）模型也会用于核心之间传递数据包或者消息（通过rings）。
+这使得数据包的处理能够在各个阶段执行，并且可以更加高效地在各个核心上运行。</p>
+<div class="section" id="id2">
+<h2>2.1. 开发环境</h2>
+<p>DPDK开发环境的安装需要Linux和相关的工具链，如一个或者多个编译器、汇编器、make工具、
+编辑器和各种用于创建DPDK组件和库的依赖库。</p>
+<p>一旦指定环境和架构的库创建完成，就可以用于创建用户的数据平面应用。</p>
+<p>当为Linux用户态创建应用的时候，需要glibc库。对于DPDK应用，RTE_SDK和RTE_TARGET这两个环境变量必须在编译前配置好。
+可以通过下面的示例设置这两个环境变量：</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">export RTE_SDK=/home/user/DPDK</span>
+<span class="go">export RTE_TARGET=x86_64-native-linuxapp-gcc</span>
+</pre></div>
+</div>
+<p>开发环境的设置参见 <em>DPDK Getting Started Guide</em></p>
+</div>
+<div class="section" id="id3">
+<h2>2.2. 环境抽象层</h2>
+<p>环境抽象层（EAL）屏蔽特定环境差异，提供了一组通用的接口/服务给应用程序使用。
+EAL提供的服务有：</p>
+<ul class="simple">
+<li>DPDK加载和启动</li>
+<li>多进程和多线程的支持</li>
+<li>CPU核心亲和性/分配</li>
+<li>系统内存申请和释放</li>
+<li>原子/锁操作</li>
+<li>时间相关</li>
+<li>PCI总线访问</li>
+<li>跟踪和调试功能</li>
+<li>CPU特性标识</li>
+<li>中断处理</li>
+<li>Alarm operations</li>
+<li>内存管理 (malloc)</li>
+</ul>
+<p>看这里 <a class="reference internal" href="env_abstraction_layer.html#environment-abstraction-layer"><span class="std std-ref">Environment Abstraction Layer</span></a>.</p>
+</div>
+<div class="section" id="id4">
+<h2>2.3. 核心组件</h2>
+<p><em>核心组件</em> 是一组库，它们提供了高性能数据包处理应用所需的要素。</p>
+<div class="figure" id="id7">
+<span id="figure-architecture-overview"></span><img alt="../_images/architecture-overview.svg" src="../_images/architecture-overview.svg" /><p class="caption"><span class="caption-number">图 2.1 </span><span class="caption-text">核心组件架构</span></p>
+</div>
+<div class="section" id="ring-librte-ring">
+<h3>2.3.1. Ring管理 (librte_ring)</h3>
+<p>ring通过一个有限大小的表实现了无锁，多生产者，多消费者，先进先出（FIFO）的API。
+和无锁队列相比其有一些优势：实现更容易，适用于大部分操作和更加快速。
+ring被 <a class="reference internal" href="mempool_lib.html#mempool-library"><span class="std std-ref">Memory Pool Manager (librte_mempool)</span></a> 使用，
+并且可以作为一种通用的通信机制为核心之间或同一核心上的执行单元提供通信。</p>
+<p>看这里 <a class="reference internal" href="ring_lib.html#ring-library"><span class="std std-ref">Ring Library</span></a>.</p>
+</div>
+<div class="section" id="librte-mempool">
+<h3>2.3.2. 内存池管理 (librte_mempool)</h3>
+<p>内存池管理器是负责为对象池申请内存的。
+内存池由名字标识，使用ring存储可用的对象。
+其提供了一些可选的服务，比如per-core对象缓存和对齐辅助（alignment helper，保证对象在所有RAM通道上均匀分布）</p>
+<p>看这里  <a class="reference internal" href="mempool_lib.html#mempool-library"><span class="std std-ref">Mempool Library</span></a>.</p>
+</div>
+<div class="section" id="librte-mbuf">
+<h3>2.3.3. 网络包缓存管理 (librte_mbuf)</h3>
+<p>mbuf库提供了用于创建和销毁DPDK消息缓存的工具。
+DPDK消息缓存在程序启动是创建，并存储在内存池中。</p>
+<p>这个库提供了申请/释放mbuf、ctrlmbuf和pktmbuf的API。
+ctrlmbuf（manipulate control message buffers）是通用消息缓存，pktmbuf（packet buffers）用于承载网络包。</p>
+<p>看这里 <a class="reference internal" href="mbuf_lib.html#mbuf-library"><span class="std std-ref">Mbuf Library</span></a>.</p>
+</div>
+<div class="section" id="librte-timer">
+<h3>2.3.4. 定时器管理 (librte_timer)</h3>
+<p>该库为DPDK执行单元提供了定时器服务、异步执行函数的能力。
+它能够周期性或者一次性地调用函数。定时器库使用EAL提供的定时器接口获取时间基准。
+并且能够按需要在每个核心上初始化。</p>
+<p>定时器完整描述 <a class="reference internal" href="timer_lib.html#timer-library"><span class="std std-ref">Timer Library</span></a>.</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>2.4. 以太网轮询模式驱动架构</h2>
+<p>DPDK包含了1 GbE, 10 GbE and 40GbE的轮询模式驱动，和半虚拟化的virtio以太网控制器。
+virtio以太网控制器能在没有异步和中断信号机制的情况下工作。</p>
+<p>看这里  <a class="reference internal" href="poll_mode_drv.html#poll-mode-driver"><span class="std std-ref">Poll Mode Driver</span></a>.</p>
+</div>
+<div class="section" id="id6">
+<h2>2.5. 数据包转发算法</h2>
+<p>DPDK包括哈希(librte_hash)和最长前缀匹配(LPM,librte_lpm)库，用于支持包转发算法。</p>
+<p>看这里 <a class="reference internal" href="hash_lib.html#hash-library"><span class="std std-ref">Hash Library</span></a> and  <a class="reference internal" href="lpm_lib.html#lpm-library"><span class="std std-ref">LPM Library</span></a> for more information.</p>
+</div>
+<div class="section" id="librte-net">
+<h2>2.6. librte_net</h2>
+<p>librte_net库是一组IP协议定义和相关操作的宏。基于FreeBSD* IP栈代码，包含IP头所使用的协议号，
+IP相关的宏，IPv4/IPv6头结构体，TCP, UDP和SCTP头结构体。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="env_abstraction_layer.html" class="btn btn-neutral float-right" title="3. 环境抽象层" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="intro.html" class="btn btn-neutral" title="1. 介绍" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

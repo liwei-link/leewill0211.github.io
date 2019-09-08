@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. NXP DPAA2 CAAM (DPAA2_SEC) &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="6. KASUMI Crypto Poll Mode Driver" href="kasumi.html" />
+    <link rel="prev" title="4. ARMv8 Crypto Poll Mode Driver" href="armv8.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Crypto Device Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Crypto Device Supported Functionality Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_mb.html">2. AESN-NI Multi Buffer Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_gcm.html">3. AES-NI GCM Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="armv8.html">4. ARMv8 Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. NXP DPAA2 CAAM (DPAA2_SEC)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#architecture">5.1. Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementation">5.2. Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#features">5.3. Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-dpaa2-socs">5.4. Supported DPAA2 SoCs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">5.5. Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">5.6. Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pre-installation-configuration">5.7. Pre-Installation Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#config-file-options">5.7.1. Config File Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#installations">5.8. Installations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kasumi.html">6. KASUMI Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openssl.html">7. OpenSSL Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="null.html">8. Null Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scheduler.html">9. Cryptodev Scheduler Poll Mode Driver Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snow3g.html">10. SNOW 3G Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qat.html">11. Intel(R) QuickAssist (QAT) Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zuc.html">12. ZUC Crypto Poll Mode Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Crypto Device Drivers</a> &raquo;</li>
+        
+      <li>5. NXP DPAA2 CAAM (DPAA2_SEC)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cryptodevs/dpaa2_sec.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nxp-dpaa2-caam-dpaa2-sec">
+<h1>5. NXP DPAA2 CAAM (DPAA2_SEC)</h1>
+<p>The DPAA2_SEC PMD provides poll mode crypto driver support for NXP DPAA2 CAAM
+hardware accelerator.</p>
+<div class="section" id="architecture">
+<h2>5.1. Architecture</h2>
+<p>SEC is the SOC's security engine, which serves as NXP's latest cryptographic
+acceleration and offloading hardware. It combines functions previously
+implemented in separate modules to create a modular and scalable acceleration
+and assurance engine. It also implements block encryption algorithms, stream
+cipher algorithms, hashing algorithms, public key algorithms, run-time
+integrity checking, and a hardware random number generator. SEC performs
+higher-level cryptographic operations than previous NXP cryptographic
+accelerators. This provides significant improvement to system level performance.</p>
+<p>DPAA2_SEC is one of the hardware resource in DPAA2 Architecture. More information
+on DPAA2 Architecture is described in <a class="reference internal" href="../nics/dpaa2.html#dpaa2-overview"><span class="std std-ref">DPAA2 Overview</span></a>.</p>
+<p>DPAA2_SEC PMD is one of DPAA2 drivers which interacts with Management Complex (MC)
+portal to access the hardware object - DPSECI. The MC provides access to create,
+discover, connect, configure and destroy dpseci objects in DPAA2_SEC PMD.</p>
+<p>DPAA2_SEC PMD also uses some of the other hardware resources like buffer pools,
+queues, queue portals to store and to enqueue/dequeue data to the hardware SEC.</p>
+<p>DPSECI objects are detected by PMD using a resource container called DPRC (like
+in <a class="reference internal" href="../nics/dpaa2.html#dpaa2-overview"><span class="std std-ref">DPAA2 Overview</span></a>).</p>
+<p>For example:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">DPRC.1 (bus)</span>
+<span class="go">  |</span>
+<span class="go">  +--+--------+-------+-------+-------+---------+</span>
+<span class="go">     |        |       |       |       |         |</span>
+<span class="go">   DPMCP.1  DPIO.1  DPBP.1  DPNI.1  DPMAC.1  DPSECI.1</span>
+<span class="go">   DPMCP.2  DPIO.2          DPNI.2  DPMAC.2  DPSECI.2</span>
+<span class="go">   DPMCP.3</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="implementation">
+<h2>5.2. Implementation</h2>
+<p>SEC provides platform assurance by working with SecMon, which is a companion
+logic block that tracks the security state of the SOC. SEC is programmed by
+means of descriptors (not to be confused with frame descriptors (FDs)) that
+indicate the operations to be performed and link to the message and
+associated data. SEC incorporates two DMA engines to fetch the descriptors,
+read the message data, and write the results of the operations. The DMA
+engine provides a scatter/gather capability so that SEC can read and write
+data scattered in memory. SEC may be configured by means of software for
+dynamic changes in byte ordering. The default configuration for this version
+of SEC is little-endian mode.</p>
+<p>A block diagram similar to dpaa2 NIC is shown below to show where DPAA2_SEC
+fits in the DPAA2 Bus model</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">                                   +----------------+</span>
+<span class="go">                                   | DPDK DPAA2_SEC |</span>
+<span class="go">                                   |     PMD        |</span>
+<span class="go">                                   +----------------+       +------------+</span>
+<span class="go">                                   |  MC SEC object |.......|  Mempool   |</span>
+<span class="go">                . . . . . . . . .  |   (DPSECI)     |       |  (DPBP)    |</span>
+<span class="go">               .                   +---+---+--------+       +-----+------+</span>
+<span class="go">              .                        ^   |                      .</span>
+<span class="go">             .                         |   |&lt;enqueue,             .</span>
+<span class="go">            .                          |   | dequeue&gt;             .</span>
+<span class="go">           .                           |   |                      .</span>
+<span class="go">          .                        +---+---V----+                 .</span>
+<span class="go">         .      . . . . . . . . . .| DPIO driver|                 .</span>
+<span class="go">        .      .                   |  (DPIO)    |                 .</span>
+<span class="go">       .      .                    +-----+------+                 .</span>
+<span class="go">      .      .                     |  QBMAN     |                 .</span>
+<span class="go">     .      .                      |  Driver    |                 .</span>
+<span class="go">+----+------+-------+              +-----+----- |                 .</span>
+<span class="go">|   dpaa2 bus       |                    |                        .</span>
+<span class="go">|   VFIO fslmc-bus  |....................|.........................</span>
+<span class="go">|                   |                    |</span>
+<span class="go">|     /bus/fslmc    |                    |</span>
+<span class="go">+-------------------+                    |</span>
+<span class="go">                                         |</span>
+<span class="go">========================== HARDWARE =====|=======================</span>
+<span class="go">                                       DPIO</span>
+<span class="go">                                         |</span>
+<span class="go">                                       DPSECI---DPBP</span>
+<span class="go">=========================================|========================</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="features">
+<h2>5.3. Features</h2>
+<p>The DPAA2 PMD has support for:</p>
+<p>Cipher algorithms:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_3DES_CBC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_AES128_CBC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_AES192_CBC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_AES256_CBC</span></code></li>
+</ul>
+<p>Hash algorithms:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA1_HMAC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA224_HMAC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA256_HMAC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA384_HMAC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA512_HMAC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_MD5_HMAC</span></code></li>
+</ul>
+</div>
+<div class="section" id="supported-dpaa2-socs">
+<h2>5.4. Supported DPAA2 SoCs</h2>
+<ul class="simple">
+<li>LS2080A/LS2040A</li>
+<li>LS2084A/LS2044A</li>
+<li>LS2088A/LS2048A</li>
+<li>LS1088A/LS1048A</li>
+</ul>
+</div>
+<div class="section" id="limitations">
+<h2>5.5. Limitations</h2>
+<ul class="simple">
+<li>Chained mbufs are not supported.</li>
+<li>Hash followed by Cipher mode is not supported</li>
+<li>Only supports the session-oriented API implementation (session-less APIs are not supported).</li>
+</ul>
+</div>
+<div class="section" id="prerequisites">
+<h2>5.6. Prerequisites</h2>
+<p>DPAA2_SEC driver has similar pre-requisites as described in <a class="reference internal" href="../nics/dpaa2.html#dpaa2-overview"><span class="std std-ref">DPAA2 Overview</span></a>.
+The following dependencies are not part of DPDK and must be installed separately:</p>
+<ul>
+<li><p class="first"><strong>NXP Linux SDK</strong></p>
+<p>NXP Linux software development kit (SDK) includes support for the family
+of QorIQ® ARM-Architecture-based system on chip (SoC) processors
+and corresponding boards.</p>
+<p>It includes the Linux board support packages (BSPs) for NXP SoCs,
+a fully operational tool chain, kernel and board specific modules.</p>
+<p>SDK and related information can be obtained from:  <a class="reference external" href="http://www.nxp.com/products/software-and-tools/run-time-software/linux-sdk/linux-sdk-for-qoriq-processors:SDKLINUX">NXP QorIQ SDK</a>.</p>
+</li>
+<li><p class="first"><strong>DPDK Helper Scripts</strong></p>
+<p>DPAA2 based resources can be configured easily with the help of ready scripts
+as provided in the DPDK helper repository.</p>
+<p><a class="reference external" href="https://github.com/qoriq-open-source/dpdk-helper">DPDK Helper Scripts</a>.</p>
+</li>
+</ul>
+<p>Currently supported by DPDK:</p>
+<ul class="simple">
+<li>NXP SDK <strong>2.0+</strong>.</li>
+<li>MC Firmware version <strong>10.0.0</strong> and higher.</li>
+<li>Supported architectures:  <strong>arm64 LE</strong>.</li>
+<li>Follow the DPDK <a class="reference internal" href="../linux_gsg/index.html#linux-gsg"><span class="std std-ref">Getting Started Guide for Linux</span></a> to setup the basic DPDK environment.</li>
+</ul>
+</div>
+<div class="section" id="pre-installation-configuration">
+<h2>5.7. Pre-Installation Configuration</h2>
+<div class="section" id="config-file-options">
+<h3>5.7.1. Config File Options</h3>
+<p>Basic DPAA2 config file options are described in <a class="reference internal" href="../nics/dpaa2.html#dpaa2-overview"><span class="std std-ref">DPAA2 Overview</span></a>.
+In addition to those, the following options can be modified in the <code class="docutils literal notranslate"><span class="pre">config</span></code> file
+to enable DPAA2_SEC PMD.</p>
+<p>Please note that enabling debugging options may affect system performance.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_PMD_DPAA2_SEC</span></code> (default <code class="docutils literal notranslate"><span class="pre">n</span></code>)
+By default it is only enabled in defconfig_arm64-dpaa2-* config.
+Toggle compilation of the <code class="docutils literal notranslate"><span class="pre">librte_pmd_dpaa2_sec</span></code> driver.</li>
+<li><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_DPAA2_SEC_DEBUG_INIT</span></code> (default <code class="docutils literal notranslate"><span class="pre">n</span></code>)
+Toggle display of initialization related driver messages</li>
+<li><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_DPAA2_SEC_DEBUG_DRIVER</span></code> (default <code class="docutils literal notranslate"><span class="pre">n</span></code>)
+Toggle display of driver runtime messages</li>
+<li><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_DPAA2_SEC_DEBUG_RX</span></code> (default <code class="docutils literal notranslate"><span class="pre">n</span></code>)
+Toggle display of receive fast path run-time message</li>
+<li><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_DPAA2_SEC_PMD_MAX_NB_SESSIONS</span></code>
+By default it is set as 2048 in defconfig_arm64-dpaa2-* config.
+It indicates Number of sessions to create in the session memory pool
+on a single DPAA2 SEC device.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installations">
+<h2>5.8. Installations</h2>
+<p>To compile the DPAA2_SEC PMD for Linux arm64 gcc target, run the
+following <code class="docutils literal notranslate"><span class="pre">make</span></code> command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd &lt;DPDK-source-directory&gt;</span>
+<span class="go">make config T=arm64-dpaa2-linuxapp-gcc install</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="kasumi.html" class="btn btn-neutral float-right" title="6. KASUMI Crypto Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="armv8.html" class="btn btn-neutral" title="4. ARMv8 Crypto Poll Mode Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

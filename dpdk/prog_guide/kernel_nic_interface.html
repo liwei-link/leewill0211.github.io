@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>21. 内核NIC接口 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="22. DPDK函数的线程安全" href="thread_safety_dpdk_functions.html" />
+    <link rel="prev" title="20. 多进程支持" href="multi_proc_support.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">21. 内核NIC接口</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-dpdk-kni-kernel-module">21.1. The DPDK KNI Kernel Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kni-creation-and-deletion">21.2. KNI Creation and Deletion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dpdk-mbuf-flow">21.3. DPDK mbuf Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-case-ingress">21.4. Use Case: Ingress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-case-egress">21.5. Use Case: Egress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ethtool">21.6. Ethtool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#link-state-and-mtu-change">21.7. Link state and MTU change</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>21. 内核NIC接口</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/kernel_nic_interface.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nic">
+<span id="kni"></span><h1>21. 内核NIC接口</h1>
+<p>The DPDK Kernel NIC Interface (KNI) allows userspace applications access to the Linux* control plane.</p>
+<p>The benefits of using the DPDK KNI are:</p>
+<ul class="simple">
+<li>Faster than existing Linux TUN/TAP interfaces
+(by eliminating system calls and copy_to_user()/copy_from_user() operations.</li>
+<li>Allows management of DPDK ports using standard Linux net tools such as ethtool, ifconfig and tcpdump.</li>
+<li>Allows an interface with the kernel network stack.</li>
+</ul>
+<p>The components of an application using the DPDK Kernel NIC Interface are shown in <a class="reference internal" href="#figure-kernel-nic-intf"><span class="std std-numref">图 21.1</span></a>.</p>
+<div class="figure" id="id1">
+<span id="figure-kernel-nic-intf"></span><img alt="../_images/kernel_nic_intf.png" src="../_images/kernel_nic_intf.png" />
+<p class="caption"><span class="caption-number">图 21.1 </span><span class="caption-text">Components of a DPDK KNI Application</span></p>
+</div>
+<div class="section" id="the-dpdk-kni-kernel-module">
+<h2>21.1. The DPDK KNI Kernel Module</h2>
+<p>The KNI kernel loadable module provides support for two types of devices:</p>
+<ul class="simple">
+<li>A Miscellaneous device (/dev/kni) that:<ul>
+<li>Creates net devices (via ioctl  calls).</li>
+<li>Maintains a kernel thread context shared by all KNI instances
+(simulating the RX side of the net driver).</li>
+<li>For single kernel thread mode, maintains a kernel thread context shared by all KNI instances
+(simulating the RX side of the net driver).</li>
+<li>For multiple kernel thread mode, maintains a kernel thread context for each KNI instance
+(simulating the RX side of the new driver).</li>
+</ul>
+</li>
+<li>Net device:<ul>
+<li>Net functionality provided by implementing several operations such as netdev_ops,
+header_ops, ethtool_ops that are defined by struct net_device,
+including support for DPDK mbufs and FIFOs.</li>
+<li>The interface name is provided from userspace.</li>
+<li>The MAC address can be the real NIC MAC address or random.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="kni-creation-and-deletion">
+<h2>21.2. KNI Creation and Deletion</h2>
+<p>The KNI interfaces are created by a DPDK application dynamically.
+The interface name and FIFO details are provided by the application through an ioctl call
+using the rte_kni_device_info struct which contains:</p>
+<ul class="simple">
+<li>The interface name.</li>
+<li>Physical addresses of the corresponding memzones for the relevant FIFOs.</li>
+<li>Mbuf mempool details, both physical and virtual (to calculate the offset for mbuf pointers).</li>
+<li>PCI information.</li>
+<li>Core affinity.</li>
+</ul>
+<p>Refer to rte_kni_common.h in the DPDK source code for more details.</p>
+<p>The physical addresses will be re-mapped into the kernel address space and stored in separate KNI contexts.</p>
+<p>The affinity of kernel RX thread (both single and multi-threaded modes) is controlled by force_bind and
+core_id config parameters.</p>
+<p>The KNI interfaces can be deleted by a DPDK application dynamically after being created.
+Furthermore, all those KNI interfaces not deleted will be deleted on the release operation
+of the miscellaneous device (when the DPDK application is closed).</p>
+</div>
+<div class="section" id="dpdk-mbuf-flow">
+<h2>21.3. DPDK mbuf Flow</h2>
+<p>To minimize the amount of DPDK code running in kernel space, the mbuf mempool is managed in userspace only.
+The kernel module will be aware of mbufs,
+but all mbuf allocation and free operations will be handled by the DPDK application only.</p>
+<p><a class="reference internal" href="#figure-pkt-flow-kni"><span class="std std-numref">图 21.2</span></a> shows a typical scenario with packets sent in both directions.</p>
+<div class="figure" id="id2">
+<span id="figure-pkt-flow-kni"></span><img alt="../_images/pkt_flow_kni.png" src="../_images/pkt_flow_kni.png" />
+<p class="caption"><span class="caption-number">图 21.2 </span><span class="caption-text">Packet Flow via mbufs in the DPDK KNI</span></p>
+</div>
+</div>
+<div class="section" id="use-case-ingress">
+<h2>21.4. Use Case: Ingress</h2>
+<p>On the DPDK RX side, the mbuf is allocated by the PMD in the RX thread context.
+This thread will enqueue the mbuf in the rx_q FIFO.
+The KNI thread will poll all KNI active devices for the rx_q.
+If an mbuf is dequeued, it will be converted to a sk_buff and sent to the net stack via netif_rx().
+The dequeued mbuf must be freed, so the same pointer is sent back in the free_q FIFO.</p>
+<p>The RX thread, in the same main loop, polls this FIFO and frees the mbuf after dequeuing it.</p>
+</div>
+<div class="section" id="use-case-egress">
+<h2>21.5. Use Case: Egress</h2>
+<p>For packet egress the DPDK application must first enqueue several mbufs to create an mbuf cache on the kernel side.</p>
+<p>The packet is received from the Linux net stack, by calling the kni_net_tx() callback.
+The mbuf is dequeued (without waiting due the cache) and filled with data from sk_buff.
+The sk_buff is then freed and the mbuf sent in the tx_q FIFO.</p>
+<p>The DPDK TX thread dequeues the mbuf and sends it to the PMD (via rte_eth_tx_burst()).
+It then puts the mbuf back in the cache.</p>
+</div>
+<div class="section" id="ethtool">
+<h2>21.6. Ethtool</h2>
+<p>Ethtool is a Linux-specific tool with corresponding support in the kernel
+where each net device must register its own callbacks for the supported operations.
+The current implementation uses the igb/ixgbe modified Linux drivers for ethtool support.
+Ethtool is not supported in i40e and VMs (VF or EM devices).</p>
+</div>
+<div class="section" id="link-state-and-mtu-change">
+<h2>21.7. Link state and MTU change</h2>
+<p>Link state and MTU change are network interface specific operations usually done via ifconfig.
+The request is initiated from the kernel side (in the context of the ifconfig process)
+and handled by the user space DPDK application.
+The application polls the request, calls the application handler and returns the response back into the kernel space.</p>
+<p>The application handlers can be registered upon interface creation or explicitly registered/unregistered in runtime.
+This provides flexibility in multiprocess scenarios
+(where the KNI is created in the primary process but the callbacks are handled in the secondary one).
+The constraint is that a single process can register and handle the requests.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="thread_safety_dpdk_functions.html" class="btn btn-neutral float-right" title="22. DPDK函数的线程安全" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="multi_proc_support.html" class="btn btn-neutral" title="20. 多进程支持" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

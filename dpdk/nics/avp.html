@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. AVP Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="5. BNX2X Poll Mode Driver" href="bnx2x.html" />
+    <link rel="prev" title="3. ARK Poll Mode Driver" href="ark.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Network Interface Controller Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Overview of Networking Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_and_test.html">2. Compiling and testing a PMD for a NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ark.html">3. ARK Poll Mode Driver</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4. AVP Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features-and-limitations-of-the-avp-pmd">4.1. Features and Limitations of the AVP PMD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">4.2. Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#launching-a-vm-with-an-avp-type-network-attachment">4.3. Launching a VM with an AVP type network attachment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bnx2x.html">5. BNX2X Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnxt.html">6. BNXT Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cxgbe.html">7. CXGBE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2.html">8. DPAA2 Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e1000em.html">9. Driver for VM Emulated Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ena.html">10. ENA Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enic.html">11. ENIC Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fm10k.html">12. FM10K Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i40e.html">13. I40E Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ixgbe.html">14. IXGBE Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intel_vf.html">15. I40E/IXGBE/IGB Virtual Function Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kni.html">16. KNI Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquidio.html">17. LiquidIO VF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx4.html">18. MLX4 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx5.html">19. MLX5 poll mode driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nfp.html">20. NFP poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qede.html">21. QEDE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sfc_efx.html">22. Solarflare libefx-based Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="szedata2.html">23. SZEDATA2 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tap.html">24. Tun/Tap Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thunderx.html">25. ThunderX NICVF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio.html">26. Poll Mode Driver for Emulated Virtio NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost.html">27. Poll Mode Driver that wraps vhost library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmxnet3.html">28. Poll Mode Driver for Paravirtual VMXNET3 NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcap_ring.html">29. Libpcap and Ring Based Poll Mode Drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Network Interface Controller Drivers</a> &raquo;</li>
+        
+      <li>4. AVP Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/nics/avp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="avp-poll-mode-driver">
+<h1>4. AVP Poll Mode Driver</h1>
+<p>The Accelerated Virtual Port (AVP) device is a shared memory based device
+only available on <a class="reference external" href="http://www.windriver.com/products/titanium-cloud/">virtualization platforms</a>
+from Wind River Systems.  The Wind River Systems virtualization platform
+currently uses QEMU/KVM as its hypervisor and as such provides support for all
+of the QEMU supported virtual and/or emulated devices (e.g., virtio, e1000,
+etc.).  The platform offers the virtio device type as the default device when
+launching a virtual machine or creating a virtual machine port.  The AVP device
+is a specialized device available to customers that require increased
+throughput and decreased latency to meet the demands of their performance
+focused applications.</p>
+<p>The AVP driver binds to any AVP PCI devices that have been exported by the Wind
+River Systems QEMU/KVM hypervisor.  As a user of the DPDK driver API it
+supports a subset of the full Ethernet device API to enable the application to
+use the standard device configuration functions and packet receive/transmit
+functions.</p>
+<p>These devices enable optimized packet throughput by bypassing QEMU and
+delivering packets directly to the virtual switch via a shared memory
+mechanism.  This provides DPDK applications running in virtual machines with
+significantly improved throughput and latency over other device types.</p>
+<p>The AVP device implementation is integrated with the QEMU/KVM live-migration
+mechanism to allow applications to seamlessly migrate from one hypervisor node
+to another with minimal packet loss.</p>
+<div class="section" id="features-and-limitations-of-the-avp-pmd">
+<h2>4.1. Features and Limitations of the AVP PMD</h2>
+<p>The AVP PMD driver provides the following functionality.</p>
+<ul class="simple">
+<li>Receive and transmit of both simple and chained mbuf packets,</li>
+<li>Chained mbufs may include up to 5 chained segments,</li>
+<li>Up to 8 receive and transmit queues per device,</li>
+<li>Only a single MAC address is supported,</li>
+<li>The MAC address cannot be modified,</li>
+<li>The maximum receive packet length is 9238 bytes,</li>
+<li>VLAN header stripping and inserting,</li>
+<li>Promiscuous mode</li>
+<li>VM live-migration</li>
+<li>PCI hotplug insertion and removal</li>
+</ul>
+</div>
+<div class="section" id="prerequisites">
+<h2>4.2. Prerequisites</h2>
+<p>The following prerequisites apply:</p>
+<ul class="simple">
+<li>A virtual machine running in a Wind River Systems virtualization
+environment and configured with at least one neutron port defined with a
+vif-model set to &quot;avp&quot;.</li>
+</ul>
+</div>
+<div class="section" id="launching-a-vm-with-an-avp-type-network-attachment">
+<h2>4.3. Launching a VM with an AVP type network attachment</h2>
+<p>The following example will launch a VM with three network attachments.  The
+first attachment will have a default vif-model of &quot;virtio&quot;.  The next two
+network attachments will have a vif-model of &quot;avp&quot; and may be used with a DPDK
+application which is built to include the AVP PMD driver.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">nova boot --flavor small --image my-image \</span>
+<span class="go">   --nic net-id=${NETWORK1_UUID} \</span>
+<span class="go">   --nic net-id=${NETWORK2_UUID},vif-model=avp \</span>
+<span class="go">   --nic net-id=${NETWORK3_UUID},vif-model=avp \</span>
+<span class="go">   --security-group default my-instance1</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bnx2x.html" class="btn btn-neutral float-right" title="5. BNX2X Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ark.html" class="btn btn-neutral" title="3. ARK Poll Mode Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

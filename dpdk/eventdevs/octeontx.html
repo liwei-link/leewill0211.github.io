@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. OCTEONTX SSOVF Eventdev Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Xen Guide" href="../xen/index.html" />
+    <link rel="prev" title="1. Software Eventdev Poll Mode Driver" href="sw.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Event Device Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sw.html">1. Software Eventdev Poll Mode Driver</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. OCTEONTX SSOVF Eventdev Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features">2.1. Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-octeontx-socs">2.2. Supported OCTEONTX SoCs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">2.3. Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pre-installation-configuration">2.4. Pre-Installation Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#config-file-options">2.4.1. Config File Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driver-compilation">2.4.2. Driver Compilation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#initialization">2.5. Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">2.6. Limitations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#burst-mode-support">2.6.1. Burst mode support</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Event Device Drivers</a> &raquo;</li>
+        
+      <li>2. OCTEONTX SSOVF Eventdev Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/eventdevs/octeontx.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="octeontx-ssovf-eventdev-driver">
+<h1>2. OCTEONTX SSOVF Eventdev Driver</h1>
+<p>The OCTEONTX SSOVF PMD (<strong>librte_pmd_octeontx_ssovf</strong>) provides poll mode
+eventdev driver support for the inbuilt event device found in the <strong>Cavium OCTEONTX</strong>
+SoC family as well as their virtual functions (VF) in SR-IOV context.</p>
+<p>More information can be found at <a class="reference external" href="http://www.cavium.com/OCTEON-TX_ARM_Processors.html">Cavium Networks Official Website</a>.</p>
+<div class="section" id="features">
+<h2>2.1. Features</h2>
+<p>Features of the OCTEONTX SSOVF PMD are:</p>
+<ul class="simple">
+<li>64 Event queues</li>
+<li>32 Event ports</li>
+<li>HW event scheduler</li>
+<li>Supports 1M flows per event queue</li>
+<li>Flow based event pipelining</li>
+<li>Flow pinning support in flow based event pipelining</li>
+<li>Queue based event pipelining</li>
+<li>Supports ATOMIC, ORDERED, PARALLEL schedule types per flow</li>
+<li>Event scheduling QoS based on event queue priority</li>
+<li>Open system with configurable amount of outstanding events</li>
+<li>HW accelerated dequeue timeout support to enable power management</li>
+<li>SR-IOV VF</li>
+</ul>
+</div>
+<div class="section" id="supported-octeontx-socs">
+<h2>2.2. Supported OCTEONTX SoCs</h2>
+<ul class="simple">
+<li>CN83xx</li>
+</ul>
+</div>
+<div class="section" id="prerequisites">
+<h2>2.3. Prerequisites</h2>
+<p>There are three main pre-perquisites for executing SSOVF PMD on a OCTEONTX
+compatible board:</p>
+<ol class="arabic">
+<li><p class="first"><strong>OCTEONTX Linux kernel PF driver for Network acceleration HW blocks</strong></p>
+<p>The OCTEONTX Linux kernel drivers (including the required PF driver for the
+SSOVF) are available on Github at <a class="reference external" href="https://github.com/caviumnetworks/octeontx-kmod">octeontx-kmod</a>
+along with build, install and dpdk usage instructions.</p>
+</li>
+<li><p class="first"><strong>ARM64 Tool Chain</strong></p>
+<p>For example, the <em>aarch64</em> Linaro Toolchain, which can be obtained from
+<a class="reference external" href="https://releases.linaro.org/components/toolchain/binaries/4.9-2017.01/aarch64-linux-gnu">here</a>.</p>
+</li>
+<li><p class="first"><strong>Rootfile system</strong></p>
+<p>Any <em>aarch64</em> supporting filesystem can be used. For example,
+Ubuntu 15.10 (Wily) or 16.04 LTS (Xenial) userland which can be obtained
+from <a class="reference external" href="http://cdimage.ubuntu.com/ubuntu-base/releases/16.04/release/ubuntu-base-16.04.1-base-arm64.tar.gz">http://cdimage.ubuntu.com/ubuntu-base/releases/16.04/release/ubuntu-base-16.04.1-base-arm64.tar.gz</a>.</p>
+<p>As an alternative method, SSOVF PMD can also be executed using images provided
+as part of SDK from Cavium. The SDK includes all the above prerequisites necessary
+to bring up a OCTEONTX board.</p>
+<p>SDK and related information can be obtained from: <a class="reference external" href="https://support.cavium.com/">Cavium support site</a>.</p>
+</li>
+</ol>
+<ul class="simple">
+<li>Follow the DPDK <a class="reference internal" href="../linux_gsg/index.html#linux-gsg"><span class="std std-ref">Getting Started Guide for Linux</span></a> to setup the basic DPDK environment.</li>
+</ul>
+</div>
+<div class="section" id="pre-installation-configuration">
+<h2>2.4. Pre-Installation Configuration</h2>
+<div class="section" id="config-file-options">
+<h3>2.4.1. Config File Options</h3>
+<p>The following options can be modified in the <code class="docutils literal notranslate"><span class="pre">config</span></code> file.
+Please note that enabling debugging options may affect system performance.</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_PMD_OCTEONTX_SSOVF</span></code> (default <code class="docutils literal notranslate"><span class="pre">y</span></code>)</p>
+<p>Toggle compilation of the <code class="docutils literal notranslate"><span class="pre">librte_pmd_octeontx_ssovf</span></code> driver.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_PMD_OCTEONTX_SSOVF_DEBUG</span></code> (default <code class="docutils literal notranslate"><span class="pre">n</span></code>)</p>
+<p>Toggle display of generic debugging messages</p>
+</li>
+</ul>
+</div>
+<div class="section" id="driver-compilation">
+<h3>2.4.2. Driver Compilation</h3>
+<p>To compile the OCTEONTX SSOVF PMD for Linux arm64 gcc target, run the
+following <code class="docutils literal notranslate"><span class="pre">make</span></code> command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd &lt;DPDK-source-directory&gt;</span>
+<span class="go">make config T=arm64-thunderx-linuxapp-gcc install</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="initialization">
+<h2>2.5. Initialization</h2>
+<p>The octeontx eventdev is exposed as a vdev device which consists of a set
+of SSO group and work-slot PCIe VF devices. On EAL initialization,
+SSO PCIe VF devices will be probed and then the vdev device can be created
+from the application code, or from the EAL command line based on
+the number of probed/bound SSO PCIe VF device to DPDK by</p>
+<ul class="simple">
+<li>Invoking <code class="docutils literal notranslate"><span class="pre">rte_vdev_init(&quot;event_octeontx&quot;)</span></code> from the application</li>
+<li>Using <code class="docutils literal notranslate"><span class="pre">--vdev=&quot;event_octeontx&quot;</span></code> in the EAL options, which will call
+rte_vdev_init() internally</li>
+</ul>
+<p>Example:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./your_eventdev_application --vdev=&quot;event_octeontx&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="limitations">
+<h2>2.6. Limitations</h2>
+<div class="section" id="burst-mode-support">
+<h3>2.6.1. Burst mode support</h3>
+<p>Burst mode is not supported. Dequeue and Enqueue functions accepts only single
+event at a time.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../xen/index.html" class="btn btn-neutral float-right" title="Xen Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="sw.html" class="btn btn-neutral" title="1. Software Eventdev Poll Mode Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

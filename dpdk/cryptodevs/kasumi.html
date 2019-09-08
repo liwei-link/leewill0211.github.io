@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6. KASUMI Crypto Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="7. OpenSSL Crypto Poll Mode Driver" href="openssl.html" />
+    <link rel="prev" title="5. NXP DPAA2 CAAM (DPAA2_SEC)" href="dpaa2_sec.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Crypto Device Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Crypto Device Supported Functionality Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_mb.html">2. AESN-NI Multi Buffer Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_gcm.html">3. AES-NI GCM Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="armv8.html">4. ARMv8 Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2_sec.html">5. NXP DPAA2 CAAM (DPAA2_SEC)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6. KASUMI Crypto Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features">6.1. Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">6.2. Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">6.3. Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialization">6.4. Initialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="openssl.html">7. OpenSSL Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="null.html">8. Null Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scheduler.html">9. Cryptodev Scheduler Poll Mode Driver Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snow3g.html">10. SNOW 3G Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qat.html">11. Intel(R) QuickAssist (QAT) Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zuc.html">12. ZUC Crypto Poll Mode Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Crypto Device Drivers</a> &raquo;</li>
+        
+      <li>6. KASUMI Crypto Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cryptodevs/kasumi.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="kasumi-crypto-poll-mode-driver">
+<h1>6. KASUMI Crypto Poll Mode Driver</h1>
+<p>The KASUMI PMD (<strong>librte_pmd_kasumi</strong>) provides poll mode crypto driver
+support for utilizing Intel Libsso library, which implements F8 and F9 functions
+for KASUMI UEA1 cipher and UIA1 hash algorithms.</p>
+<div class="section" id="features">
+<h2>6.1. Features</h2>
+<p>KASUMI PMD has support for:</p>
+<p>Cipher algorithm:</p>
+<ul class="simple">
+<li>RTE_CRYPTO_CIPHER_KASUMI_F8</li>
+</ul>
+<p>Authentication algorithm:</p>
+<ul class="simple">
+<li>RTE_CRYPTO_AUTH_KASUMI_F9</li>
+</ul>
+</div>
+<div class="section" id="limitations">
+<h2>6.2. Limitations</h2>
+<ul class="simple">
+<li>Chained mbufs are not supported.</li>
+<li>KASUMI(F9) supported only if hash offset field is byte-aligned.</li>
+<li>In-place bit-level operations for KASUMI(F8) are not supported
+(if length and/or offset of data to be ciphered is not byte-aligned).</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>6.3. Installation</h2>
+<p>To build DPDK with the KASUMI_PMD the user is required to download
+the export controlled <code class="docutils literal notranslate"><span class="pre">libsso_kasumi</span></code> library, by requesting it from
+<a class="reference external" href="https://networkbuilders.intel.com/network-technologies/dpdk">https://networkbuilders.intel.com/network-technologies/dpdk</a>.
+Once approval has been granted, the user needs to log in
+<a class="reference external" href="https://networkbuilders.intel.com/dpdklogin">https://networkbuilders.intel.com/dpdklogin</a>
+and click on &quot;Kasumi Bit Stream crypto library&quot; link, to download the library.
+After downloading the library, the user needs to unpack and compile it
+on their system before building DPDK:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>make
+</pre></div>
+</div>
+<p><strong>Note</strong>: To build the PMD as a shared library, the libsso_kasumi
+library must be built as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>make KASUMI_CFLAGS=-DKASUMI_C
+</pre></div>
+</div>
+</div>
+<div class="section" id="initialization">
+<h2>6.4. Initialization</h2>
+<p>In order to enable this virtual crypto PMD, user must:</p>
+<ul class="simple">
+<li>Export the environmental variable LIBSSO_KASUMI_PATH with the path where
+the library was extracted (kasumi folder).</li>
+<li>Build the LIBSSO library (explained in Installation section).</li>
+<li>Set CONFIG_RTE_LIBRTE_PMD_KASUMI=y in config/common_base.</li>
+</ul>
+<p>To use the PMD in an application, user must:</p>
+<ul class="simple">
+<li>Call rte_vdev_init(&quot;crypto_kasumi&quot;) within the application.</li>
+<li>Use --vdev=&quot;crypto_kasumi&quot; in the EAL options, which will call rte_vdev_init() internally.</li>
+</ul>
+<p>The following parameters (all optional) can be provided in the previous two calls:</p>
+<ul class="simple">
+<li>socket_id: Specify the socket where the memory for the device is going to be allocated
+(by default, socket_id will be the socket where the core that is creating the PMD is running on).</li>
+<li>max_nb_queue_pairs: Specify the maximum number of queue pairs in the device (8 by default).</li>
+<li>max_nb_sessions: Specify the maximum number of sessions that can be created (2048 by default).</li>
+</ul>
+<p>Example:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./l2fwd-crypto -l 6 -n 4 --vdev=&quot;crypto_kasumi,socket_id=1,max_nb_sessions=128&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="openssl.html" class="btn btn-neutral float-right" title="7. OpenSSL Crypto Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dpaa2_sec.html" class="btn btn-neutral" title="5. NXP DPAA2 CAAM (DPAA2_SEC)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

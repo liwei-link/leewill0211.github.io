@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>16. KNI Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="17. LiquidIO VF Poll Mode Driver" href="liquidio.html" />
+    <link rel="prev" title="15. I40E/IXGBE/IGB Virtual Function Driver" href="intel_vf.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Network Interface Controller Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Overview of Networking Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_and_test.html">2. Compiling and testing a PMD for a NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ark.html">3. ARK Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="avp.html">4. AVP Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnx2x.html">5. BNX2X Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnxt.html">6. BNXT Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cxgbe.html">7. CXGBE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2.html">8. DPAA2 Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e1000em.html">9. Driver for VM Emulated Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ena.html">10. ENA Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enic.html">11. ENIC Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fm10k.html">12. FM10K Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i40e.html">13. I40E Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ixgbe.html">14. IXGBE Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intel_vf.html">15. I40E/IXGBE/IGB Virtual Function Driver</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">16. KNI Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage">16.1. Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#default-interface-configuration">16.2. Default interface configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pmd-arguments">16.3. PMD arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pmd-log-messages">16.4. PMD log messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pmd-testing">16.5. PMD testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="liquidio.html">17. LiquidIO VF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx4.html">18. MLX4 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx5.html">19. MLX5 poll mode driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nfp.html">20. NFP poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qede.html">21. QEDE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sfc_efx.html">22. Solarflare libefx-based Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="szedata2.html">23. SZEDATA2 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tap.html">24. Tun/Tap Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thunderx.html">25. ThunderX NICVF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio.html">26. Poll Mode Driver for Emulated Virtio NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost.html">27. Poll Mode Driver that wraps vhost library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmxnet3.html">28. Poll Mode Driver for Paravirtual VMXNET3 NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcap_ring.html">29. Libpcap and Ring Based Poll Mode Drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Network Interface Controller Drivers</a> &raquo;</li>
+        
+      <li>16. KNI Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/nics/kni.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="kni-poll-mode-driver">
+<h1>16. KNI Poll Mode Driver</h1>
+<p>KNI PMD is wrapper to the <a class="reference internal" href="../prog_guide/kernel_nic_interface.html#kni"><span class="std std-ref">librte_kni</span></a> library.</p>
+<p>This PMD enables using KNI without having a KNI specific application,
+any forwarding application can use PMD interface for KNI.</p>
+<p>Sending packets to any DPDK controlled interface or sending to the
+Linux networking stack will be transparent to the DPDK application.</p>
+<p>To create a KNI device <code class="docutils literal notranslate"><span class="pre">net_kni#</span></code> device name should be used, and this
+will create <code class="docutils literal notranslate"><span class="pre">kni#</span></code> Linux virtual network interface.</p>
+<p>There is no physical device backend for the virtual KNI device.</p>
+<p>Packets sent to the KNI Linux interface will be received by the DPDK
+application, and DPDK application may forward packets to a physical NIC
+or to a virtual device (like another KNI interface or PCAP interface).</p>
+<p>To forward any traffic from physical NIC to the Linux networking stack,
+an application should control a physical port and create one virtual KNI port,
+and forward between two.</p>
+<p>Using this PMD requires KNI kernel module be inserted.</p>
+<div class="section" id="usage">
+<h2>16.1. Usage</h2>
+<p>EAL <code class="docutils literal notranslate"><span class="pre">--vdev</span></code> argument can be used to create KNI device instance, like:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>testpmd --vdev=net_kni0 --vdev=net_kn1 -- -i
+</pre></div>
+</div>
+<p>Above command will create <code class="docutils literal notranslate"><span class="pre">kni0</span></code> and <code class="docutils literal notranslate"><span class="pre">kni1</span></code> Linux network interfaces,
+those interfaces can be controlled by standard Linux tools.</p>
+<p>When testpmd forwarding starts, any packets sent to <code class="docutils literal notranslate"><span class="pre">kni0</span></code> interface
+forwarded to the <code class="docutils literal notranslate"><span class="pre">kni1</span></code> interface and vice versa.</p>
+<p>There is no hard limit on number of interfaces that can be created.</p>
+</div>
+<div class="section" id="default-interface-configuration">
+<h2>16.2. Default interface configuration</h2>
+<p><code class="docutils literal notranslate"><span class="pre">librte_kni</span></code> can create Linux network interfaces with different features,
+feature set controlled by a configuration struct, and KNI PMD uses a fixed
+configuration:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Interface name: kni#</span>
+<span class="go">force bind kernel thread to a core : NO</span>
+<span class="go">mbuf size: MAX_PACKET_SZ</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>KNI control path is not supported with the PMD, since there is no physical
+backend device by default.</p>
+</div>
+<div class="section" id="pmd-arguments">
+<h2>16.3. PMD arguments</h2>
+<p><code class="docutils literal notranslate"><span class="pre">no_request_thread</span></code>, by default PMD creates a phtread for each KNI interface
+to handle Linux network interface control commands, like <code class="docutils literal notranslate"><span class="pre">ifconfig</span> <span class="pre">kni0</span> <span class="pre">up</span></code></p>
+<p>With <code class="docutils literal notranslate"><span class="pre">no_request_thread</span></code> option, pthread is not created and control commands
+not handled by PMD.</p>
+<p>By default request thread is enabled. And this argument should not be used
+most of the time, unless this PMD used with customized DPDK application to handle
+requests itself.</p>
+<p>Argument usage:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>testpmd --vdev &quot;net_kni0,no_request_thread=1&quot; -- -i
+</pre></div>
+</div>
+</div>
+<div class="section" id="pmd-log-messages">
+<h2>16.4. PMD log messages</h2>
+<p>If KNI kernel module (rte_kni.ko) not inserted, following error log printed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;KNI: KNI subsystem has not been initialized. Invoke rte_kni_init() first&quot;
+</pre></div>
+</div>
+</div>
+<div class="section" id="pmd-testing">
+<h2>16.5. PMD testing</h2>
+<p>It is possible to test PMD quickly using KNI kernel module loopback feature:</p>
+<ul>
+<li><p class="first">Insert KNI kernel module with loopback support:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">insmod build/kmod/rte_kni.ko lo_mode=lo_mode_fifo_skb</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Start testpmd with no physical device but two KNI virtual devices:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./testpmd --vdev net_kni0 --vdev net_kni1 -- -i</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">...</span>
+<span class="go">Configuring Port 0 (socket 0)</span>
+<span class="go">KNI: pci: 00:00:00       c580:b8</span>
+<span class="go">Port 0: 1A:4A:5B:7C:A2:8C</span>
+<span class="go">Configuring Port 1 (socket 0)</span>
+<span class="go">KNI: pci: 00:00:00       600:b9</span>
+<span class="go">Port 1: AE:95:21:07:93:DD</span>
+<span class="go">Checking link statuses...</span>
+<span class="go">Port 0 Link Up - speed 10000 Mbps - full-duplex</span>
+<span class="go">Port 1 Link Up - speed 10000 Mbps - full-duplex</span>
+<span class="go">Done</span>
+<span class="go">testpmd&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Observe Linux interfaces</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ifconfig kni0 <span class="o">&amp;&amp;</span> ifconfig kni1
+<span class="go">kni0: flags=4098&lt;BROADCAST,MULTICAST&gt;  mtu 1500</span>
+<span class="go">        ether ae:8e:79:8e:9b:c8  txqueuelen 1000  (Ethernet)</span>
+<span class="go">        RX packets 0  bytes 0 (0.0 B)</span>
+<span class="go">        RX errors 0  dropped 0  overruns 0  frame 0</span>
+<span class="go">        TX packets 0  bytes 0 (0.0 B)</span>
+<span class="go">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span>
+
+<span class="go">kni1: flags=4098&lt;BROADCAST,MULTICAST&gt;  mtu 1500</span>
+<span class="go">        ether 9e:76:43:53:3e:9b  txqueuelen 1000  (Ethernet)</span>
+<span class="go">        RX packets 0  bytes 0 (0.0 B)</span>
+<span class="go">        RX errors 0  dropped 0  overruns 0  frame 0</span>
+<span class="go">        TX packets 0  bytes 0 (0.0 B)</span>
+<span class="go">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Start forwarding with tx_first:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; start tx_first</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Quit and check forwarding stats:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; quit</span>
+<span class="go">Telling cores to stop...</span>
+<span class="go">Waiting for lcores to finish...</span>
+
+<span class="go">---------------------- Forward statistics for port 0  ----------------------</span>
+<span class="go">RX-packets: 35637905       RX-dropped: 0             RX-total: 35637905</span>
+<span class="go">TX-packets: 35637947       TX-dropped: 0             TX-total: 35637947</span>
+<span class="go">----------------------------------------------------------------------------</span>
+
+<span class="go">---------------------- Forward statistics for port 1  ----------------------</span>
+<span class="go">RX-packets: 35637915       RX-dropped: 0             RX-total: 35637915</span>
+<span class="go">TX-packets: 35637937       TX-dropped: 0             TX-total: 35637937</span>
+<span class="go">----------------------------------------------------------------------------</span>
+
+<span class="go">+++++++++++++++ Accumulated forward statistics for all ports+++++++++++++++</span>
+<span class="go">RX-packets: 71275820       RX-dropped: 0             RX-total: 71275820</span>
+<span class="go">TX-packets: 71275884       TX-dropped: 0             TX-total: 71275884</span>
+<span class="go">++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="liquidio.html" class="btn btn-neutral float-right" title="17. LiquidIO VF Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="intel_vf.html" class="btn btn-neutral" title="15. I40E/IXGBE/IGB Virtual Function Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,915 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>开发者指南 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="1. 介绍" href="intro.html" />
+    <link rel="prev" title="40. IPsec Security Gateway Sample Application" href="../sample_app_ug/ipsec_secgw.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">开发者指南</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>开发者指南</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>开发者指南</h1>
+<p><em>--- 翻译: linus_linux&#64;163.com</em></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. 介绍</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#id2">1.1. 文档导航</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#id3">1.2. 相关出版物</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">2. 概述</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#id2">2.1. 开发环境</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#id3">2.2. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#id4">2.3. 核心组件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#ring-librte-ring">2.3.1. Ring管理 (librte_ring)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#librte-mempool">2.3.2. 内存池管理 (librte_mempool)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#librte-mbuf">2.3.3. 网络包缓存管理 (librte_mbuf)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#librte-timer">2.3.4. 定时器管理 (librte_timer)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#id5">2.4. 以太网轮询模式驱动架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#id6">2.5. 数据包转发算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#librte-net">2.6. librte_net</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html#linuxeal">3.1. Linux下的EAL</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#eal">3.1.1. EAL初始化和核心启动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id2">3.1.2. 多进程支持</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id3">3.1.3. 内存映射和内存预留</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#hugetblsxen-dom0">3.1.4. 对无hugetbls的Xen Dom0支持</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#pci">3.1.5. PCI访问</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#per-lcore">3.1.6. Per-lcore和共享变量</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id4">3.1.7. 日志</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#cpu">3.1.8. CPU特性标识</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id6">3.1.9. 用户空间中断事件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id7">3.1.10. 黑名单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id8">3.1.11. 其他</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html#memzone">3.2. 内存段和内存区域(memzone)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html#id9">3.3. 多线程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#eal-pthreadlcore">3.3.1. EAL pthread和lcore亲和性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id10">3.3.2. 非EAL线程支持</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#api">3.3.3. 公共线程API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#known-issue-label">3.3.4. 已知问题</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#cgroup">3.3.5. cgroup控制</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html#malloc">3.4. Malloc</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#cookies">3.4.1. Cookies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#numa">3.4.2. 对齐和NUMA限制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id12">3.4.3. 使用案例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="env_abstraction_layer.html#id13">3.4.4. 内部实现</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ring_lib.html">4. Ring库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html#freebsd-ring">4.1. FreeBSD* 中Ring实现参考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html#linux-ring-buffer">4.2. Linux* 中无锁环形缓冲区（Ring Buffer）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html#id2">4.3. 附加特性</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ring_lib.html#id3">4.3.1. 名称</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html#id4">4.4. 使用案例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html#id5">4.5. Ring缓冲区剖析</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ring_lib.html#id6">4.5.1. 单生产者入队</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ring_lib.html#id10">4.5.2. 单消费者出队</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ring_lib.html#id14">4.5.3. 多生产者入队</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ring_lib.html#id20">4.5.4. 32位模索引</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html#id21">4.6. 参考</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html#cookies">5.1. Cookies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html#id2">5.2. 统计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html#id3">5.3. 内存对齐限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html#mempool-local-cache">5.4. 本地缓存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html#mempool-handlers">5.5. Mempool Handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html#id5">5.6. 使用案例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#id1">6.1. 包缓冲区的设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#id2">6.2. 存储在内存池中的缓冲区</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#id3">6.3. 构造器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#id4">6.4. 申请和释放mbuf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#id5">6.5. 操作mbuf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#id6">6.6. 元信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#direct-indirect-buffer">6.7. 直接和间接缓冲区</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#id8">6.8. 调试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html#id9">6.9. 使用案例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html#id2">7.1. 要求与假设</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html#id3">7.2. 设计原则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html#nic">7.3. 逻辑核，内存和NIC队列的关系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html#id4">7.4. 设备标识和配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#id5">7.4.1. 设备标识</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#id6">7.4.2. 设备配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#on-the-fly-configuration">7.4.3. 热配置(On-the-Fly Configuration)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#id7">7.4.4. 传输队列的配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#tx-mbuf">7.4.5. 按需释放Tx mbuf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#hardware-offload">7.4.6. 硬件卸载(Hardware Offload)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html#api">7.5. 轮询模式驱动API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#id8">7.5.1. 概论</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#id9">7.5.2. 通用数据包表示</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#id10">7.5.3. 以太网设备API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poll_mode_drv.html#id11">7.5.4. 扩展统计API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#id1">8.1. 综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#id2">8.2. 流规则</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id3">8.2.1. 描述</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id4">8.2.2. 属性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#pattern-item">8.2.3. 模式项(Pattern item)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id8">8.2.4. 匹配模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id9">8.2.5. 元模式项类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id10">8.2.6. 数据匹配项类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id11">8.2.7. 动作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id12">8.2.8. 动作类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id17">8.2.9. 负数类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id18">8.2.10. 计划中的类型</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#id19">8.3. 规则管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id20">8.3.1. 校验</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id21">8.3.2. 创建</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id22">8.3.3. 销毁</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#flush">8.3.4. 刷新(flush)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id23">8.3.5. 查询</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#id24">8.4. 详细错误报告</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#id25">8.5. 注意事项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#pmd">8.6. PMD接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#id26">8.7. 设备兼容性</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id27">8.7.1. 全局位掩码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id28">8.7.2. 不支持的(协议)层类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id29">8.7.3. <code class="docutils literal notranslate"><span class="pre">ANY</span></code> 模式项</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id30">8.7.4. 不支持的动作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#id31">8.7.5. 流规则优先级</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#id32">8.8. 未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html#api">8.9. API 迁移</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#macvlan-to-eth-vf-pf">8.9.1. <code class="docutils literal notranslate"><span class="pre">MACVLAN</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code> → <code class="docutils literal notranslate"><span class="pre">VF</span></code>, <code class="docutils literal notranslate"><span class="pre">PF</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#ethertype-to-eth-queue-drop">8.9.2. <code class="docutils literal notranslate"><span class="pre">ETHERTYPE</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code>, <code class="docutils literal notranslate"><span class="pre">DROP</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#flexible-to-raw-queue">8.9.3. <code class="docutils literal notranslate"><span class="pre">FLEXIBLE</span></code> to <code class="docutils literal notranslate"><span class="pre">RAW</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#syn-to-tcp-queue">8.9.4. <code class="docutils literal notranslate"><span class="pre">SYN</span></code> to <code class="docutils literal notranslate"><span class="pre">TCP</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#ntuple-to-ipv4-tcp-udp-queue">8.9.5. <code class="docutils literal notranslate"><span class="pre">NTUPLE</span></code> to <code class="docutils literal notranslate"><span class="pre">IPV4</span></code>, <code class="docutils literal notranslate"><span class="pre">TCP</span></code>, <code class="docutils literal notranslate"><span class="pre">UDP</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#tunnel-to-eth-ipv4-ipv6-vxlan-or-other-queue">8.9.6. <code class="docutils literal notranslate"><span class="pre">TUNNEL</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code>, <code class="docutils literal notranslate"><span class="pre">IPV4</span></code>, <code class="docutils literal notranslate"><span class="pre">IPV6</span></code>, <code class="docutils literal notranslate"><span class="pre">VXLAN</span></code> (or other) → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#fdir-to-most-item-types-queue-drop-passthru">8.9.7. <code class="docutils literal notranslate"><span class="pre">FDIR</span></code> to most item types → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code>, <code class="docutils literal notranslate"><span class="pre">DROP</span></code>, <code class="docutils literal notranslate"><span class="pre">PASSTHRU</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#hash">8.9.8. <code class="docutils literal notranslate"><span class="pre">HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rte_flow.html#l2-tunnel-to-void-vxlan">8.9.9. <code class="docutils literal notranslate"><span class="pre">L2_TUNNEL</span></code> to <code class="docutils literal notranslate"><span class="pre">VOID</span></code> → <code class="docutils literal notranslate"><span class="pre">VXLAN</span></code> (或其他)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html#id2">9.1. 设计原则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html#id3">9.2. 设备管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id4">9.2.1. 设备创建</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id5">9.2.2. 设备标识</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id6">9.2.3. 设备配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id7">9.2.4. 队列对的配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id8">9.2.5. 逻辑核，内存和队列对的关系</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html#id9">9.3. 设备特性和能力</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id10">9.3.1. 设备特性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id11">9.3.2. 设备操作能力</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id12">9.3.3. 功能发现</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html#id13">9.4. 操作处理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#api">9.4.1. 批量入队/出队 API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id14">9.4.2. 操作的表示</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id15">9.4.3. 操作管理和申请</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html#id16">9.5. 对称加密的支持</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id17">9.5.1. 会话和会话管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id18">9.5.2. 转换和转换链</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id19">9.5.3. 对称操作</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html#id20">9.6. 非对称加密</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cryptodev_lib.html#id21">9.6.1. 加密设备API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html#id2">10.1. 链路聚合模式总览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html#id3">10.2. 实现细节</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html#id4">10.2.1. 链路状态变更中断/轮询</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html#id5">10.2.2. 要求 / 限制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html#id6">10.2.3. 配置</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html#id10">10.3. 使用链路聚合设备</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html#id11">10.3.1. 在应用中使用轮询模式驱动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html#eal">10.3.2. 通过EAL命令行使用链路聚合设备</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="timer_lib.html">11. 定时器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html#id2">11.1. 实现细节</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html#id3">11.2. 使用案例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html#id4">11.3. 参考</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hash_lib.html">12. Hash库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html#hash-api">12.1. Hash API 总览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html#id1">12.2. 多进程的支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html#id2">12.3. 实现细节</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html#entry-distribution-in-hash-table">12.4. Entry distribution in hash table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html#use-case-flow-classification">12.5. Use Case: Flow Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html#references">12.6. References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html#introduction">13.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html#flow-based-distribution">13.2. Flow Based Distribution</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#computation-based-schemes">13.2.1. Computation Based Schemes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#flow-table-based-schemes">13.2.2. Flow-Table Based Schemes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#efd-based-scheme">13.2.3. EFD Based Scheme</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html#example-of-efd-library-usage">13.3. Example of EFD Library Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html#library-api-overview">13.4. Library API Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#efd-table-create">13.4.1. EFD Table Create</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#efd-insert-and-update">13.4.2. EFD Insert and Update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#efd-lookup">13.4.3. EFD Lookup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#efd-delete">13.4.4. EFD Delete</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html#library-internals">13.5. Library Internals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#insert-function-internals">13.5.1. Insert Function Internals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#lookup-function-internals">13.5.2. Lookup Function Internals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="efd_lib.html#group-rebalancing-function-internals">13.5.3. Group Rebalancing Function Internals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html#references">13.6. References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lpm_lib.html">14. LPM库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html#lpm-api-overview">14.1. LPM API Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html#implementation-details">14.2. Implementation Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="lpm_lib.html#addition">14.2.1. Addition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lpm_lib.html#lookup">14.2.2. Lookup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lpm_lib.html#limitations-in-the-number-of-rules">14.2.3. Limitations in the Number of Rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lpm_lib.html#use-case-ipv4-forwarding">14.2.4. Use Case: IPv4 Forwarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lpm_lib.html#references">14.2.5. References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html#lpm6-api-overview">15.1. LPM6 API Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="lpm6_lib.html#implementation-details">15.1.1. Implementation Details</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lpm6_lib.html#addition">15.1.2. Addition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lpm6_lib.html#lookup">15.1.3. Lookup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lpm6_lib.html#limitations-in-the-number-of-rules">15.1.4. Limitations in the Number of Rules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html#use-case-ipv6-forwarding">15.2. Use Case: IPv6 Forwarding</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html#distributor-core-operation">16.1. Distributor Core Operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html#worker-operation">16.2. Worker Operation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html#operation">17.1. Operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html#implementation-details">17.2. Implementation Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html#use-case-packet-distributor">17.3. Use Case: Packet Distributor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html#packet-fragmentation">18.1. Packet fragmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html#packet-reassembly">18.2. Packet reassembly</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ip_fragment_reassembly_lib.html#ip-fragment-table">18.2.1. IP Fragment Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ip_fragment_reassembly_lib.html#id1">18.2.2. Packet Reassembly</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ip_fragment_reassembly_lib.html#debug-logging-and-statistics-collection">18.2.3. Debug logging and Statistics Collection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html#operation">19.1. Operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html#implementation-details">19.2. Implementation Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html#use-case-packet-capturing">19.3. Use Case: Packet Capturing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html#memory-sharing">20.1. Memory Sharing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html#deployment-models">20.2. Deployment Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="multi_proc_support.html#symmetric-peer-processes">20.2.1. Symmetric/Peer Processes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multi_proc_support.html#asymmetric-non-peer-processes">20.2.2. Asymmetric/Non-Peer Processes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multi_proc_support.html#running-multiple-independent-dpdk-applications">20.2.3. Running Multiple Independent DPDK Applications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multi_proc_support.html#running-multiple-independent-groups-of-dpdk-applications">20.2.4. Running Multiple Independent Groups of DPDK Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html#multi-process-limitations">20.3. Multi-process Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html#the-dpdk-kni-kernel-module">21.1. The DPDK KNI Kernel Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html#kni-creation-and-deletion">21.2. KNI Creation and Deletion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html#dpdk-mbuf-flow">21.3. DPDK mbuf Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html#use-case-ingress">21.4. Use Case: Ingress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html#use-case-egress">21.5. Use Case: Egress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html#ethtool">21.6. Ethtool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html#link-state-and-mtu-change">21.7. Link state and MTU change</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html#fast-path-apis">22.1. Fast-Path APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html#performance-insensitive-api">22.2. Performance Insensitive API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html#library-initialization">22.3. Library Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html#interrupt-thread">22.4. Interrupt Thread</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html#packet-pipeline-with-qos-support">23.1. Packet Pipeline with QoS Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html#hierarchical-scheduler">23.2. Hierarchical Scheduler</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#overview">23.2.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#scheduling-hierarchy">23.2.2. Scheduling Hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#application-programming-interface-api">23.2.3. Application Programming Interface (API)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#implementation">23.2.4. Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#worst-case-scenarios-for-performance">23.2.5. Worst Case Scenarios for Performance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html#dropper">23.3. Dropper</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#configuration">23.3.1. Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#enqueue-operation">23.3.2. Enqueue Operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#queue-empty-operation">23.3.3. Queue Empty Operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#source-files-location">23.3.4. Source Files Location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#integration-with-the-dpdk-qos-scheduler">23.3.5. Integration with the DPDK QoS Scheduler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#integration-with-the-dpdk-qos-scheduler-sample-application">23.3.6. Integration with the DPDK QoS Scheduler Sample Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#id7">23.3.7. Application Programming Interface (API)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html#traffic-metering">23.4. Traffic Metering</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#functional-overview">23.4.1. Functional Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qos_framework.html#id8">23.4.2. Implementation Overview</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="power_man.html">24. 电源管理</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html#cpu-frequency-scaling">24.1. CPU Frequency Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html#core-load-throttling-through-c-states">24.2. Core-load Throttling through C-States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html#api-overview-of-the-power-library">24.3. API Overview of the Power Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html#user-cases">24.4. User Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html#references">24.5. References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html#overview">25.1. Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packet_classif_access_ctrl.html#rule-definition">25.1.1. Rule definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packet_classif_access_ctrl.html#rt-memory-size-limit">25.1.2. RT memory size limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packet_classif_access_ctrl.html#classification-methods">25.1.3. Classification methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html#application-programming-interface-api-usage">25.2. Application Programming Interface (API) Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packet_classif_access_ctrl.html#classify-with-multiple-categories">25.2.1. Classify with Multiple Categories</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="packet_framework.html">26. 包框架</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html#design-objectives">26.1. Design Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html#overview">26.2. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html#port-library-design">26.3. Port Library Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#port-types">26.3.1. Port Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#port-interface">26.3.2. Port Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html#table-library-design">26.4. Table Library Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#table-types">26.4.1. Table Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#table-interface">26.4.2. Table Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#hash-table-design">26.4.3. Hash Table Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html#pipeline-library-design">26.5. Pipeline Library Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#connectivity-of-ports-and-tables">26.5.1. Connectivity of Ports and Tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#port-actions">26.5.2. Port Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#table-actions">26.5.3. Table Actions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html#multicore-scaling">26.6. Multicore Scaling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="packet_framework.html#shared-data-structures">26.6.1. Shared Data Structures</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html#interfacing-with-accelerators">26.7. Interfacing with Accelerators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vhost_lib.html">27. vhost库</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html#vhost-api-overview">27.1. Vhost API Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html#vhost-user-implementations">27.2. Vhost-user Implementations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html#vhost-supported-vswitch-reference">27.3. Vhost supported vSwitch reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html#initialising-the-library">28.1. Initialising the library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html#registering-metrics">28.2. Registering metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html#updating-metric-values">28.3. Updating metric values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html#querying-metrics">28.4. Querying metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html#bit-rate-statistics-library">28.5. Bit-rate statistics library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="metrics_lib.html#initialization">28.5.1. Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics_lib.html#controlling-the-sampling-rate">28.5.2. Controlling the sampling rate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html#latency-statistics-library">28.6. Latency statistics library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="metrics_lib.html#id2">28.6.1. Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics_lib.html#triggering-statistic-updates">28.6.2. Triggering statistic updates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics_lib.html#library-shutdown">28.6.3. Library shutdown</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html#overview">29.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html#port-hotplug-api-overview">29.2. Port Hotplug API overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html#reference">29.3. Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html#limitations">29.4. Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="source_org.html">30. 源代码组织</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html#makefiles-and-config">30.1. Makefiles and Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html#libraries">30.2. Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html#drivers">30.3. Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html#applications">30.4. Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html#building-the-development-kit-binary">31.1. Building the Development Kit Binary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dev_kit_build_system.html#build-directory-concept">31.1.1. Build Directory Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html#building-external-applications">31.2. Building External Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html#makefile-description">31.3. Makefile Description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dev_kit_build_system.html#general-rules-for-dpdk-makefiles">31.3.1. General Rules For DPDK Makefiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_kit_build_system.html#makefile-types">31.3.2. Makefile Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_kit_build_system.html#internally-generated-build-tools">31.3.3. Internally Generated Build Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_kit_build_system.html#useful-variables-provided-by-the-build-system">31.3.4. Useful Variables Provided by the Build System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_kit_build_system.html#variables-that-can-be-set-overridden-in-a-makefile-only">31.3.5. Variables that Can be Set/Overridden in a Makefile Only</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_kit_build_system.html#variables-that-can-be-set-overridden-by-the-user-on-the-command-line-only">31.3.6. Variables that can be Set/Overridden by the User on the Command Line Only</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev_kit_build_system.html#variables-that-can-be-set-overridden-by-the-user-in-a-makefile-or-command-line">31.3.7. Variables that Can be Set/Overridden by the User in a Makefile or Command Line</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#configuration-targets">32.1. Configuration Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#build-targets">32.2. Build Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#install-targets">32.3. Install Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#test-targets">32.4. Test Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#documentation-targets">32.5. Documentation Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#misc-targets">32.6. Misc Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#other-useful-command-line-variables">32.7. Other Useful Command-line Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#make-in-a-build-directory">32.8. Make in a Build Directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html#compiling-for-debug">32.9. Compiling for Debug</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html#example-adding-a-new-library-libfoo">33.1. Example: Adding a New Library libfoo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="extend_dpdk.html#example-using-libfoo-in-the-test-application">33.1.1. Example: Using libfoo in the Test Application</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_app.html">34. 构建你的应用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html#compiling-a-sample-application-in-the-development-kit-directory">34.1. Compiling a Sample Application in the Development Kit Directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html#build-your-own-application-outside-the-development-kit">34.2. Build Your Own Application Outside the Development Kit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html#customizing-makefiles">34.3. Customizing Makefiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="build_app.html#application-makefile">34.3.1. Application Makefile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="build_app.html#library-makefile">34.3.2. Library Makefile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="build_app.html#customize-makefile-actions">34.3.3. Customize Makefile Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html#prerequisites">35.1. Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html#build-targets">35.2. Build Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html#help-targets">35.3. Help Targets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html#other-useful-command-line-variables">35.4. Other Useful Command-line Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html#make-from-another-directory">35.5. Make from Another Directory</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html#introduction">36.1. Introduction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html#memory">37.1. Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="writing_efficient_code.html#memory-copy-do-not-use-libc-in-the-data-plane">37.1.1. Memory Copy: Do not Use libc in the Data Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing_efficient_code.html#memory-allocation">37.1.2. Memory Allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing_efficient_code.html#concurrent-access-to-the-same-memory-area">37.1.3. Concurrent Access to the Same Memory Area</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing_efficient_code.html#numa">37.1.4. NUMA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing_efficient_code.html#distribution-across-memory-channels">37.1.5. Distribution Across Memory Channels</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html#communication-between-lcores">37.2. Communication Between lcores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html#pmd-driver">37.3. PMD Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="writing_efficient_code.html#lower-packet-latency">37.3.1. Lower Packet Latency</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html#locks-and-atomic-operations">37.4. Locks and Atomic Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html#coding-considerations">37.5. Coding Considerations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="writing_efficient_code.html#inline-functions">37.5.1. Inline Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing_efficient_code.html#branch-prediction">37.5.2. Branch Prediction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html#setting-the-target-cpu-type">37.6. Setting the Target CPU Type</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html#profiling-on-x86">38.1. Profiling on x86</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html#profiling-on-arm64">38.2. Profiling on ARM64</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="profile_app.html#using-linux-perf">38.2.1. Using Linux perf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profile_app.html#high-resolution-cycle-counter">38.2.2. High-resolution cycle counter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</div>
+<p><strong>Figures</strong></p>
+<p><a class="reference internal" href="overview.html#figure-architecture-overview"><span class="std std-numref">图 2.1</span></a> <a class="reference internal" href="overview.html#figure-architecture-overview"><span class="std std-ref">核心组件架构</span></a></p>
+<p><a class="reference internal" href="env_abstraction_layer.html#figure-linuxapp-launch"><span class="std std-numref">图 3.1</span></a> <a class="reference internal" href="env_abstraction_layer.html#figure-linuxapp-launch"><span class="std std-ref">Linux环境下EAL的初始化</span></a></p>
+<p><a class="reference internal" href="env_abstraction_layer.html#figure-malloc-heap"><span class="std std-numref">图 3.2</span></a> <a class="reference internal" href="env_abstraction_layer.html#figure-malloc-heap"><span class="std std-ref">malloc库中堆（malloc_heap）和元素（malloc_elem）的示例</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring1"><span class="std std-numref">图 4.2</span></a> <a class="reference internal" href="ring_lib.html#figure-ring1"><span class="std std-ref">Ring 结构</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-enqueue1"><span class="std std-numref">图 4.3</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-enqueue1"><span class="std std-ref">入队第一步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-enqueue2"><span class="std std-numref">图 4.4</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-enqueue2"><span class="std std-ref">入队第二步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-enqueue3"><span class="std std-numref">图 4.5</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-enqueue3"><span class="std std-ref">入队最后一步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-dequeue1"><span class="std std-numref">图 4.6</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-dequeue1"><span class="std std-ref">出队第一步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-dequeue2"><span class="std std-numref">图 4.7</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-dequeue2"><span class="std std-ref">出队第二步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-dequeue3"><span class="std std-numref">图 4.8</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-dequeue3"><span class="std std-ref">出队最后一步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue1"><span class="std std-numref">图 4.9</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue1"><span class="std std-ref">多生产者入队第一步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue2"><span class="std std-numref">图 4.10</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue2"><span class="std std-ref">多生产者入队第二步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue3"><span class="std std-numref">图 4.11</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue3"><span class="std std-ref">多生产者入队第三步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue4"><span class="std std-numref">图 4.12</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue4"><span class="std std-ref">多生产者入队第四步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue5"><span class="std std-numref">图 4.13</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-mp-enqueue5"><span class="std std-ref">多生产者入队最后一步</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-modulo1"><span class="std std-numref">图 4.14</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-modulo1"><span class="std std-ref">32位模索引 - 实例1</span></a></p>
+<p><a class="reference internal" href="ring_lib.html#figure-ring-modulo2"><span class="std std-numref">图 4.15</span></a> <a class="reference internal" href="ring_lib.html#figure-ring-modulo2"><span class="std std-ref">32位模索引 - 实例2</span></a></p>
+<p><a class="reference internal" href="mempool_lib.html#figure-memory-management"><span class="std std-numref">图 5.1</span></a> <a class="reference internal" href="mempool_lib.html#figure-memory-management"><span class="std std-ref">Two Channels and Quad-ranked DIMM Example</span></a></p>
+<p><a class="reference internal" href="mempool_lib.html#figure-memory-management2"><span class="std std-numref">图 5.2</span></a> <a class="reference internal" href="mempool_lib.html#figure-memory-management2"><span class="std std-ref">Three Channels and Two Dual-ranked DIMM Example</span></a></p>
+<p><a class="reference internal" href="mempool_lib.html#figure-mempool"><span class="std std-numref">图 5.3</span></a> <a class="reference internal" href="mempool_lib.html#figure-mempool"><span class="std std-ref">内存中的mempool和相关的Ring</span></a></p>
+<p><a class="reference internal" href="mbuf_lib.html#figure-mbuf1"><span class="std std-numref">图 6.1</span></a> <a class="reference internal" href="mbuf_lib.html#figure-mbuf1"><span class="std std-ref">一个段的mbuf</span></a></p>
+<p><a class="reference internal" href="mbuf_lib.html#figure-mbuf2"><span class="std std-numref">图 6.2</span></a> <a class="reference internal" href="mbuf_lib.html#figure-mbuf2"><span class="std std-ref">三个段的mbuf</span></a></p>
+<p><a class="reference internal" href="multi_proc_support.html#figure-multi-process-memory"><span class="std std-numref">图 20.1</span></a> <a class="reference internal" href="multi_proc_support.html#figure-multi-process-memory"><span class="std std-ref">Memory Sharing in the DPDK Multi-process Sample Application</span></a></p>
+<p><a class="reference internal" href="kernel_nic_interface.html#figure-kernel-nic-intf"><span class="std std-numref">图 21.1</span></a> <a class="reference internal" href="kernel_nic_interface.html#figure-kernel-nic-intf"><span class="std std-ref">Components of a DPDK KNI Application</span></a></p>
+<p><a class="reference internal" href="kernel_nic_interface.html#figure-pkt-flow-kni"><span class="std std-numref">图 21.2</span></a> <a class="reference internal" href="kernel_nic_interface.html#figure-pkt-flow-kni"><span class="std std-ref">Packet Flow via mbufs in the DPDK KNI</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-pkt-proc-pipeline-qos"><span class="std std-numref">图 23.2</span></a> <a class="reference internal" href="qos_framework.html#figure-pkt-proc-pipeline-qos"><span class="std std-ref">Complex Packet Processing Pipeline with QoS Support</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-hier-sched-blk"><span class="std std-numref">图 23.3</span></a> <a class="reference internal" href="qos_framework.html#figure-hier-sched-blk"><span class="std std-ref">Hierarchical Scheduler Block Internal Diagram</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-sched-hier-per-port"><span class="std std-numref">图 23.4</span></a> <a class="reference internal" href="qos_framework.html#figure-sched-hier-per-port"><span class="std std-ref">Scheduling Hierarchy per Port</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-data-struct-per-port"><span class="std std-numref">图 23.5</span></a> <a class="reference internal" href="qos_framework.html#figure-data-struct-per-port"><span class="std std-ref">Internal Data Structures per Port</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-prefetch-pipeline"><span class="std std-numref">图 23.6</span></a> <a class="reference internal" href="qos_framework.html#figure-prefetch-pipeline"><span class="std std-ref">Prefetch Pipeline for the Hierarchical Scheduler Enqueue Operation</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-pipe-prefetch-sm"><span class="std std-numref">图 23.7</span></a> <a class="reference internal" href="qos_framework.html#figure-pipe-prefetch-sm"><span class="std std-ref">Pipe Prefetch State Machine for the Hierarchical Scheduler Dequeue
+Operation</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-blk-diag-dropper"><span class="std std-numref">图 23.8</span></a> <a class="reference internal" href="qos_framework.html#figure-blk-diag-dropper"><span class="std std-ref">High-level Block Diagram of the DPDK Dropper</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-flow-tru-droppper"><span class="std std-numref">图 23.9</span></a> <a class="reference internal" href="qos_framework.html#figure-flow-tru-droppper"><span class="std std-ref">Flow Through the Dropper</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-ex-data-flow-tru-dropper"><span class="std std-numref">图 23.10</span></a> <a class="reference internal" href="qos_framework.html#figure-ex-data-flow-tru-dropper"><span class="std std-ref">Example Data Flow Through Dropper</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-pkt-drop-probability"><span class="std std-numref">图 23.11</span></a> <a class="reference internal" href="qos_framework.html#figure-pkt-drop-probability"><span class="std std-ref">Packet Drop Probability for a Given RED Configuration</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#figure-drop-probability-graph"><span class="std std-numref">图 23.12</span></a> <a class="reference internal" href="qos_framework.html#figure-drop-probability-graph"><span class="std std-ref">Initial Drop Probability (pb), Actual Drop probability (pa) Computed Using
+a Factor 1 (Blue Curve) and a Factor 2 (Red Curve)</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#figure-figure32"><span class="std std-numref">图 26.2</span></a> <a class="reference internal" href="packet_framework.html#figure-figure32"><span class="std std-ref">Example of Packet Processing Pipeline where Input Ports 0 and 1
+are Connected with Output Ports 0, 1 and 2 through Tables 0 and 1</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#figure-figure33"><span class="std std-numref">图 26.3</span></a> <a class="reference internal" href="packet_framework.html#figure-figure33"><span class="std std-ref">Sequence of Steps for Hash Table Operations in a Packet Processing Context</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#figure-figure34"><span class="std std-numref">图 26.4</span></a> <a class="reference internal" href="packet_framework.html#figure-figure34"><span class="std std-ref">Data Structures for Configurable Key Size Hash Tables</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#figure-figure35"><span class="std std-numref">图 26.5</span></a> <a class="reference internal" href="packet_framework.html#figure-figure35"><span class="std std-ref">Bucket Search Pipeline for Key Lookup Operation (Configurable Key Size Hash
+Tables)</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#figure-figure37"><span class="std std-numref">图 26.6</span></a> <a class="reference internal" href="packet_framework.html#figure-figure37"><span class="std std-ref">Data Structures for 8-byte Key Hash Tables</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#figure-figure38"><span class="std std-numref">图 26.7</span></a> <a class="reference internal" href="packet_framework.html#figure-figure38"><span class="std std-ref">Data Structures for 16-byte Key Hash Tables</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#figure-figure39"><span class="std std-numref">图 26.8</span></a> <a class="reference internal" href="packet_framework.html#figure-figure39"><span class="std std-ref">Bucket Search Pipeline for Key Lookup Operation (Single Key Size Hash
+Tables)</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd1"><span class="std std-numref">图 13.2</span></a> <a class="reference internal" href="efd_lib.html#figure-efd1"><span class="std std-ref">Load Balancing Using Front End Node</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd2"><span class="std std-numref">图 13.3</span></a> <a class="reference internal" href="efd_lib.html#figure-efd2"><span class="std std-ref">Consistent Hashing</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd3"><span class="std std-numref">图 13.4</span></a> <a class="reference internal" href="efd_lib.html#figure-efd3"><span class="std std-ref">Table Based Flow Distribution</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd4"><span class="std std-numref">图 13.5</span></a> <a class="reference internal" href="efd_lib.html#figure-efd4"><span class="std std-ref">Searching for Perfect Hash Function</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd5"><span class="std std-numref">图 13.6</span></a> <a class="reference internal" href="efd_lib.html#figure-efd5"><span class="std std-ref">Divide and Conquer for Millions of Keys</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd6"><span class="std std-numref">图 13.7</span></a> <a class="reference internal" href="efd_lib.html#figure-efd6"><span class="std std-ref">EFD as a Flow-Level Load Balancer</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd7"><span class="std std-numref">图 13.8</span></a> <a class="reference internal" href="efd_lib.html#figure-efd7"><span class="std std-ref">Group Assignment</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd8"><span class="std std-numref">图 13.9</span></a> <a class="reference internal" href="efd_lib.html#figure-efd8"><span class="std std-ref">Perfect Hash Search - Assigned Keys &amp; Target Value</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd9"><span class="std std-numref">图 13.10</span></a> <a class="reference internal" href="efd_lib.html#figure-efd9"><span class="std std-ref">Perfect Hash Search - Satisfy Target Values</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd10"><span class="std std-numref">图 13.11</span></a> <a class="reference internal" href="efd_lib.html#figure-efd10"><span class="std std-ref">Finding Hash Index for Conflict Free lookup_table</span></a></p>
+<p><a class="reference internal" href="efd_lib.html#figure-efd11"><span class="std std-numref">图 13.12</span></a> <a class="reference internal" href="efd_lib.html#figure-efd11"><span class="std std-ref">EFD Lookup Operation</span></a></p>
+<p><strong>Tables</strong></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-1"><span class="std std-numref">表 23.1</span></a> <a class="reference internal" href="qos_framework.html#table-qos-1"><span class="std std-ref">Packet Processing Pipeline Implementing QoS</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-2"><span class="std std-numref">表 23.2</span></a> <a class="reference internal" href="qos_framework.html#table-qos-2"><span class="std std-ref">Infrastructure Blocks Used by the Packet Processing Pipeline</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-3"><span class="std std-numref">表 23.3</span></a> <a class="reference internal" href="qos_framework.html#table-qos-3"><span class="std std-ref">Port Scheduling Hierarchy</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-4"><span class="std std-numref">表 23.4</span></a> <a class="reference internal" href="qos_framework.html#table-qos-4"><span class="std std-ref">Scheduler Internal Data Structures per Port</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-5"><span class="std std-numref">表 23.5</span></a> <a class="reference internal" href="qos_framework.html#table-qos-5"><span class="std std-ref">Ethernet Frame Overhead Fields</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-6"><span class="std std-numref">表 23.6</span></a> <a class="reference internal" href="qos_framework.html#table-qos-6"><span class="std std-ref">Token Bucket Generic Operations</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-7"><span class="std std-numref">表 23.7</span></a> <a class="reference internal" href="qos_framework.html#table-qos-7"><span class="std std-ref">Token Bucket Generic Parameters</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-8"><span class="std std-numref">表 23.8</span></a> <a class="reference internal" href="qos_framework.html#table-qos-8"><span class="std std-ref">Token Bucket Persistent Data Structure</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-9"><span class="std std-numref">表 23.9</span></a> <a class="reference internal" href="qos_framework.html#table-qos-9"><span class="std std-ref">Token Bucket Operations</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-10"><span class="std std-numref">表 23.10</span></a> <a class="reference internal" href="qos_framework.html#table-qos-10"><span class="std std-ref">Subport/Pipe Traffic Class Upper Limit Enforcement Persistent Data Structure</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-11"><span class="std std-numref">表 23.11</span></a> <a class="reference internal" href="qos_framework.html#table-qos-11"><span class="std std-ref">Subport/Pipe Traffic Class Upper Limit Enforcement Operations</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-12"><span class="std std-numref">表 23.12</span></a> <a class="reference internal" href="qos_framework.html#table-qos-12"><span class="std std-ref">Weighted Round Robin (WRR)</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-13"><span class="std std-numref">表 23.13</span></a> <a class="reference internal" href="qos_framework.html#table-qos-13"><span class="std std-ref">Subport Traffic Class Oversubscription</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-14"><span class="std std-numref">表 23.14</span></a> <a class="reference internal" href="qos_framework.html#table-qos-14"><span class="std std-ref">Watermark Propagation from Subport Level to Member Pipes at the Beginning of Each Traffic Class Upper Limit Enforcement Period</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-15"><span class="std std-numref">表 23.15</span></a> <a class="reference internal" href="qos_framework.html#table-qos-15"><span class="std std-ref">Watermark Calculation</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-16"><span class="std std-numref">表 23.16</span></a> <a class="reference internal" href="qos_framework.html#table-qos-16"><span class="std std-ref">RED Configuration Parameters</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-17"><span class="std std-numref">表 23.17</span></a> <a class="reference internal" href="qos_framework.html#table-qos-17"><span class="std std-ref">Relative Performance of Alternative Approaches</span></a></p>
+<p><a class="reference internal" href="qos_framework.html#table-qos-18"><span class="std std-numref">表 23.18</span></a> <a class="reference internal" href="qos_framework.html#table-qos-18"><span class="std std-ref">RED Configuration Corresponding to RED Configuration File</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-19"><span class="std std-numref">表 26.2</span></a> <a class="reference internal" href="packet_framework.html#table-qos-19"><span class="std std-ref">Port Types</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-20"><span class="std std-numref">表 26.3</span></a> <a class="reference internal" href="packet_framework.html#table-qos-20"><span class="std std-ref">20 Port Abstract Interface</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-21"><span class="std std-numref">表 26.4</span></a> <a class="reference internal" href="packet_framework.html#table-qos-21"><span class="std std-ref">Table Types</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-22"><span class="std std-numref">表 26.6</span></a> <a class="reference internal" href="packet_framework.html#table-qos-22"><span class="std std-ref">Configuration Parameters Common for All Hash Table Types</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-23"><span class="std std-numref">表 26.7</span></a> <a class="reference internal" href="packet_framework.html#table-qos-23"><span class="std std-ref">Configuration Parameters Specific to Extendable Bucket Hash Table</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-24"><span class="std std-numref">表 26.8</span></a> <a class="reference internal" href="packet_framework.html#table-qos-24"><span class="std std-ref">Configuration Parameters Specific to Pre-computed Key Signature Hash Table</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-25"><span class="std std-numref">表 26.9</span></a> <a class="reference internal" href="packet_framework.html#table-qos-25"><span class="std std-ref">Main Large Data Structures (Arrays) used for Configurable Key Size Hash Tables</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-26"><span class="std std-numref">表 26.10</span></a> <a class="reference internal" href="packet_framework.html#table-qos-26"><span class="std std-ref">Field Description for Bucket Array Entry (Configurable Key Size Hash Tables)</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-27"><span class="std std-numref">表 26.11</span></a> <a class="reference internal" href="packet_framework.html#table-qos-27"><span class="std std-ref">Description of the Bucket Search Pipeline Stages (Configurable Key Size Hash Tables)</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-28"><span class="std std-numref">表 26.12</span></a> <a class="reference internal" href="packet_framework.html#table-qos-28"><span class="std std-ref">Lookup Tables for Match, Match_Many and Match_Pos</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-29"><span class="std std-numref">表 26.13</span></a> <a class="reference internal" href="packet_framework.html#table-qos-29"><span class="std std-ref">Collapsed Lookup Tables for Match, Match_Many and Match_Pos</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-30"><span class="std std-numref">表 26.14</span></a> <a class="reference internal" href="packet_framework.html#table-qos-30"><span class="std std-ref">Main Large Data Structures (Arrays) used for 8-byte and 16-byte Key Size Hash Tables</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-31"><span class="std std-numref">表 26.15</span></a> <a class="reference internal" href="packet_framework.html#table-qos-31"><span class="std std-ref">Field Description for Bucket Array Entry (8-byte and 16-byte Key Hash Tables)</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-32"><span class="std std-numref">表 26.16</span></a> <a class="reference internal" href="packet_framework.html#table-qos-32"><span class="std std-ref">Description of the Bucket Search Pipeline Stages (8-byte and 16-byte Key Hash Tables)</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-33"><span class="std std-numref">表 26.17</span></a> <a class="reference internal" href="packet_framework.html#table-qos-33"><span class="std std-ref">Next Hop Actions (Reserved)</span></a></p>
+<p><a class="reference internal" href="packet_framework.html#table-qos-34"><span class="std std-numref">表 26.18</span></a> <a class="reference internal" href="packet_framework.html#table-qos-34"><span class="std std-ref">User Action Examples</span></a></p>
+<p><a class="reference internal" href="hash_lib.html#table-hash-lib-1"><span class="std std-numref">表 12.1</span></a> <a class="reference internal" href="hash_lib.html#table-hash-lib-1"><span class="std std-ref">Entry distribution measured with an example table with 1024 random entries using jhash algorithm</span></a></p>
+<p><a class="reference internal" href="hash_lib.html#table-hash-lib-2"><span class="std std-numref">表 12.2</span></a> <a class="reference internal" href="hash_lib.html#table-hash-lib-2"><span class="std std-ref">Entry distribution measured with an example table with 1 million random entries using jhash algorithm</span></a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="intro.html" class="btn btn-neutral float-right" title="1. 介绍" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../sample_app_ug/ipsec_secgw.html" class="btn btn-neutral" title="40. IPsec Security Gateway Sample Application" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

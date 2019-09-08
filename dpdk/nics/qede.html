@@ -1,0 +1,494 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>21. QEDE Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="22. Solarflare libefx-based Poll Mode Driver" href="sfc_efx.html" />
+    <link rel="prev" title="20. NFP poll mode driver library" href="nfp.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Network Interface Controller Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Overview of Networking Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_and_test.html">2. Compiling and testing a PMD for a NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ark.html">3. ARK Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="avp.html">4. AVP Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnx2x.html">5. BNX2X Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnxt.html">6. BNXT Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cxgbe.html">7. CXGBE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2.html">8. DPAA2 Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e1000em.html">9. Driver for VM Emulated Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ena.html">10. ENA Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enic.html">11. ENIC Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fm10k.html">12. FM10K Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i40e.html">13. I40E Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ixgbe.html">14. IXGBE Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intel_vf.html">15. I40E/IXGBE/IGB Virtual Function Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kni.html">16. KNI Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquidio.html">17. LiquidIO VF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx4.html">18. MLX4 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx5.html">19. MLX5 poll mode driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nfp.html">20. NFP poll mode driver library</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">21. QEDE Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#supported-features">21.1. Supported Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#non-supported-features">21.2. Non-supported Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-qlogic-adapters">21.3. Supported QLogic Adapters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">21.4. Prerequisites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#performance-note">21.4.1. Performance note</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#config-file-options">21.4.2. Config File Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#driver-compilation-and-testing">21.5. Driver compilation and testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sr-iov-prerequisites-and-sample-application-notes">21.6. SR-IOV: Prerequisites and Sample Application Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sfc_efx.html">22. Solarflare libefx-based Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="szedata2.html">23. SZEDATA2 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tap.html">24. Tun/Tap Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thunderx.html">25. ThunderX NICVF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio.html">26. Poll Mode Driver for Emulated Virtio NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost.html">27. Poll Mode Driver that wraps vhost library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmxnet3.html">28. Poll Mode Driver for Paravirtual VMXNET3 NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcap_ring.html">29. Libpcap and Ring Based Poll Mode Drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Network Interface Controller Drivers</a> &raquo;</li>
+        
+      <li>21. QEDE Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/nics/qede.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="qede-poll-mode-driver">
+<h1>21. QEDE Poll Mode Driver</h1>
+<p>The QEDE poll mode driver library (<strong>librte_pmd_qede</strong>) implements support
+for <strong>QLogic FastLinQ QL4xxxx 10G/25G/40G/50G/100G CNA</strong> family of adapters as well
+as their virtual functions (VF) in SR-IOV context. It is supported on
+several standard Linux distros like RHEL7.x, SLES12.x and Ubuntu.
+It is compile-tested under FreeBSD OS.</p>
+<p>More information can be found at <a class="reference external" href="http://www.qlogic.com">QLogic Corporation's Website</a>.</p>
+<div class="section" id="supported-features">
+<h2>21.1. Supported Features</h2>
+<ul class="simple">
+<li>Unicast/Multicast filtering</li>
+<li>Promiscuous mode</li>
+<li>Allmulti mode</li>
+<li>Port hardware statistics</li>
+<li>Jumbo frames</li>
+<li>VLAN offload - Filtering and stripping</li>
+<li>Stateless checksum offloads (IPv4/TCP/UDP)</li>
+<li>Multiple Rx/Tx queues</li>
+<li>RSS (with RETA/hash table/key)</li>
+<li>TSS</li>
+<li>Multiple MAC address</li>
+<li>Default pause flow control</li>
+<li>SR-IOV VF</li>
+<li>MTU change</li>
+<li>Multiprocess aware</li>
+<li>Scatter-Gather</li>
+<li>VXLAN tunneling offload</li>
+<li>N-tuple filter and flow director (limited support)</li>
+<li>LRO/TSO</li>
+</ul>
+</div>
+<div class="section" id="non-supported-features">
+<h2>21.2. Non-supported Features</h2>
+<ul class="simple">
+<li>SR-IOV PF</li>
+<li>GENEVE and NVGRE Tunneling offloads</li>
+<li>NPAR</li>
+</ul>
+</div>
+<div class="section" id="supported-qlogic-adapters">
+<h2>21.3. Supported QLogic Adapters</h2>
+<ul class="simple">
+<li>QLogic FastLinQ QL4xxxx 10G/25G/40G/50G/100G CNAs.</li>
+</ul>
+</div>
+<div class="section" id="prerequisites">
+<h2>21.4. Prerequisites</h2>
+<ul class="simple">
+<li>Requires firmware version <strong>8.18.x.</strong> and management firmware
+version <strong>8.18.x or higher</strong>. Firmware may be available
+inbox in certain newer Linux distros under the standard directory
+<code class="docutils literal notranslate"><span class="pre">E.g.</span> <span class="pre">/lib/firmware/qed/qed_init_values-8.18.9.0.bin</span></code></li>
+<li>If the required firmware files are not available then visit
+<a class="reference external" href="http://driverdownloads.qlogic.com">QLogic Driver Download Center</a>.</li>
+</ul>
+<div class="section" id="performance-note">
+<h3>21.4.1. Performance note</h3>
+<ul class="simple">
+<li>For better performance, it is recommended to use 4K or higher RX/TX rings.</li>
+</ul>
+</div>
+<div class="section" id="config-file-options">
+<h3>21.4.2. Config File Options</h3>
+<p>The following options can be modified in the <code class="docutils literal notranslate"><span class="pre">.config</span></code> file. Please note that
+enabling debugging options may affect system performance.</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_QEDE_PMD</span></code> (default <strong>y</strong>)</p>
+<p>Toggle compilation of QEDE PMD driver.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_QEDE_DEBUG_INFO</span></code> (default <strong>n</strong>)</p>
+<p>Toggle display of generic debugging messages.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_QEDE_DEBUG_DRIVER</span></code> (default <strong>n</strong>)</p>
+<p>Toggle display of ecore related messages.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_QEDE_DEBUG_TX</span></code> (default <strong>n</strong>)</p>
+<p>Toggle display of transmit fast path run-time messages.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_QEDE_DEBUG_RX</span></code> (default <strong>n</strong>)</p>
+<p>Toggle display of receive fast path run-time messages.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_QEDE_FW</span></code> (default <strong>&quot;&quot;</strong>)</p>
+<p>Gives absolute path of firmware file.
+<code class="docutils literal notranslate"><span class="pre">Eg:</span> <span class="pre">&quot;/lib/firmware/qed/qed_init_values_zipped-8.18.9.0.bin&quot;</span></code>
+Empty string indicates driver will pick up the firmware file
+from the default location.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="driver-compilation-and-testing">
+<h2>21.5. Driver compilation and testing</h2>
+<p>Refer to the document <a class="reference internal" href="build_and_test.html#pmd-build-and-test"><span class="std std-ref">compiling and testing a PMD for a NIC</span></a>
+for details.</p>
+</div>
+<div class="section" id="sr-iov-prerequisites-and-sample-application-notes">
+<h2>21.6. SR-IOV: Prerequisites and Sample Application Notes</h2>
+<p>This section provides instructions to configure SR-IOV with Linux OS.</p>
+<p><strong>Note</strong>: librte_pmd_qede will be used to bind to SR-IOV VF device and Linux native kernel driver (QEDE) will function as SR-IOV PF driver. Requires PF driver to be 8.10.x.x or higher.</p>
+<ol class="arabic">
+<li><p class="first">Verify SR-IOV and ARI capability is enabled on the adapter using <code class="docutils literal notranslate"><span class="pre">lspci</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">lspci -s &lt;slot&gt; -vvv</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[...]</span>
+<span class="go">Capabilities: [1b8 v1] Alternative Routing-ID Interpretation (ARI)</span>
+<span class="go">[...]</span>
+<span class="go">Capabilities: [1c0 v1] Single Root I/O Virtualization (SR-IOV)</span>
+<span class="go">[...]</span>
+<span class="go">Kernel driver in use: igb_uio</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Load the kernel module:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">modprobe qede</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">systemd-udevd[4848]: renamed network interface eth0 to ens5f0</span>
+<span class="go">systemd-udevd[4848]: renamed network interface eth1 to ens5f1</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Bring up the PF ports:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ifconfig ens5f0 up</span>
+<span class="go">ifconfig ens5f1 up</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create VF device(s):</p>
+<p>Echo the number of VFs to be created into <code class="docutils literal notranslate"><span class="pre">&quot;sriov_numvfs&quot;</span></code> sysfs entry
+of the parent PF.</p>
+<p>Example output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">echo 2 &gt; /sys/devices/pci0000:00/0000:00:03.0/0000:81:00.0/sriov_numvfs</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Assign VF MAC address:</p>
+<p>Assign MAC address to the VF using iproute2 utility. The syntax is:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ip link set &lt;PF iface&gt; vf &lt;VF id&gt; mac &lt;macaddr&gt;
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ip link set ens5f0 vf 0 mac 52:54:00:2f:9d:e8</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">PCI Passthrough:</p>
+<p>The VF devices may be passed through to the guest VM using <code class="docutils literal notranslate"><span class="pre">virt-manager</span></code> or
+<code class="docutils literal notranslate"><span class="pre">virsh</span></code>. QEDE PMD should be used to bind the VF devices in the guest VM
+using the instructions from Driver compilation and testing section above.</p>
+</li>
+<li><p class="first">Running testpmd
+(Enable QEDE_DEBUG_INFO=y to view informational messages):</p>
+<p>Refer to the document
+<a class="reference internal" href="build_and_test.html#pmd-build-and-test"><span class="std std-ref">compiling and testing a PMD for a NIC</span></a> to run
+<code class="docutils literal notranslate"><span class="pre">testpmd</span></code> application.</p>
+<p>Example output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">  testpmd -l 0,4-11 -n 4 -- -i --nb-cores=8 --portmask=0xf --rxd=4096 \</span>
+<span class="go">  --txd=4096 --txfreet=4068 --enable-rx-cksum --rxq=4 --txq=4 \</span>
+<span class="go">  --rss-ip --rss-udp</span>
+
+<span class="go">  [...]</span>
+
+<span class="go">EAL: PCI device 0000:84:00.0 on NUMA socket 1</span>
+<span class="go">EAL:   probe driver: 1077:1634 rte_qede_pmd</span>
+<span class="go">EAL:   Not managed by a supported kernel driver, skipped</span>
+<span class="go">EAL: PCI device 0000:84:00.1 on NUMA socket 1</span>
+<span class="go">EAL:   probe driver: 1077:1634 rte_qede_pmd</span>
+<span class="go">EAL:   Not managed by a supported kernel driver, skipped</span>
+<span class="go">EAL: PCI device 0000:88:00.0 on NUMA socket 1</span>
+<span class="go">EAL:   probe driver: 1077:1656 rte_qede_pmd</span>
+<span class="go">EAL:   PCI memory mapped at 0x7f738b200000</span>
+<span class="go">EAL:   PCI memory mapped at 0x7f738b280000</span>
+<span class="go">EAL:   PCI memory mapped at 0x7f738b300000</span>
+<span class="go">PMD: Chip details : BB1</span>
+<span class="go">PMD: Driver version : QEDE PMD 8.7.9.0_1.0.0</span>
+<span class="go">PMD: Firmware version : 8.7.7.0</span>
+<span class="go">PMD: Management firmware version : 8.7.8.0</span>
+<span class="go">PMD: Firmware file : /lib/firmware/qed/qed_init_values_zipped-8.7.7.0.bin</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_common_dev_init:macaddr \</span>
+<span class="go">                                                    00:0e:1e:d2:09:9c</span>
+<span class="go">  [...]</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_tx_queue_setup:txq 0 num_desc 4096 \</span>
+<span class="go">                                            tx_free_thresh 4068 socket 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_tx_queue_setup:txq 1 num_desc 4096 \</span>
+<span class="go">                                            tx_free_thresh 4068 socket 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_tx_queue_setup:txq 2 num_desc 4096 \</span>
+<span class="go">                                             tx_free_thresh 4068 socket 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_tx_queue_setup:txq 3 num_desc 4096 \</span>
+<span class="go">                                             tx_free_thresh 4068 socket 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_rx_queue_setup:rxq 0 num_desc 4096 \</span>
+<span class="go">                                            rx_buf_size=2148 socket 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_rx_queue_setup:rxq 1 num_desc 4096 \</span>
+<span class="go">                                            rx_buf_size=2148 socket 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_rx_queue_setup:rxq 2 num_desc 4096 \</span>
+<span class="go">                                            rx_buf_size=2148 socket 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_rx_queue_setup:rxq 3 num_desc 4096 \</span>
+<span class="go">                                            rx_buf_size=2148 socket 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_dev_start:port 0</span>
+<span class="go">[QEDE PMD: (84:00.0:dpdk-port-0)]qede_dev_start:link status: down</span>
+<span class="go">  [...]</span>
+<span class="go">Checking link statuses...</span>
+<span class="go">Port 0 Link Up - speed 25000 Mbps - full-duplex</span>
+<span class="go">Port 1 Link Up - speed 25000 Mbps - full-duplex</span>
+<span class="go">Port 2 Link Up - speed 25000 Mbps - full-duplex</span>
+<span class="go">Port 3 Link Up - speed 25000 Mbps - full-duplex</span>
+<span class="go">Done</span>
+<span class="go">testpmd&gt;</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sfc_efx.html" class="btn btn-neutral float-right" title="22. Solarflare libefx-based Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="nfp.html" class="btn btn-neutral" title="20. NFP poll mode driver library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

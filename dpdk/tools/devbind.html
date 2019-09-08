@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. dpdk-devbind Application &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="5. dpdk-test-crypto-perf Application" href="cryptoperf.html" />
+    <link rel="prev" title="3. dpdk-pmdinfo Application" href="pmdinfo.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">DPDK Tools User Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="proc_info.html">1. dpdk-procinfo Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump.html">2. dpdk-pdump Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pmdinfo.html">3. dpdk-pmdinfo Application</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4. dpdk-devbind Application</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-application">4.1. Running the Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#options">4.2. OPTIONS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">4.3. Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cryptoperf.html">5. dpdk-test-crypto-perf Application</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">DPDK Tools User Guides</a> &raquo;</li>
+        
+      <li>4. dpdk-devbind Application</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tools/devbind.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dpdk-devbind-application">
+<h1>4. dpdk-devbind Application</h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">dpdk-devbind</span></code> tool is a Data Plane Development Kit (DPDK) utility
+that helps binding and unbinding devices from specific drivers.
+As well as checking their status in that regard.</p>
+<div class="section" id="running-the-application">
+<h2>4.1. Running the Application</h2>
+<p>The tool has a number of command line options:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">dpdk-devbind [options] DEVICE1 DEVICE2 ....</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="options">
+<h2>4.2. OPTIONS</h2>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--help,</span> <span class="pre">--usage</span></code></p>
+<blockquote>
+<div><p>Display usage information and quit</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--status</span></code></p>
+<blockquote>
+<div><p>Print the current status of all known network interfaces.
+For each device, it displays the PCI domain, bus, slot and function,
+along with a text description of the device. Depending upon whether the
+device is being used by a kernel driver, the <code class="docutils literal notranslate"><span class="pre">igb_uio</span></code> driver, or no
+driver, other relevant information will be displayed:
+- the Linux interface name e.g. <code class="docutils literal notranslate"><span class="pre">if=eth0</span></code>
+- the driver being used e.g. <code class="docutils literal notranslate"><span class="pre">drv=igb_uio</span></code>
+- any suitable drivers not currently using that device e.g. <code class="docutils literal notranslate"><span class="pre">unused=igb_uio</span></code>
+NOTE: if this flag is passed along with a bind/unbind option, the
+status display will always occur after the other operations have taken
+place.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">driver,</span> <span class="pre">--bind=driver</span></code></p>
+<blockquote>
+<div><p>Select the driver to use or &quot;none&quot; to unbind the device</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-u,</span> <span class="pre">--unbind</span></code></p>
+<blockquote>
+<div><p>Unbind a device (Equivalent to <code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">none</span></code>)</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--force</span></code></p>
+<blockquote>
+<div><p>By default, devices which are used by Linux - as indicated by having
+routes in the routing table - cannot be modified. Using the <code class="docutils literal notranslate"><span class="pre">--force</span></code>
+flag overrides this behavior, allowing active links to be forcibly
+unbound.
+WARNING: This can lead to loss of network connection and should be used
+with caution.</p>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p>Due to the way VFIO works, there are certain limitations to which devices can be used with VFIO.
+Mainly it comes down to how IOMMU groups work.
+Any Virtual Function device can be used with VFIO on its own, but physical devices will require either all ports bound to VFIO,
+or some of them bound to VFIO while others not being bound to anything at all.</p>
+<p class="last">If your device is behind a PCI-to-PCI bridge, the bridge will then be part of the IOMMU group in which your device is in.
+Therefore, the bridge driver should also be unbound from the bridge PCI device for VFIO to work with devices behind the bridge.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">While any user can run the <code class="docutils literal notranslate"><span class="pre">dpdk-devbind.py</span></code> script to view the status of the network ports,
+binding or unbinding network ports requires root privileges.</p>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>4.3. Examples</h2>
+<p>To display current device status:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-devbind --status
+</pre></div>
+</div>
+<p>To bind eth1 from the current driver and move to use igb_uio:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-devbind --bind=igb_uio eth1
+</pre></div>
+</div>
+<p>To unbind 0000:01:00.0 from using any driver:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-devbind -u 0000:01:00.0
+</pre></div>
+</div>
+<p>To bind 0000:02:00.0 and 0000:02:00.1 to the ixgbe kernel driver:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-devbind -b ixgbe 02:00.0 02:00.1
+</pre></div>
+</div>
+<p>To check status of all network ports, assign one to the igb_uio driver and check status again:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Check the status of the available devices.
+dpdk-devbind --status
+Network devices using DPDK-compatible driver
+============================================
+&lt;none&gt;
+
+Network devices using kernel driver
+===================================
+0000:0a:00.0 &#39;82599ES 10-Gigabit&#39; if=eth2 drv=ixgbe unused=
+
+
+# Bind the device to igb_uio.
+sudo dpdk-devbind -b igb_uio 0000:0a:00.0
+
+
+# Recheck the status of the devices.
+dpdk-devbind --status
+Network devices using DPDK-compatible driver
+============================================
+0000:0a:00.0 &#39;82599ES 10-Gigabit&#39; drv=igb_uio unused=
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cryptoperf.html" class="btn btn-neutral float-right" title="5. dpdk-test-crypto-perf Application" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pmdinfo.html" class="btn btn-neutral" title="3. dpdk-pmdinfo Application" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

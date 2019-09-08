@@ -1,0 +1,855 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. Live Migration of VM with SR-IOV VF &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="2. Live Migration of VM with Virtio on host running vhost_user" href="lm_virtio_vhost_user.html" />
+    <link rel="prev" title="HowTo Guides" href="index.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">HowTo Guides</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1. Live Migration of VM with SR-IOV VF</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">1.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-setup">1.2. Test Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#live-migration-steps">1.3. Live Migration steps</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#on-host-server-1-terminal-1">1.3.1. On host_server_1: Terminal 1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#on-host-server-1-terminal-2">1.3.2. On host_server_1: Terminal 2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">1.3.3. On host_server_1: Terminal 1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">1.3.4. On host_server_1: Terminal 2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">1.3.5. On host_server_1: Terminal 1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#on-host-server-2-terminal-1">1.3.6. On host_server_2: Terminal 1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#on-host-server-2-terminal-2">1.3.7. On host_server_2: Terminal 2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">1.3.8. On host_server_1: Terminal 2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">1.3.9. On host_server_2: Terminal 1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">1.3.10. On host_server_2: Terminal 2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">1.3.11. On host_server_2: Terminal 1</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-host-scripts">1.4. Sample host scripts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#setup-vf-on-212-46-sh">1.4.1. setup_vf_on_212_46.sh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vm-virtio-vf-one-212-46-sh">1.4.2. vm_virtio_vf_one_212_46.sh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setup-bridge-on-212-46-sh">1.4.3. setup_bridge_on_212_46.sh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#connect-to-qemu-mon-on-host-sh">1.4.4. connect_to_qemu_mon_on_host.sh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setup-vf-on-212-131-sh">1.4.5. setup_vf_on_212_131.sh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vm-virtio-one-migrate-sh">1.4.6. vm_virtio_one_migrate.sh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setup-bridge-on-212-131-sh">1.4.7. setup_bridge_on_212_131.sh</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-vm-scripts">1.5. Sample VM scripts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#setup-dpdk-in-vm-sh">1.5.1. setup_dpdk_in_vm.sh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#run-testpmd-bonding-in-vm-sh">1.5.2. run_testpmd_bonding_in_vm.sh</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sample-switch-configuration">1.6. Sample switch configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#on-switch-terminal-1">1.6.1. On Switch: Terminal 1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#on-switch-terminal-2">1.6.2. On Switch: Terminal 2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">1.6.3. On Switch: Terminal 1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sample-switch-configuration-script">1.6.4. Sample switch configuration script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="lm_virtio_vhost_user.html">2. Live Migration of VM with Virtio on host running vhost_user</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_bifurcation.html">3. Flow Bifurcation How-to Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pvp_reference_benchmark.html">4. PVP reference benchmark setup using testpmd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vfd.html">5. VF daemon (VFd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio_user_for_container_networking.html">6. Virtio_user for Container Networking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio_user_as_exceptional_path.html">7. Virtio_user as Exceptional Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">HowTo Guides</a> &raquo;</li>
+        
+      <li>1. Live Migration of VM with SR-IOV VF</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/howto/lm_bond_virtio_sriov.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="live-migration-of-vm-with-sr-iov-vf">
+<h1>1. Live Migration of VM with SR-IOV VF</h1>
+<div class="section" id="overview">
+<h2>1.1. Overview</h2>
+<p>It is not possible to migrate a Virtual Machine which has an SR-IOV Virtual Function (VF).</p>
+<p>To get around this problem the bonding PMD is used.</p>
+<p>The following sections show an example of how to do this.</p>
+</div>
+<div class="section" id="test-setup">
+<h2>1.2. Test Setup</h2>
+<p>A bonded device is created in the VM.
+The virtio and VF PMD's are added as slaves to the bonded device.
+The VF is set as the primary slave of the bonded device.</p>
+<p>A bridge must be set up on the Host connecting the tap device, which is the
+backend of the Virtio device and the Physical Function (PF) device.</p>
+<p>To test the Live Migration two servers with identical operating systems installed are used.
+KVM and Qemu 2.3 is also required on the servers.</p>
+<p>In this example, the servers have Niantic and or Fortville NIC's installed.
+The NIC's on both servers are connected to a switch
+which is also connected to the traffic generator.</p>
+<p>The switch is configured to broadcast traffic on all the NIC ports.
+A <a class="reference internal" href="#lm-bond-virtio-sriov-switch-conf"><span class="std std-ref">Sample switch configuration</span></a>
+can be found in this section.</p>
+<p>The host is running the Kernel PF driver (ixgbe or i40e).</p>
+<p>The ip address of host_server_1 is 10.237.212.46</p>
+<p>The ip address of host_server_2 is 10.237.212.131</p>
+<div class="figure" id="figure-lm-bond-virtio-sriov">
+<img alt="../_images/lm_bond_virtio_sriov.svg" src="../_images/lm_bond_virtio_sriov.svg" /></div>
+</div>
+<div class="section" id="live-migration-steps">
+<h2>1.3. Live Migration steps</h2>
+<p>The sample scripts mentioned in the steps below can be found in the
+<a class="reference internal" href="#lm-bond-virtio-sriov-host-scripts"><span class="std std-ref">Sample host scripts</span></a> and
+<a class="reference internal" href="#lm-bond-virtio-sriov-vm-scripts"><span class="std std-ref">Sample VM scripts</span></a> sections.</p>
+<div class="section" id="on-host-server-1-terminal-1">
+<h3>1.3.1. On host_server_1: Terminal 1</h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd /root/dpdk/host_scripts</span>
+<span class="go">./setup_vf_on_212_46.sh</span>
+</pre></div>
+</div>
+<p>For Fortville NIC</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./vm_virtio_vf_i40e_212_46.sh</span>
+</pre></div>
+</div>
+<p>For Niantic NIC</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./vm_virtio_vf_one_212_46.sh</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="on-host-server-1-terminal-2">
+<h3>1.3.2. On host_server_1: Terminal 2</h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd /root/dpdk/host_scripts</span>
+<span class="go">./setup_bridge_on_212_46.sh</span>
+<span class="go">./connect_to_qemu_mon_on_host.sh</span>
+<span class="go">(qemu)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>1.3.3. On host_server_1: Terminal 1</h3>
+<p><strong>In VM on host_server_1:</strong></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd /root/dpdk/vm_scripts</span>
+<span class="go">./setup_dpdk_in_vm.sh</span>
+<span class="go">./run_testpmd_bonding_in_vm.sh</span>
+
+<span class="go">testpmd&gt; show port info all</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">mac_addr</span></code> command only works with kernel PF for Niantic</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; mac_addr add port 1 vf 0 AA:BB:CC:DD:EE:FF</span>
+</pre></div>
+</div>
+<p>The syntax of the <code class="docutils literal notranslate"><span class="pre">testpmd</span></code> command is:</p>
+<p>Create bonded device (mode) (socket).</p>
+<p>Mode 1 is active backup.</p>
+<p>Virtio is port 0 (P0).</p>
+<p>VF is port 1 (P1).</p>
+<p>Bonding is port 2 (P2).</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; create bonded device 1 0</span>
+<span class="go">Created new bonded device net_bond_testpmd_0 on (port 2).</span>
+<span class="go">testpmd&gt; add bonding slave 0 2</span>
+<span class="go">testpmd&gt; add bonding slave 1 2</span>
+<span class="go">testpmd&gt; show bonding config 2</span>
+</pre></div>
+</div>
+<p>The syntax of the <code class="docutils literal notranslate"><span class="pre">testpmd</span></code> command is:</p>
+<p>set bonding primary (slave id) (port id)</p>
+<p>Set primary to P1 before starting bonding port.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; set bonding primary 1 2</span>
+<span class="go">testpmd&gt; show bonding config 2</span>
+<span class="go">testpmd&gt; port start 2</span>
+<span class="go">Port 2: 02:09:C0:68:99:A5</span>
+<span class="go">Checking link statuses...</span>
+<span class="go">Port 0 Link Up - speed 10000 Mbps - full-duplex</span>
+<span class="go">Port 1 Link Up - speed 10000 Mbps - full-duplex</span>
+<span class="go">Port 2 Link Up - speed 10000 Mbps - full-duplex</span>
+
+<span class="go">testpmd&gt; show bonding config 2</span>
+</pre></div>
+</div>
+<p>Primary is now P1. There are 2 active slaves.</p>
+<p>Use P2 only for forwarding.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; set portlist 2</span>
+<span class="go">testpmd&gt; show config fwd</span>
+<span class="go">testpmd&gt; set fwd mac</span>
+<span class="go">testpmd&gt; start</span>
+<span class="go">testpmd&gt; show bonding config 2</span>
+</pre></div>
+</div>
+<p>Primary is now P1. There are 2 active slaves.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; show port stats all</span>
+</pre></div>
+</div>
+<p>VF traffic is seen at P1 and P2.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; clear port stats all</span>
+<span class="go">testpmd&gt; set bonding primary 0 2</span>
+<span class="go">testpmd&gt; remove bonding slave 1 2</span>
+<span class="go">testpmd&gt; show bonding config 2</span>
+</pre></div>
+</div>
+<p>Primary is now P0. There is 1 active slave.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; clear port stats all</span>
+<span class="go">testpmd&gt; show port stats all</span>
+</pre></div>
+</div>
+<p>No VF traffic is seen at P0 and P2, VF MAC address still present.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; port stop 1</span>
+<span class="go">testpmd&gt; port close 1</span>
+</pre></div>
+</div>
+<p>Port close should remove VF MAC address, it does not remove perm_addr.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mac_addr</span></code> command only works with the kernel PF for Niantic.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; mac_addr remove 1 AA:BB:CC:DD:EE:FF</span>
+<span class="go">testpmd&gt; port detach 1</span>
+<span class="go">Port &#39;0000:00:04.0&#39; is detached. Now total ports is 2</span>
+<span class="go">testpmd&gt; show port stats all</span>
+</pre></div>
+</div>
+<p>No VF traffic is seen at P0 and P2.</p>
+</div>
+<div class="section" id="id2">
+<h3>1.3.4. On host_server_1: Terminal 2</h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">(qemu) device_del vf1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>1.3.5. On host_server_1: Terminal 1</h3>
+<p><strong>In VM on host_server_1:</strong></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; show bonding config 2</span>
+</pre></div>
+</div>
+<p>Primary is now P0. There is 1 active slave.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; show port info all</span>
+<span class="go">testpmd&gt; show port stats all</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="on-host-server-2-terminal-1">
+<h3>1.3.6. On host_server_2: Terminal 1</h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd /root/dpdk/host_scripts</span>
+<span class="go">./setup_vf_on_212_131.sh</span>
+<span class="go">./vm_virtio_one_migrate.sh</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="on-host-server-2-terminal-2">
+<h3>1.3.7. On host_server_2: Terminal 2</h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./setup_bridge_on_212_131.sh</span>
+<span class="go">./connect_to_qemu_mon_on_host.sh</span>
+<span class="go">(qemu) info status</span>
+<span class="go">VM status: paused (inmigrate)</span>
+<span class="go">(qemu)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>1.3.8. On host_server_1: Terminal 2</h3>
+<p>Check that the switch is up before migrating.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">(qemu) migrate tcp:10.237.212.131:5555</span>
+<span class="go">(qemu) info status</span>
+<span class="go">VM status: paused (postmigrate)</span>
+</pre></div>
+</div>
+<p>For the Niantic NIC.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">(qemu) info migrate</span>
+<span class="go">capabilities: xbzrle: off rdma-pin-all: off auto-converge: off zero-blocks: off</span>
+<span class="go">Migration status: completed</span>
+<span class="go">total time: 11834 milliseconds</span>
+<span class="go">downtime: 18 milliseconds</span>
+<span class="go">setup: 3 milliseconds</span>
+<span class="go">transferred ram: 389137 kbytes</span>
+<span class="go">throughput: 269.49 mbps</span>
+<span class="go">remaining ram: 0 kbytes</span>
+<span class="go">total ram: 1590088 kbytes</span>
+<span class="go">duplicate: 301620 pages</span>
+<span class="go">skipped: 0 pages</span>
+<span class="go">normal: 96433 pages</span>
+<span class="go">normal bytes: 385732 kbytes</span>
+<span class="go">dirty sync count: 2</span>
+<span class="go">(qemu) quit</span>
+</pre></div>
+</div>
+<p>For the Fortville NIC.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">(qemu) info migrate</span>
+<span class="go">capabilities: xbzrle: off rdma-pin-all: off auto-converge: off zero-blocks: off</span>
+<span class="go">Migration status: completed</span>
+<span class="go">total time: 11619 milliseconds</span>
+<span class="go">downtime: 5 milliseconds</span>
+<span class="go">setup: 7 milliseconds</span>
+<span class="go">transferred ram: 379699 kbytes</span>
+<span class="go">throughput: 267.82 mbps</span>
+<span class="go">remaining ram: 0 kbytes</span>
+<span class="go">total ram: 1590088 kbytes</span>
+<span class="go">duplicate: 303985 pages</span>
+<span class="go">skipped: 0 pages</span>
+<span class="go">normal: 94073 pages</span>
+<span class="go">normal bytes: 376292 kbytes</span>
+<span class="go">dirty sync count: 2</span>
+<span class="go">(qemu) quit</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>1.3.9. On host_server_2: Terminal 1</h3>
+<p><strong>In VM on host_server_2:</strong></p>
+<blockquote>
+<div>Hit Enter key. This brings the user to the testpmd prompt.</div></blockquote>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>1.3.10. On host_server_2: Terminal 2</h3>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">(qemu) info status</span>
+<span class="go">VM status: running</span>
+</pre></div>
+</div>
+<p>For the Niantic NIC.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">(qemu) device_add pci-assign,host=06:10.0,id=vf1</span>
+</pre></div>
+</div>
+<p>For the Fortville NIC.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">(qemu) device_add pci-assign,host=03:02.0,id=vf1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>1.3.11. On host_server_2: Terminal 1</h3>
+<p><strong>In VM on host_server_2:</strong></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testomd&gt; show port info all</span>
+<span class="go">testpmd&gt; show port stats all</span>
+<span class="go">testpmd&gt; show bonding config 2</span>
+<span class="go">testpmd&gt; port attach 0000:00:04.0</span>
+<span class="go">Port 1 is attached.</span>
+<span class="go">Now total ports is 3</span>
+<span class="go">Done</span>
+
+<span class="go">testpmd&gt; port start 1</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">mac_addr</span></code> command only works with the Kernel PF for Niantic.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; mac_addr add port 1 vf 0 AA:BB:CC:DD:EE:FF</span>
+<span class="go">testpmd&gt; show port stats all.</span>
+<span class="go">testpmd&gt; show config fwd</span>
+<span class="go">testpmd&gt; show bonding config 2</span>
+<span class="go">testpmd&gt; add bonding slave 1 2</span>
+<span class="go">testpmd&gt; set bonding primary 1 2</span>
+<span class="go">testpmd&gt; show bonding config 2</span>
+<span class="go">testpmd&gt; show port stats all</span>
+</pre></div>
+</div>
+<p>VF traffic is seen at P1 (VF) and P2 (Bonded device).</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd&gt; remove bonding slave 0 2</span>
+<span class="go">testpmd&gt; show bonding config 2</span>
+<span class="go">testpmd&gt; port stop 0</span>
+<span class="go">testpmd&gt; port close 0</span>
+<span class="go">testpmd&gt; port detach 0</span>
+<span class="go">Port &#39;0000:00:03.0&#39; is detached. Now total ports is 2</span>
+
+<span class="go">testpmd&gt; show port info all</span>
+<span class="go">testpmd&gt; show config fwd</span>
+<span class="go">testpmd&gt; show port stats all</span>
+</pre></div>
+</div>
+<p>VF traffic is seen at P1 (VF) and P2 (Bonded device).</p>
+</div>
+</div>
+<div class="section" id="sample-host-scripts">
+<span id="lm-bond-virtio-sriov-host-scripts"></span><h2>1.4. Sample host scripts</h2>
+<div class="section" id="setup-vf-on-212-46-sh">
+<h3>1.4.1. setup_vf_on_212_46.sh</h3>
+<p>Set up Virtual Functions on host_server_1</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="c1"># This script is run on the host 10.237.212.46 to setup the VF</span>
+
+<span class="c1"># set up Niantic VF</span>
+cat /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">09</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+<span class="nb">echo</span> <span class="m">1</span> &gt; /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">09</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+cat /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">09</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+rmmod ixgbevf
+
+<span class="c1"># set up Fortville VF</span>
+cat /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">02</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+<span class="nb">echo</span> <span class="m">1</span> &gt; /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">02</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+cat /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">02</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+rmmod i40evf
+</pre></div>
+</div>
+</div>
+<div class="section" id="vm-virtio-vf-one-212-46-sh">
+<h3>1.4.2. vm_virtio_vf_one_212_46.sh</h3>
+<p>Setup Virtual Machine on host_server_1</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="c1"># Path to KVM tool</span>
+<span class="nv">KVM_PATH</span><span class="o">=</span><span class="s2">&quot;/usr/bin/qemu-system-x86_64&quot;</span>
+
+<span class="c1"># Guest Disk image</span>
+<span class="nv">DISK_IMG</span><span class="o">=</span><span class="s2">&quot;/home/username/disk_image/virt1_sml.disk&quot;</span>
+
+<span class="c1"># Number of guest cpus</span>
+<span class="nv">VCPUS_NR</span><span class="o">=</span><span class="s2">&quot;4&quot;</span>
+
+<span class="c1"># Memory</span>
+<span class="nv">MEM</span><span class="o">=</span><span class="m">1536</span>
+
+taskset -c <span class="m">1</span>-5 <span class="nv">$KVM_PATH</span> <span class="se">\</span>
+ -enable-kvm <span class="se">\</span>
+ -m <span class="nv">$MEM</span> <span class="se">\</span>
+ -smp <span class="nv">$VCPUS_NR</span> <span class="se">\</span>
+ -cpu host <span class="se">\</span>
+ -name VM1 <span class="se">\</span>
+ -no-reboot <span class="se">\</span>
+ -net none <span class="se">\</span>
+ -vnc none -nographic <span class="se">\</span>
+ -hda <span class="nv">$DISK_IMG</span> <span class="se">\</span>
+ -netdev <span class="nv">type</span><span class="o">=</span>tap,id<span class="o">=</span>net1,script<span class="o">=</span>no,downscript<span class="o">=</span>no,ifname<span class="o">=</span>tap1 <span class="se">\</span>
+ -device virtio-net-pci,netdev<span class="o">=</span>net1,mac<span class="o">=</span>CC:BB:BB:BB:BB:BB <span class="se">\</span>
+ -device pci-assign,host<span class="o">=</span><span class="m">09</span>:10.0,id<span class="o">=</span>vf1 <span class="se">\</span>
+ -monitor telnet::3333,server,nowait
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup-bridge-on-212-46-sh">
+<h3>1.4.3. setup_bridge_on_212_46.sh</h3>
+<p>Setup bridge on host_server_1</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="c1"># This script is run on the host 10.237.212.46 to setup the bridge</span>
+<span class="c1"># for the Tap device and the PF device.</span>
+<span class="c1"># This enables traffic to go from the PF to the Tap to the Virtio PMD in the VM.</span>
+
+<span class="c1"># ens3f0 is the Niantic NIC</span>
+<span class="c1"># ens6f0 is the Fortville NIC</span>
+
+ifconfig ens3f0 down
+ifconfig tap1 down
+ifconfig ens6f0 down
+ifconfig virbr0 down
+
+brctl show virbr0
+brctl addif virbr0 ens3f0
+brctl addif virbr0 ens6f0
+brctl addif virbr0 tap1
+brctl show virbr0
+
+ifconfig ens3f0 up
+ifconfig tap1 up
+ifconfig ens6f0 up
+ifconfig virbr0 up
+</pre></div>
+</div>
+</div>
+<div class="section" id="connect-to-qemu-mon-on-host-sh">
+<h3>1.4.4. connect_to_qemu_mon_on_host.sh</h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="c1"># This script is run on both hosts when the VM is up,</span>
+<span class="c1"># to connect to the Qemu Monitor.</span>
+
+telnet <span class="m">0</span> <span class="m">3333</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup-vf-on-212-131-sh">
+<h3>1.4.5. setup_vf_on_212_131.sh</h3>
+<p>Set up Virtual Functions on host_server_2</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="c1"># This script is run on the host 10.237.212.131 to setup the VF</span>
+
+<span class="c1"># set up Niantic VF</span>
+cat /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">06</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+<span class="nb">echo</span> <span class="m">1</span> &gt; /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">06</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+cat /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">06</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+rmmod ixgbevf
+
+<span class="c1"># set up Fortville VF</span>
+cat /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">03</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+<span class="nb">echo</span> <span class="m">1</span> &gt; /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">03</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+cat /sys/bus/pci/devices/0000<span class="se">\:</span><span class="m">03</span><span class="se">\:</span><span class="m">00</span>.0/sriov_numvfs
+rmmod i40evf
+</pre></div>
+</div>
+</div>
+<div class="section" id="vm-virtio-one-migrate-sh">
+<h3>1.4.6. vm_virtio_one_migrate.sh</h3>
+<p>Setup Virtual Machine on host_server_2</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="c1"># Start the VM on host_server_2 with the same parameters except without the VF</span>
+<span class="c1"># parameters, as the VM on host_server_1, in migration-listen mode</span>
+<span class="c1"># (-incoming tcp:0:5555)</span>
+
+<span class="c1"># Path to KVM tool</span>
+<span class="nv">KVM_PATH</span><span class="o">=</span><span class="s2">&quot;/usr/bin/qemu-system-x86_64&quot;</span>
+
+<span class="c1"># Guest Disk image</span>
+<span class="nv">DISK_IMG</span><span class="o">=</span><span class="s2">&quot;/home/username/disk_image/virt1_sml.disk&quot;</span>
+
+<span class="c1"># Number of guest cpus</span>
+<span class="nv">VCPUS_NR</span><span class="o">=</span><span class="s2">&quot;4&quot;</span>
+
+<span class="c1"># Memory</span>
+<span class="nv">MEM</span><span class="o">=</span><span class="m">1536</span>
+
+taskset -c <span class="m">1</span>-5 <span class="nv">$KVM_PATH</span> <span class="se">\</span>
+ -enable-kvm <span class="se">\</span>
+ -m <span class="nv">$MEM</span> <span class="se">\</span>
+ -smp <span class="nv">$VCPUS_NR</span> <span class="se">\</span>
+ -cpu host <span class="se">\</span>
+ -name VM1 <span class="se">\</span>
+ -no-reboot <span class="se">\</span>
+ -net none <span class="se">\</span>
+ -vnc none -nographic <span class="se">\</span>
+ -hda <span class="nv">$DISK_IMG</span> <span class="se">\</span>
+ -netdev <span class="nv">type</span><span class="o">=</span>tap,id<span class="o">=</span>net1,script<span class="o">=</span>no,downscript<span class="o">=</span>no,ifname<span class="o">=</span>tap1 <span class="se">\</span>
+ -device virtio-net-pci,netdev<span class="o">=</span>net1,mac<span class="o">=</span>CC:BB:BB:BB:BB:BB <span class="se">\</span>
+ -incoming tcp:0:5555 <span class="se">\</span>
+ -monitor telnet::3333,server,nowait
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup-bridge-on-212-131-sh">
+<h3>1.4.7. setup_bridge_on_212_131.sh</h3>
+<p>Setup bridge on host_server_2</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="c1"># This script is run on the host to setup the bridge</span>
+<span class="c1"># for the Tap device and the PF device.</span>
+<span class="c1"># This enables traffic to go from the PF to the Tap to the Virtio PMD in the VM.</span>
+
+<span class="c1"># ens4f0 is the Niantic NIC</span>
+<span class="c1"># ens5f0 is the Fortville NIC</span>
+
+ifconfig ens4f0 down
+ifconfig tap1 down
+ifconfig ens5f0 down
+ifconfig virbr0 down
+
+brctl show virbr0
+brctl addif virbr0 ens4f0
+brctl addif virbr0 ens5f0
+brctl addif virbr0 tap1
+brctl show virbr0
+
+ifconfig ens4f0 up
+ifconfig tap1 up
+ifconfig ens5f0 up
+ifconfig virbr0 up
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sample-vm-scripts">
+<span id="lm-bond-virtio-sriov-vm-scripts"></span><h2>1.5. Sample VM scripts</h2>
+<div class="section" id="setup-dpdk-in-vm-sh">
+<h3>1.5.1. setup_dpdk_in_vm.sh</h3>
+<p>Set up DPDK in the Virtual Machine</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="c1"># this script matches the vm_virtio_vf_one script</span>
+<span class="c1"># virtio port is 03</span>
+<span class="c1"># vf port is 04</span>
+
+cat  /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+<span class="nb">echo</span> <span class="m">1024</span> &gt; /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+cat  /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+
+ifconfig -a
+/root/dpdk/usertools/dpdk-devbind.py --status
+
+rmmod virtio-pci ixgbevf
+
+modprobe uio
+insmod /root/dpdk/x86_64-default-linuxapp-gcc/kmod/igb_uio.ko
+
+/root/dpdk/usertools/dpdk-devbind.py -b igb_uio <span class="m">0000</span>:00:03.0
+/root/dpdk/usertools/dpdk-devbind.py -b igb_uio <span class="m">0000</span>:00:04.0
+
+/root/dpdk/usertools/dpdk-devbind.py --status
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-testpmd-bonding-in-vm-sh">
+<h3>1.5.2. run_testpmd_bonding_in_vm.sh</h3>
+<p>Run testpmd in the Virtual Machine.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="c1"># Run testpmd in the VM</span>
+
+<span class="c1"># The test system has 8 cpus (0-7), use cpus 2-7 for VM</span>
+<span class="c1"># Use taskset -pc &lt;core number&gt; &lt;thread_id&gt;</span>
+
+<span class="c1"># use for bonding of virtio and vf tests in VM</span>
+
+/root/dpdk/x86_64-default-linuxapp-gcc/app/testpmd <span class="se">\</span>
+-l <span class="m">0</span>-3 -n <span class="m">4</span> --socket-mem <span class="m">350</span> --  --i --port-topology<span class="o">=</span>chained
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sample-switch-configuration">
+<span id="lm-bond-virtio-sriov-switch-conf"></span><h2>1.6. Sample switch configuration</h2>
+<p>The Intel switch is used to connect the traffic generator to the
+NIC's on host_server_1 and host_server_2.</p>
+<p>In order to run the switch configuration two console windows are required.</p>
+<p>Log in as root in both windows.</p>
+<p>TestPointShared, run_switch.sh and load /root/switch_config must be executed
+in the sequence below.</p>
+<div class="section" id="on-switch-terminal-1">
+<h3>1.6.1. On Switch: Terminal 1</h3>
+<p>run TestPointShared</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">/usr/bin/TestPointShared</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="on-switch-terminal-2">
+<h3>1.6.2. On Switch: Terminal 2</h3>
+<p>execute run_switch.sh</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">/root/run_switch.sh</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>1.6.3. On Switch: Terminal 1</h3>
+<p>load switch configuration</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">load /root/switch_config</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-switch-configuration-script">
+<h3>1.6.4. Sample switch configuration script</h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">/root/switch_config</span></code> script:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># TestPoint History</span>
+show port <span class="m">1</span>,5,9,13,17,21,25
+<span class="nb">set</span> port <span class="m">1</span>,5,9,13,17,21,25 up
+show port <span class="m">1</span>,5,9,13,17,21,25
+del acl <span class="m">1</span>
+create acl <span class="m">1</span>
+create acl-port-set
+create acl-port-set
+add port port-set <span class="m">1</span> <span class="m">0</span>
+add port port-set <span class="m">5</span>,9,13,17,21,25 <span class="m">1</span>
+create acl-rule <span class="m">1</span> <span class="m">1</span>
+add acl-rule condition <span class="m">1</span> <span class="m">1</span> port-set <span class="m">1</span>
+add acl-rule action <span class="m">1</span> <span class="m">1</span> redirect <span class="m">1</span>
+apply acl
+create vlan <span class="m">1000</span>
+add vlan port <span class="m">1000</span> <span class="m">1</span>,5,9,13,17,21,25
+<span class="nb">set</span> vlan tagging <span class="m">1000</span> <span class="m">1</span>,5,9,13,17,21,25 tag
+<span class="nb">set</span> switch config flood_ucast fwd
+show port stats all <span class="m">1</span>,5,9,13,17,21,25
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="lm_virtio_vhost_user.html" class="btn btn-neutral float-right" title="2. Live Migration of VM with Virtio on host running vhost_user" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="HowTo Guides" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

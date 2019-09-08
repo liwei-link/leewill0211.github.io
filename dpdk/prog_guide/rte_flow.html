@@ -1,0 +1,2622 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8. 通用流API (rte_flow) &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="9. 加密设备库" href="cryptodev_lib.html" />
+    <link rel="prev" title="7. 轮询模式驱动" href="poll_mode_drv.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8. 通用流API (rte_flow)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">8.1. 综述</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">8.2. 流规则</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">8.2.1. 描述</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">8.2.2. 属性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pattern-item">8.2.3. 模式项(Pattern item)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">8.2.4. 匹配模式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">8.2.5. 元模式项类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">8.2.6. 数据匹配项类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">8.2.7. 动作</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">8.2.8. 动作类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">8.2.9. 负数类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">8.2.10. 计划中的类型</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">8.3. 规则管理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id20">8.3.1. 校验</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id21">8.3.2. 创建</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id22">8.3.3. 销毁</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flush">8.3.4. 刷新(flush)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id23">8.3.5. 查询</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">8.4. 详细错误报告</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25">8.5. 注意事项</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pmd">8.6. PMD接口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26">8.7. 设备兼容性</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id27">8.7.1. 全局位掩码</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id28">8.7.2. 不支持的(协议)层类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id29">8.7.3. <code class="docutils literal notranslate"><span class="pre">ANY</span></code> 模式项</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id30">8.7.4. 不支持的动作</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id31">8.7.5. 流规则优先级</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id32">8.8. 未来发展</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#api">8.9. API 迁移</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#macvlan-to-eth-vf-pf">8.9.1. <code class="docutils literal notranslate"><span class="pre">MACVLAN</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code> → <code class="docutils literal notranslate"><span class="pre">VF</span></code>, <code class="docutils literal notranslate"><span class="pre">PF</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ethertype-to-eth-queue-drop">8.9.2. <code class="docutils literal notranslate"><span class="pre">ETHERTYPE</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code>, <code class="docutils literal notranslate"><span class="pre">DROP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flexible-to-raw-queue">8.9.3. <code class="docutils literal notranslate"><span class="pre">FLEXIBLE</span></code> to <code class="docutils literal notranslate"><span class="pre">RAW</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syn-to-tcp-queue">8.9.4. <code class="docutils literal notranslate"><span class="pre">SYN</span></code> to <code class="docutils literal notranslate"><span class="pre">TCP</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ntuple-to-ipv4-tcp-udp-queue">8.9.5. <code class="docutils literal notranslate"><span class="pre">NTUPLE</span></code> to <code class="docutils literal notranslate"><span class="pre">IPV4</span></code>, <code class="docutils literal notranslate"><span class="pre">TCP</span></code>, <code class="docutils literal notranslate"><span class="pre">UDP</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tunnel-to-eth-ipv4-ipv6-vxlan-or-other-queue">8.9.6. <code class="docutils literal notranslate"><span class="pre">TUNNEL</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code>, <code class="docutils literal notranslate"><span class="pre">IPV4</span></code>, <code class="docutils literal notranslate"><span class="pre">IPV6</span></code>, <code class="docutils literal notranslate"><span class="pre">VXLAN</span></code> (or other) → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fdir-to-most-item-types-queue-drop-passthru">8.9.7. <code class="docutils literal notranslate"><span class="pre">FDIR</span></code> to most item types → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code>, <code class="docutils literal notranslate"><span class="pre">DROP</span></code>, <code class="docutils literal notranslate"><span class="pre">PASSTHRU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hash">8.9.8. <code class="docutils literal notranslate"><span class="pre">HASH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#l2-tunnel-to-void-vxlan">8.9.9. <code class="docutils literal notranslate"><span class="pre">L2_TUNNEL</span></code> to <code class="docutils literal notranslate"><span class="pre">VOID</span></code> → <code class="docutils literal notranslate"><span class="pre">VXLAN</span></code> (或其他)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>8. 通用流API (rte_flow)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/rte_flow.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-rte-flow">
+<span id="generic-flow-api"></span><h1>8. 通用流API (rte_flow)</h1>
+<div class="section" id="id1">
+<h2>8.1. 综述</h2>
+<p>该API提供了通用的硬件配置方法，使硬件能够根据用于定义的规则匹配特定出入口流量，
+改变硬件工作方式和查询相关计数器。</p>
+<p>该API中所有符号名都是以 <em>rte_flow</em> 为前缀，并且定义在 <code class="docutils literal notranslate"><span class="pre">rte_flow.h</span></code> 文件中。</p>
+<ul class="simple">
+<li>可以匹配的对象有包数据(协议头，负载)和属性(比如，物理网口，虚拟设备功能ID)</li>
+<li>操作有丢弃包，传递到指定队列，传递到虚拟/物理设备处理函数或者端口，
+执行隧道卸载(tunnel offloads)，增加标签等。</li>
+</ul>
+<p>该API是用来替换旧过滤框架(其包含了旧框架所有功能和过滤类型)的，比旧过滤框架更高级一些。
+该API为所有PMD提供了清楚且通用的使用接口。</p>
+<p>旧应用中API更新方法，参考 <a class="reference internal" href="#api">API 迁移</a>。</p>
+</div>
+<div class="section" id="id2">
+<h2>8.2. 流规则</h2>
+<div class="section" id="id3">
+<h3>8.2.1. 描述</h3>
+<p>流规则是规则属性的组合，规则属性包括匹配模式和动作列表。流规则构成了该API的基础。</p>
+<p>一个流规则能包含多个不同的动作(如，计数，转发前封包和解包)，
+不需要多个流规则来实现多个动作。
+也不需要应用处理不同动作顺序的硬件实现细节。</p>
+<p>流规则支持优先级，比如一个包匹配两个流规则，那么优先级高的规则会被优先处理。
+但是，无法保证硬件支持多优先级。当支持时，可用的优先级往往比较少，
+这就是为什么优先级可以有PMD在软件层面实现(比如可以通过重新排序规则来模拟)。</p>
+<p>为了尽量保持硬件无关性，默认认为所有规则有相同的优先级，
+也就是重叠规则(一个包匹配多个过滤器)的动作执行顺序未定义。</p>
+<p>PMD可以拒绝在同一个优先级上创建重叠规则(比如，匹配模式已存在)。</p>
+<p>因此在给定优先级上没有重叠规则时，其结果是可预见的。这样的规则在所有协议层都可以完美工作。</p>
+<p>流规则也可以分组，流规则优先级被分配到他们所属的组上。因此，
+给定组内的流规则要么在其他组的前面处理，要么在其他组后面处理。</p>
+<p>在内部，一个规则多动作的支持可能是基于非默认硬件优先级实现的，
+因此这两种特性可能不会同时对应用可用。</p>
+<p>考虑到设备允许的模式/动作组合不能预先知道，会导致暴露大量无用的功能。
+DPDK提供了从当设备配置状态中验证给定规则的方法。</p>
+<p>这可以让应用在初始化时(启动数据路径前)检查它需要的规则类型是否支持。
+该方法可以在任何时候使用，前提条件是规则所需的资源应该存在(比如，一个目标RX队列应先被配置好)</p>
+<p>每一个定义好的规则都和由PMD管理的不透明句柄(opaque handle)相关联，应用应该维护它。
+这些句柄可以用于查询和管理规则，比如获取计数器或其他数据，销毁规则。</p>
+<p>为避免在PMD侧出现资源泄露，应用在释放相关资源(如，队列和端口)前必须明确销毁句柄。</p>
+<p>以下章节包括:</p>
+<ul class="simple">
+<li><strong>属性</strong> (由 <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_flow_attr</span></code> 表示): 流规则的属性，比如方向(入口或出口)和优先级。</li>
+<li><strong>模式项</strong> (由 <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_flow_item</span></code> 表示): 匹配模式的一部分，匹配对象是特定包数据或者流量属性。
+它描述了模式本身的属性，比如反向匹配。</li>
+<li><strong>匹配模式</strong>: 要查找的流量属性，任意项组合。</li>
+<li><strong>动作</strong> (由 <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_flow_action</span></code> 表示): 包匹配时要执行的操作。</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3>8.2.2. 属性</h3>
+<div class="section" id="id5">
+<h4>8.2.2.1. 属性: 组</h4>
+<p>可以给流规则指定组号进行分组。组号越小优先级越高。组0拥有最高优先级。</p>
+<p>虽然是可选的，但还是鼓励应用尽可能多的把类似的规则分为一组，
+这样可以充分利用硬件能力(比如，最佳匹配)和解决(打破)限制(比如，一组只能有一个匹配模式)。</p>
+<p>注意，无法保证对多组的支持。</p>
+</div>
+<div class="section" id="id6">
+<h4>8.2.2.2. 属性: 优先级</h4>
+<p>优先级可以分配给流规则。在规则组中，优先级值越小优先级越高，0是最高的。</p>
+<p>组8中优先级0的规则的优先级总是低于组0中优先级8的规则的。</p>
+<p>组和优先级是任意的，并且取决于应用，它们不必是连续的，也不必从0开始。
+但是，不同设备的组和优先级的最大数量可能受已存在的流规则影响。</p>
+<p>如果一个包匹配多条规则，结果是未定义的。它可能被意处理，
+比如复制，甚至引发不可恢复的错误。</p>
+<p>注意，无法保证对多优先级的支持。</p>
+</div>
+<div class="section" id="id7">
+<h4>8.2.2.3. 属性: 流量方向</h4>
+<p>流规则可以应用到出口/入口流量。</p>
+<p>我们至少要为流规则指定一个方向。但不限于一个方向，同一个流规则可以应用到两个方向上。</p>
+<p>不建议同时在两个方向上指定一个规则，但在一些案例中是合理的(比如，共享计数器)</p>
+</div>
+</div>
+<div class="section" id="pattern-item">
+<h3>8.2.3. 模式项(Pattern item)</h3>
+<p>模式项分为两类:</p>
+<ul class="simple">
+<li>协议头和包数据的匹配 (ANY, RAW, ETH, VLAN, IPV4,
+IPV6, ICMP, UDP, TCP, SCTP, VXLAN, MPLS, GRE 等), 通常和一个结构体相关。</li>
+<li>元数据和模式处理匹配 (END, VOID, INVERT, PF,
+VF, PORT 等), 通常没有结构体与之相关。</li>
+</ul>
+<p>模式项详情结构体用于匹配指定的协议(或模式的属性)。文档中会描述每个模式项。</p>
+<p>目前，一个模式项类型可以有三个相关结构体:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">spec</span></code>: 匹配值 (如，IPv4地址)。</li>
+<li><code class="docutils literal notranslate"><span class="pre">last</span></code>: <code class="docutils literal notranslate"><span class="pre">spec</span></code> 字段的范围上限。</li>
+<li><code class="docutils literal notranslate"><span class="pre">mask</span></code>: 位掩码应用于 <code class="docutils literal notranslate"><span class="pre">spec</span></code> 和 <code class="docutils literal notranslate"><span class="pre">last</span></code> ，目的是区分哪些值算在内或者哪些值排除在外。
+(比如，用于匹配IPv4前缀)。</li>
+</ul>
+<p>使用限制和规范:</p>
+<ul class="simple">
+<li>只设置 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 或者 <code class="docutils literal notranslate"><span class="pre">last</span></code> ，不设置 <code class="docutils literal notranslate"><span class="pre">spec</span></code> 是错误的。</li>
+<li><code class="docutils literal notranslate"><span class="pre">last</span></code> 等于0或者等于相关的  <code class="docutils literal notranslate"><span class="pre">spec</span></code> 会被忽略；因为这无法指定一个范围。
+不支持比 <code class="docutils literal notranslate"><span class="pre">spec</span></code> 小的非零值。</li>
+<li>设置 <code class="docutils literal notranslate"><span class="pre">spec</span></code> 而不设置 <code class="docutils literal notranslate"><span class="pre">mask</span></code> ，PMD会使用该模式项默认的mask
+(常量 <code class="docutils literal notranslate"><span class="pre">rte_flow_item_{name}_mask</span></code> )。</li>
+<li>当这些都不设置(假设模式项类型支持)时等价于空(零) <code class="docutils literal notranslate"><span class="pre">mask</span></code> 宽(未指定)匹配。</li>
+<li><code class="docutils literal notranslate"><span class="pre">mask</span></code> 是一个简单的位掩码，在解析 <code class="docutils literal notranslate"><span class="pre">spec</span></code> 和 <code class="docutils literal notranslate"><span class="pre">last</span></code> 内容前应用。
+(如使用不当会产生不可预期的结果) 比如，对于IPv4地址，<code class="docutils literal notranslate"><span class="pre">spec</span></code> 为 <em>10.1.2.3</em>，
+<code class="docutils literal notranslate"><span class="pre">last</span></code> 为 <em>10.3.4.5</em> , <code class="docutils literal notranslate"><span class="pre">mask</span></code> 为 <em>255.255.0.0</em> ，
+那么最终有效范围变成 <em>10.1.0.0</em> to <em>10.3.255.255</em>。</li>
+</ul>
+<p>模式项匹配以太网头的例子:</p>
+<span id="table-rte-flow-pattern-item-example"></span><table border="1" class="docutils" id="id33">
+<caption><span class="caption-number">表 8.1 </span><span class="caption-text">Ethernet 项</span></caption>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Subfield</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3"><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">src</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">00:01:02:03:04</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">dst</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">00:2a:66:00:01</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">type</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0x22aa</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td colspan="2">未指定</td>
+</tr>
+<tr class="row-even"><td rowspan="3"><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">src</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">00:ff:ff:ff:00</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">dst</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">00:00:00:00:ff</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">type</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">0x0000</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>无掩码位代表可以是任意值(如下的 <code class="docutils literal notranslate"><span class="pre">?</span></code>)，因此，像下面的以太网头可以匹配到:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">src</span></code>: <code class="docutils literal notranslate"><span class="pre">??:01:02:03:??</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">dst</span></code>: <code class="docutils literal notranslate"><span class="pre">??:??:??:??:01</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">type</span></code>: <code class="docutils literal notranslate"><span class="pre">0x????</span></code></li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h3>8.2.4. 匹配模式</h3>
+<p>匹配模式中与协议相关的模式项是从最底层协议开始匹配的(组成一个模式项栈)。该限制不会应用到元模式项，
+元模式项可以放在模式中任何位置，并且不会影响到最终的匹配模式。</p>
+<p>匹配模式由END项终结。</p>
+<p>例子:</p>
+<span id="table-rte-flow-tcpv4-as-l4"></span><table border="1" class="docutils" id="id34">
+<caption><span class="caption-number">表 8.2 </span><span class="caption-text">TCPv4 as L4</span></caption>
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>Ethernet</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>IPv4</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>TCP</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<span id="table-rte-flow-tcpv6-in-vxlan"></span><table border="1" class="docutils" id="id35">
+<caption><span class="caption-number">表 8.3 </span><span class="caption-text">TCPv6 in VXLAN</span></caption>
+<colgroup>
+<col width="37%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>Ethernet</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>IPv4</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>UDP</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>VXLAN</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>Ethernet</td>
+</tr>
+<tr class="row-odd"><td>5</td>
+<td>IPv6</td>
+</tr>
+<tr class="row-even"><td>6</td>
+<td>TCP</td>
+</tr>
+<tr class="row-odd"><td>7</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<span id="table-rte-flow-tcpv4-as-l4-meta"></span><table border="1" class="docutils" id="id36">
+<caption><span class="caption-number">表 8.4 </span><span class="caption-text">TCPv4 as L4 with meta items</span></caption>
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>VOID</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Ethernet</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>VOID</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>IPv4</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>TCP</td>
+</tr>
+<tr class="row-odd"><td>5</td>
+<td>VOID</td>
+</tr>
+<tr class="row-even"><td>6</td>
+<td>VOID</td>
+</tr>
+<tr class="row-odd"><td>7</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+<p>上面的例子说明了只要保持包数据模式项的正确的叠放顺序，
+那么元模式项是不会影响包数据模式项的。所以上面的例子中匹配模式和&quot;TCPv4 as L4&quot;一样。</p>
+<span id="table-rte-flow-udpv6-anywhere"></span><table border="1" class="docutils" id="id37">
+<caption><span class="caption-number">表 8.5 </span><span class="caption-text">UDPv6 anywhere</span></caption>
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>IPv6</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>UDP</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+<p>如果PMD支持，省略栈底的一个或几个协议层(如上例未指定以太网层)，
+则会查找包中任意位置。</p>
+<p>这种情况下未指定封装负载(比如，VXLAN负载)要匹配哪种包，可能是封装的内部包，外部包或者两者都是。</p>
+<span id="table-rte-flow-invalid-l3"></span><table border="1" class="docutils" id="id38">
+<caption><span class="caption-number">表 8.6 </span><span class="caption-text">无效, 缺少L3协议</span></caption>
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>Ethernet</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>UDP</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+<p>上面的匹配模式中因为在L2(Ethernet)和L4(UDP)之间未指定L3协议，所以是无效的。
+层级的缺失只能发生在栈顶或栈底。</p>
+</div>
+<div class="section" id="id9">
+<h3>8.2.5. 元模式项类型</h3>
+<p>元模式项匹配的是元数据，或者影响模式处理而不是直接匹配包数据，大多数的元模式项不需要指定数据结构。
+这个例外可以让元模式项处在栈中任何位置并不会产生副作用。</p>
+<div class="section" id="end">
+<h4>8.2.5.1. 元模式项: <code class="docutils literal notranslate"><span class="pre">END</span></code></h4>
+<p>模式项列表的结束标志。防止超范围的模式项处理，从而结束模式匹配。</p>
+<ul class="simple">
+<li>为了方便起见，它的数值为0。</li>
+<li>PMD必须支持。</li>
+<li>忽略 <code class="docutils literal notranslate"><span class="pre">spec</span></code>, <code class="docutils literal notranslate"><span class="pre">last</span></code> 和 <code class="docutils literal notranslate"><span class="pre">mask</span></code>。</li>
+</ul>
+<span id="table-rte-flow-item-end"></span><table border="1" class="docutils" id="id39">
+<caption><span class="caption-number">表 8.7 </span><span class="caption-text">END</span></caption>
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>ignored</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>ignored</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>ignored</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="void">
+<h4>8.2.5.2. 元模式项: <code class="docutils literal notranslate"><span class="pre">VOID</span></code></h4>
+<p>该元模式项是个占位符。PMD在处理时会忽略并丢弃该元模式项。</p>
+<ul class="simple">
+<li>PMD必须支持。</li>
+<li>忽略 <code class="docutils literal notranslate"><span class="pre">spec</span></code>, <code class="docutils literal notranslate"><span class="pre">last</span></code> 和 <code class="docutils literal notranslate"><span class="pre">mask</span></code>。</li>
+</ul>
+<span id="table-rte-flow-item-void"></span><table border="1" class="docutils" id="id40">
+<caption><span class="caption-number">表 8.8 </span><span class="caption-text">VOID</span></caption>
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>ignored</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>ignored</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>ignored</td>
+</tr>
+</tbody>
+</table>
+<p>该类型的一个使用案例是流规则快速共享通用前缀，不用重新申请内存，仅更新模式项类型:</p>
+<span id="table-rte-flow-item-void-example"></span><table border="1" class="docutils" id="id41">
+<caption><span class="caption-number">表 8.9 </span><span class="caption-text">TCP, UDP or ICMP as L4</span></caption>
+<colgroup>
+<col width="28%" />
+<col width="24%" />
+<col width="24%" />
+<col width="24%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head" colspan="3">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td colspan="3">Ethernet</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td colspan="3">IPv4</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>UDP</td>
+<td>VOID</td>
+<td>VOID</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>VOID</td>
+<td>TCP</td>
+<td>VOID</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>VOID</td>
+<td>VOID</td>
+<td>ICMP</td>
+</tr>
+<tr class="row-odd"><td>5</td>
+<td colspan="3">END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="invert">
+<h4>8.2.5.3. 元模式项: <code class="docutils literal notranslate"><span class="pre">INVERT</span></code></h4>
+<p>反向匹配, 也就是处理与该模式不匹配的包。</p>
+<ul class="simple">
+<li>忽略 <code class="docutils literal notranslate"><span class="pre">spec</span></code>, <code class="docutils literal notranslate"><span class="pre">last</span></code> and <code class="docutils literal notranslate"><span class="pre">mask</span></code>。</li>
+</ul>
+<span id="table-rte-flow-item-invert"></span><table border="1" class="docutils" id="id42">
+<caption><span class="caption-number">表 8.10 </span><span class="caption-text">INVERT</span></caption>
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>ignored</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>ignored</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>ignored</td>
+</tr>
+</tbody>
+</table>
+<p>使用案例，仅匹配非TCPv4包:</p>
+<span id="table-rte-flow-item-invert-example"></span><table border="1" class="docutils" id="id43">
+<caption><span class="caption-number">表 8.11 </span><span class="caption-text">Anything but TCPv4</span></caption>
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>INVERT</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>Ethernet</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>IPv4</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>TCP</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="pf">
+<h4>8.2.5.4. 元模式项: <code class="docutils literal notranslate"><span class="pre">PF</span></code></h4>
+<p>匹配发送到设备物理功能的包。</p>
+<p>如果底层设备功能无法正常接收匹配流量，则使用该元模式项可以防止流量到达该设备，
+除非流规则包含 <a class="reference internal" href="#id15">动作: PF</a>。默认数据包不会在设备实例间复制。</p>
+<ul class="simple">
+<li>该元模式项如果应用到VF设备很可能会返回错误或者根本不会匹配到任何流量。</li>
+<li>可以和任何数量的  <a class="reference internal" href="#vf">元模式项: VF</a> 组合匹配PF和VF流量。</li>
+<li><code class="docutils literal notranslate"><span class="pre">spec</span></code>, <code class="docutils literal notranslate"><span class="pre">last</span></code> 和 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 不允许设置。</li>
+</ul>
+<span id="table-rte-flow-item-pf"></span><table border="1" class="docutils" id="id44">
+<caption><span class="caption-number">表 8.12 </span><span class="caption-text">PF</span></caption>
+<colgroup>
+<col width="59%" />
+<col width="41%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>unset</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>unset</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>unset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="vf">
+<h4>8.2.5.5. 元模式项: <code class="docutils literal notranslate"><span class="pre">VF</span></code></h4>
+<p>匹配发送到设备虚拟功能的包。</p>
+<p>如果底层设备功能无法正常接收匹配流量，则使用该元模式项可以防止流量到达该设备，
+除非流规则包含 <a class="reference internal" href="#id16">动作: VF</a> 。默认数据包不会在设备实例间复制。</p>
+<ul class="simple">
+<li>该元模式项如果应用到VF设备很可能会返回错误或者根本不会匹配到任何流量。</li>
+<li>可以和任何数量的  <a class="reference internal" href="#vf">元模式项: VF</a> 组合匹配PF和VF流量。</li>
+<li><code class="docutils literal notranslate"><span class="pre">spec</span></code>, <code class="docutils literal notranslate"><span class="pre">last</span></code> 和 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 不允许设置。</li>
+<li>如果让VF设备去匹配发送到不同VF上的流量时，很可能会返回错误或者根本不会匹配到任何流量。</li>
+<li>可以通过多次指定该元模式项去匹配发送到多个VF上的流量。</li>
+<li>可以和PF模式项组合匹配FP和VF流量。</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 匹配任何VF。</li>
+</ul>
+<span id="table-rte-flow-item-vf"></span><table border="1" class="docutils" id="id45">
+<caption><span class="caption-number">表 8.13 </span><span class="caption-text">VF</span></caption>
+<colgroup>
+<col width="21%" />
+<col width="21%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Subfield</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">id</span></code></td>
+<td>destination VF ID</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">id</span></code></td>
+<td>上限</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">id</span></code></td>
+<td>0值匹配任何VF ID</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="port">
+<h4>8.2.5.6. 元模式项: <code class="docutils literal notranslate"><span class="pre">PORT</span></code></h4>
+<p>匹配来自底层设备物理端口的数据包。</p>
+<p>第一个PORT模式项覆盖了和DPDK相关联(port_id)的物理端口。
+可以提供多个该模式项匹配多个物理端口。</p>
+<p>注意，当物理端口不在DPDK控制下时，就不必绑定到DPDK输入端口(port_id)上。
+每个设备会有一个port_id，他们不必从0开始，也可能不是连续的。</p>
+<p>作为设备的属性，合法的端口号应该通过其他方法获得。</p>
+<ul class="simple">
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 匹配任何端口号。</li>
+</ul>
+<span id="table-rte-flow-item-port"></span><table border="1" class="docutils" id="id46">
+<caption><span class="caption-number">表 8.14 </span><span class="caption-text">PORT</span></caption>
+<colgroup>
+<col width="19%" />
+<col width="21%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Subfield</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">index</span></code></td>
+<td>物理端口号</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">index</span></code></td>
+<td>上限</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">index</span></code></td>
+<td>0值匹配任何端口号</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>8.2.6. 数据匹配项类型</h3>
+<p>这些类型基本上都是协议头和相关位掩码的定义。这些类型必须按照从最低到最高协议层排列成一个栈，
+组成一个匹配模式。</p>
+<p>下面的列表并不是全面的，未来可能会有新协议加入进来。</p>
+<div class="section" id="any">
+<h4>8.2.6.1. 数据模式项: <code class="docutils literal notranslate"><span class="pre">ANY</span></code></h4>
+<p>匹配任何协议，而不是仅匹配当前协议层，一个单个的ANY也可以代表多个协议层。</p>
+<p>当在包中任意层查找一个协议时，<code class="docutils literal notranslate"><span class="pre">ANY</span></code> 通常作为第一个模式项。</p>
+<ul class="simple">
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 代表任意层数。</li>
+</ul>
+<span id="table-rte-flow-item-any"></span><table border="1" class="docutils" id="id47">
+<caption><span class="caption-number">表 8.15 </span><span class="caption-text">ANY</span></caption>
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Subfield</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">num</span></code></td>
+<td>覆盖的层数</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">num</span></code></td>
+<td>上限</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">num</span></code></td>
+<td>0代表任意层数</td>
+</tr>
+</tbody>
+</table>
+<p>VXLAN TCP负载匹配的例子，外部的L3(IPv4 or IPv6)和L4(UDP)都是由第一个 ANY 匹配。
+内部的L3 (IPv4 or IPv6)由第二个 ANY 匹配:</p>
+<span id="table-rte-flow-item-any-example"></span><table border="1" class="docutils" id="id48">
+<caption><span class="caption-number">表 8.16 </span><span class="caption-text">使用 ANY 通配符匹配VXLAN中的TCP</span></caption>
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="25%" />
+<col width="25%" />
+<col width="18%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+<th class="head">Field</th>
+<th class="head">Subfield</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td colspan="4">Ethernet</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>ANY</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">num</span></code></td>
+<td>2</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td colspan="4">VXLAN</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td colspan="4">Ethernet</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>ANY</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">num</span></code></td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>5</td>
+<td colspan="4">TCP</td>
+</tr>
+<tr class="row-even"><td>6</td>
+<td colspan="4">END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="raw">
+<h4>8.2.6.2. 数据模式项: <code class="docutils literal notranslate"><span class="pre">RAW</span></code></h4>
+<p>在给定的偏移位置上匹配给定长度的字符串。</p>
+<p>偏移位置可以是绝对位置(从包的起始位置开始)或者是相对位置(相对于匹配项栈中前一个匹配项结束位置)，
+相对位置可以是负数。</p>
+<p>如果开启搜索功能，偏移位置用作起始点。搜索区域可以通过一个非零值(该值就是偏移位置后的最大字节数)进行限定。</p>
+<p>可以设置匹配0长度字符串，这样做可以重置随后匹配项的相对偏移位置。</p>
+<ul class="simple">
+<li>该类型不支持范围 (<code class="docutils literal notranslate"><span class="pre">last</span></code> 字段).</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 严格匹配所有字段。</li>
+</ul>
+<p>示例，使用RAW匹配项在UDP负载多个偏移位置上查找字符串:
+.. _table_rte_flow_item_raw_example:</p>
+<table border="1" class="docutils" id="id49">
+<caption><span class="caption-number">表 8.17 </span><span class="caption-text">UDP 负载匹配</span></caption>
+<colgroup>
+<col width="16%" />
+<col width="14%" />
+<col width="23%" />
+<col width="32%" />
+<col width="16%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+<th class="head">Field</th>
+<th class="head">Subfield</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td colspan="4">Ethernet</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td colspan="4">IPv4</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td colspan="4">UDP</td>
+</tr>
+<tr class="row-odd"><td rowspan="6">3</td>
+<td rowspan="6">RAW</td>
+<td rowspan="6"><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">relative</span></code></td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">search</span></code></td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">offset</span></code></td>
+<td>10</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">limit</span></code></td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">length</span></code></td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">pattern</span></code></td>
+<td>&quot;foo&quot;</td>
+</tr>
+<tr class="row-odd"><td rowspan="6">4</td>
+<td rowspan="6">RAW</td>
+<td rowspan="6"><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">relative</span></code></td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">search</span></code></td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">offset</span></code></td>
+<td>20</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">limit</span></code></td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">length</span></code></td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">pattern</span></code></td>
+<td>&quot;bar&quot;</td>
+</tr>
+<tr class="row-odd"><td rowspan="6">5</td>
+<td rowspan="6">RAW</td>
+<td rowspan="6"><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">relative</span></code></td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">search</span></code></td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">offset</span></code></td>
+<td>-29</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">limit</span></code></td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">length</span></code></td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">pattern</span></code></td>
+<td>&quot;baz&quot;</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td colspan="4">END</td>
+</tr>
+</tbody>
+</table>
+<p>解释:</p>
+<ul class="simple">
+<li>在UDP负载第10个字符处开始查找&quot;foo&quot;</li>
+<li>在&quot;foo&quot;后第20字节处开始查找&quot;bar&quot;</li>
+<li>在&quot;bar&quot;前第29字节处开始查找&quot;baz&quot;</li>
+</ul>
+<p>包示例 (非等比例):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>0                     &gt;= 10 B           == 20 B
+|                  |&lt;---------&gt;|     |&lt;---------&gt;|
+|                  |           |     |           |
+|-----|------|-----|-----|-----|-----|-----------|-----|------|
+| ETH | IPv4 | UDP | ... | baz | foo | ......... | bar | .... |
+|-----|------|-----|-----|-----|-----|-----------|-----|------|
+                         |                             |
+                         |&lt;---------------------------&gt;|
+                                     == 29 B
+</pre></div>
+</div>
+<p>注意，后续的模式项将从&quot;baz&quot;开始，而不是&quot;bar&quot;，因为匹配总是接着上一个匹配项开始执行的。</p>
+</div>
+<div class="section" id="eth">
+<h4>8.2.6.3. 数据模式项: <code class="docutils literal notranslate"><span class="pre">ETH</span></code></h4>
+<p>匹配以太网头</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">dst</span></code>: 目的 MAC.</li>
+<li><code class="docutils literal notranslate"><span class="pre">src</span></code>: 源 MAC.</li>
+<li><code class="docutils literal notranslate"><span class="pre">type</span></code>: 类型</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配目的地址和源地址</li>
+</ul>
+</div>
+<div class="section" id="vlan">
+<h4>8.2.6.4. 数据模式项: <code class="docutils literal notranslate"><span class="pre">VLAN</span></code></h4>
+<p>匹配 802.1Q/ad VLAN 标签</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">tpid</span></code>: 标签协议标识符</li>
+<li><code class="docutils literal notranslate"><span class="pre">tci</span></code>: 标签控制信息</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配TCI</li>
+</ul>
+</div>
+<div class="section" id="ipv4">
+<h4>8.2.6.5. 数据模式项: <code class="docutils literal notranslate"><span class="pre">IPV4</span></code></h4>
+<p>匹配IPv4头</p>
+<p>注意: IPv4 选项是由专门的模式项来处理的。</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">hdr</span></code>: IPv4 头定义 (<code class="docutils literal notranslate"><span class="pre">rte_ip.h</span></code>).</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配目的地址和源地址</li>
+</ul>
+</div>
+<div class="section" id="ipv6">
+<h4>8.2.6.6. 数据模式项: <code class="docutils literal notranslate"><span class="pre">IPV6</span></code></h4>
+<p>匹配IPv6头</p>
+<p>注意: IPv6 选项是由专门的模式项来处理的。</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">hdr</span></code>: IPv6 头定义 (<code class="docutils literal notranslate"><span class="pre">rte_ip.h</span></code>).</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配目的地址和源地址</li>
+</ul>
+</div>
+<div class="section" id="icmp">
+<h4>8.2.6.7. 数据模式项: <code class="docutils literal notranslate"><span class="pre">ICMP</span></code></h4>
+<p>匹配 ICMP 头</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">hdr</span></code>: ICMP 头定义 (<code class="docutils literal notranslate"><span class="pre">rte_icmp.h</span></code>).</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配ICMP类型和代码</li>
+</ul>
+</div>
+<div class="section" id="udp">
+<h4>8.2.6.8. 数据模式项: <code class="docutils literal notranslate"><span class="pre">UDP</span></code></h4>
+<p>匹配UDP头</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">hdr</span></code>: UDP 头定义 (<code class="docutils literal notranslate"><span class="pre">rte_udp.h</span></code>).</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配源端口和目的端口</li>
+</ul>
+</div>
+<div class="section" id="tcp">
+<h4>8.2.6.9. 数据模式项: <code class="docutils literal notranslate"><span class="pre">TCP</span></code></h4>
+<p>匹配TCP头</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">hdr</span></code>: TCP 头定义 (<code class="docutils literal notranslate"><span class="pre">rte_tcp.h</span></code>).</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配源端口和目的端口</li>
+</ul>
+</div>
+<div class="section" id="sctp">
+<h4>8.2.6.10. 数据模式项: <code class="docutils literal notranslate"><span class="pre">SCTP</span></code></h4>
+<p>匹配SCTP头</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">hdr</span></code>: SCTP 头定义 (<code class="docutils literal notranslate"><span class="pre">rte_sctp.h</span></code>).</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配源端口和目的端口</li>
+</ul>
+</div>
+<div class="section" id="vxlan">
+<h4>8.2.6.11. 数据模式项: <code class="docutils literal notranslate"><span class="pre">VXLAN</span></code></h4>
+<p>匹配VXLAN头(RFC 7348).</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">flags</span></code>: 通常是 0x08 (I flag).</li>
+<li><code class="docutils literal notranslate"><span class="pre">rsvd0</span></code>: 预留, 通常是 0x000000.</li>
+<li><code class="docutils literal notranslate"><span class="pre">vni</span></code>: VXLAN网络标识符</li>
+<li><code class="docutils literal notranslate"><span class="pre">rsvd1</span></code>: 预留, 通常是 0x00.</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配VNI</li>
+</ul>
+</div>
+<div class="section" id="e-tag">
+<h4>8.2.6.12. 数据模式项: <code class="docutils literal notranslate"><span class="pre">E_TAG</span></code></h4>
+<p>匹配 IEEE 802.1BR E-Tag 头</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">tpid</span></code>: 标签协议标识符(0x893F)</li>
+<li><code class="docutils literal notranslate"><span class="pre">epcp_edei_in_ecid_b</span></code>: E-Tag 控制信息 (E-TCI), E-PCP (3b),
+E-DEI (1b), ingress E-CID base (12b).</li>
+<li><code class="docutils literal notranslate"><span class="pre">rsvd_grp_ecid_b</span></code>: reserved (2b), GRP (2b), E-CID base (12b).</li>
+<li><code class="docutils literal notranslate"><span class="pre">in_ecid_e</span></code>: ingress E-CID ext.</li>
+<li><code class="docutils literal notranslate"><span class="pre">ecid_e</span></code>: E-CID ext.</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 同时匹配GRP 和 E-CID base.</li>
+</ul>
+</div>
+<div class="section" id="nvgre">
+<h4>8.2.6.13. 数据模式项: <code class="docutils literal notranslate"><span class="pre">NVGRE</span></code></h4>
+<p>匹配NVGRE头 (RFC 7637).</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">c_k_s_rsvd0_ver</span></code>: checksum (1b), undefined (1b), key bit (1b),
+sequence number (1b), reserved 0 (9b), version (3b). This field must have
+value 0x2000 according to RFC 7637.</li>
+<li><code class="docutils literal notranslate"><span class="pre">protocol</span></code>: 协议类型 (0x6558).</li>
+<li><code class="docutils literal notranslate"><span class="pre">tni</span></code>: 虚拟子网ID.</li>
+<li><code class="docutils literal notranslate"><span class="pre">flow_id</span></code>: 流ID.</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配TNI。</li>
+</ul>
+</div>
+<div class="section" id="mpls">
+<h4>8.2.6.14. 数据模式项: <code class="docutils literal notranslate"><span class="pre">MPLS</span></code></h4>
+<p>匹配MPLS头</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">label_tc_s_ttl</span></code>: label, TC, Bottom of Stack and TTL.</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配label。</li>
+</ul>
+</div>
+<div class="section" id="gre">
+<h4>8.2.6.15. 数据模式项: <code class="docutils literal notranslate"><span class="pre">GRE</span></code></h4>
+<p>匹配GRE头</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">c_rsvd0_ver</span></code>: checksum, reserved 0 and version.</li>
+<li><code class="docutils literal notranslate"><span class="pre">protocol</span></code>: 协议类型</li>
+<li>默认 <code class="docutils literal notranslate"><span class="pre">mask</span></code> 仅匹配协议</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>8.2.7. 动作</h3>
+<p>每种动作都由一个类型表示。有的动作有配置结构。合并在一个列表中的多个动作能够受到一个流规则的影响。
+该列表是无序的。</p>
+<p>动作有三类:</p>
+<ul class="simple">
+<li>终止动作 (比如 QUEUE, DROP, RSS, PF, VF)终止后续流规则处理匹配包，除非用 PASSTHRU 覆盖。</li>
+<li>非终止动作(PASSTHRU, DUP)把匹配的包留给后续流规则处理。</li>
+<li>其他非终止类元动作，这类动作不会影响到包的处理(END, VOID, MARK, FLAG, COUNT)。</li>
+</ul>
+<p>当多个动作合并到一个流规则中时，它们应该是不同类型的(比如，同一个包不能丢弃两次)。</p>
+<p>对于给定的动作类型只有最后一个动作有效。但PMD仍会对整个表执行错误检查。</p>
+<p>和匹配模式类似，动作列表也是有 END 项结束的。</p>
+<p><em>注意PASSTHRU是唯一能够覆盖终止规则的动作。</em></p>
+<p>实例，把包重定向到10号队列:</p>
+<span id="table-rte-flow-action-example"></span><table border="1" class="docutils" id="id50">
+<caption><span class="caption-number">表 8.18 </span><span class="caption-text">队列动作</span></caption>
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">index</span></code></td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<p>动作列表示例，顺序是没有意义的，应用必须考虑到所有动作可以同时执行。</p>
+<span id="table-rte-flow-count-and-drop"></span><table border="1" class="docutils" id="id51">
+<caption><span class="caption-number">表 8.19 </span><span class="caption-text">统计和丢弃</span></caption>
+<colgroup>
+<col width="47%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Action</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>COUNT</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>DROP</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<span id="table-rte-flow-mark-count-redirect"></span><table border="1" class="docutils" id="id52">
+<caption><span class="caption-number">表 8.20 </span><span class="caption-text">标记，统计和重定向</span></caption>
+<colgroup>
+<col width="21%" />
+<col width="24%" />
+<col width="33%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Action</th>
+<th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>MARK</td>
+<td><code class="docutils literal notranslate"><span class="pre">mark</span></code></td>
+<td>0x2a</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td colspan="3">COUNT</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>QUEUE</td>
+<td><code class="docutils literal notranslate"><span class="pre">queue</span></code></td>
+<td>10</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td colspan="3">END</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<span id="table-rte-flow-redirect-queue-5"></span><table border="1" class="docutils" id="id53">
+<caption><span class="caption-number">表 8.21 </span><span class="caption-text">重定向到5号队列</span></caption>
+<colgroup>
+<col width="21%" />
+<col width="24%" />
+<col width="33%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Action</th>
+<th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td colspan="3">DROP</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>QUEUE</td>
+<td><code class="docutils literal notranslate"><span class="pre">queue</span></code></td>
+<td>5</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td colspan="3">END</td>
+</tr>
+</tbody>
+</table>
+<p>在上面的例子中，考虑到两者同时执行，最终结果仅有QUEUE有效。</p>
+<span id="table-rte-flow-redirect-queue-3"></span><table border="1" class="docutils" id="id54">
+<caption><span class="caption-number">表 8.22 </span><span class="caption-text">重定向到3号队列</span></caption>
+<colgroup>
+<col width="21%" />
+<col width="24%" />
+<col width="33%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Action</th>
+<th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>QUEUE</td>
+<td><code class="docutils literal notranslate"><span class="pre">queue</span></code></td>
+<td>5</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td colspan="3">VOID</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>QUEUE</td>
+<td><code class="docutils literal notranslate"><span class="pre">queue</span></code></td>
+<td>3</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td colspan="3">END</td>
+</tr>
+</tbody>
+</table>
+<p>如前面的描述，列表中对于给定类型(本例中QUEUE)仅有最后一个动作有效。上例中也展示了VOID只是被简单忽略。</p>
+</div>
+<div class="section" id="id12">
+<h3>8.2.8. 动作类型</h3>
+<p>本节描述了通用动作类型。本节内容并不是全面的，未来可能会有新动作加入进来。</p>
+<div class="section" id="id13">
+<h4>8.2.8.1. 动作: <code class="docutils literal notranslate"><span class="pre">END</span></code></h4>
+<p>动作列表的结束标记。阻止超范围的动作处理，进而结束列表。</p>
+<ul class="simple">
+<li>为了方便起见，它的数值为0。</li>
+<li>PMD必须支持。</li>
+<li>无配置属性。</li>
+</ul>
+<span id="table-rte-flow-action-end"></span><table border="1" class="docutils" id="id55">
+<caption><span class="caption-number">表 8.23 </span><span class="caption-text">END</span></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>无属性</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id14">
+<h4>8.2.8.2. 动作: <code class="docutils literal notranslate"><span class="pre">VOID</span></code></h4>
+<p>作为占位符使用。PMD忽略并简单丢弃它。</p>
+<ul class="simple">
+<li>PMD必须支持。</li>
+<li>无配置属性。</li>
+</ul>
+<span id="table-rte-flow-action-void"></span><table border="1" class="docutils" id="id56">
+<caption><span class="caption-number">表 8.24 </span><span class="caption-text">VOID</span></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>无属性</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="passthru">
+<h4>8.2.8.3. 动作: <code class="docutils literal notranslate"><span class="pre">PASSTHRU</span></code></h4>
+<p>把包留给后续流规则处理。当规则中不包含终止动作时，该动作是默认动作。
+也可以给规则指定该动作使之变成非终止的。</p>
+<ul class="simple">
+<li>无配置属性。</li>
+</ul>
+<span id="table-rte-flow-action-passthru"></span><table border="1" class="docutils" id="id57">
+<caption><span class="caption-number">表 8.25 </span><span class="caption-text">PASSTHRU</span></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>无属性</td>
+</tr>
+</tbody>
+</table>
+<p>实例，把包拷贝一份给队列，然后由后续流规则继续处理该包:</p>
+<span id="table-rte-flow-action-passthru-example"></span><table border="1" class="docutils" id="id58">
+<caption><span class="caption-number">表 8.26 </span><span class="caption-text">拷贝到8号队列</span></caption>
+<colgroup>
+<col width="21%" />
+<col width="24%" />
+<col width="33%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Action</th>
+<th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td colspan="3">PASSTHRU</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>QUEUE</td>
+<td><code class="docutils literal notranslate"><span class="pre">queue</span></code></td>
+<td>8</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td colspan="3">END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="mark">
+<h4>8.2.8.4. 动作: <code class="docutils literal notranslate"><span class="pre">MARK</span></code></h4>
+<p>给包绑定一个整数值并设置 <code class="docutils literal notranslate"><span class="pre">PKT_RX_FDIR</span></code> 和 <code class="docutils literal notranslate"><span class="pre">PKT_RX_FDIR_ID</span></code> mbuf 标志。</p>
+<p>该值由应用任意指定。最大值依赖底层实现。该值由 <code class="docutils literal notranslate"><span class="pre">hash.fdir.hi</span></code> mbuf 字段返回。</p>
+<span id="table-rte-flow-action-mark"></span><table border="1" class="docutils" id="id59">
+<caption><span class="caption-number">表 8.27 </span><span class="caption-text">MARK</span></caption>
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">id</span></code></td>
+<td>integer value to return with packets</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="flag">
+<h4>8.2.8.5. 动作: <code class="docutils literal notranslate"><span class="pre">FLAG</span></code></h4>
+<p>标记包。和 <a class="reference internal" href="#mark">动作: MARK</a> 相似，但不会指定值；仅设置 <code class="docutils literal notranslate"><span class="pre">PKT_RX_FDIR</span></code> mbuf 标志。</p>
+<ul class="simple">
+<li>无配置属性。</li>
+</ul>
+<span id="table-rte-flow-action-flag"></span><table border="1" class="docutils" id="id60">
+<caption><span class="caption-number">表 8.28 </span><span class="caption-text">FLAG</span></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>无属性</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="queue">
+<h4>8.2.8.6. 动作: <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></h4>
+<p>把包分派到给定队列。</p>
+<ul class="simple">
+<li>Terminating by default.</li>
+</ul>
+<span id="table-rte-flow-action-queue"></span><table border="1" class="docutils" id="id61">
+<caption><span class="caption-number">表 8.29 </span><span class="caption-text">QUEUE</span></caption>
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">index</span></code></td>
+<td>队列索引</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="drop">
+<h4>8.2.8.7. 动作: <code class="docutils literal notranslate"><span class="pre">DROP</span></code></h4>
+<p>丢弃包。</p>
+<ul class="simple">
+<li>无配置属性。</li>
+<li>默认为终止动作。</li>
+<li>如果和 PASSTHRU 同时指定的话，该动作会被 PASSTHRU 覆盖。</li>
+</ul>
+<span id="table-rte-flow-action-drop"></span><table border="1" class="docutils" id="id62">
+<caption><span class="caption-number">表 8.30 </span><span class="caption-text">DROP</span></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>无属性</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="count">
+<h4>8.2.8.8. 动作: <code class="docutils literal notranslate"><span class="pre">COUNT</span></code></h4>
+<p>开启规则的计数器。</p>
+<p>这些计数器可以通过 <code class="docutils literal notranslate"><span class="pre">rte_flow_query()</span></code> 获取和重置，参考 <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_flow_query_count</span></code> 。</p>
+<ul class="simple">
+<li>计数器可以通过 <code class="docutils literal notranslate"><span class="pre">rte_flow_query()</span></code> 获取。</li>
+<li>无配置属性。</li>
+</ul>
+<span id="table-rte-flow-action-count"></span><table border="1" class="docutils" id="id63">
+<caption><span class="caption-number">表 8.31 </span><span class="caption-text">COUNT</span></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>无属性</td>
+</tr>
+</tbody>
+</table>
+<p>查询和重置流规则计数器的查询结构体( <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_flow_query_count</span></code> ):</p>
+<span id="table-rte-flow-query-count"></span><table border="1" class="docutils" id="id64">
+<caption><span class="caption-number">表 8.32 </span><span class="caption-text">COUNT query</span></caption>
+<colgroup>
+<col width="27%" />
+<col width="9%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">I/O</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">reset</span></code></td>
+<td>in</td>
+<td>查询后重置计数器</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">hits_set</span></code></td>
+<td>out</td>
+<td>设置 <code class="docutils literal notranslate"><span class="pre">hits</span></code> 字段</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bytes_set</span></code></td>
+<td>out</td>
+<td>设置 <code class="docutils literal notranslate"><span class="pre">bytes</span></code> 字段</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">hits</span></code></td>
+<td>out</td>
+<td>该规则被击中次数</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bytes</span></code></td>
+<td>out</td>
+<td>通过该规则的字节数</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="dup">
+<h4>8.2.8.9. 动作: <code class="docutils literal notranslate"><span class="pre">DUP</span></code></h4>
+<p>复制包到指定队列。</p>
+<p>正常要和QUEUE组合使用，而单独使用时它其实和 QUEUE + PASSTHRU 类似。</p>
+<ul class="simple">
+<li>默认为非终止动作。</li>
+</ul>
+<span id="table-rte-flow-action-dup"></span><table border="1" class="docutils" id="id65">
+<caption><span class="caption-number">表 8.33 </span><span class="caption-text">DUP</span></caption>
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">index</span></code></td>
+<td>队列索引</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="rss">
+<h4>8.2.8.10. 动作: <code class="docutils literal notranslate"><span class="pre">RSS</span></code></h4>
+<p>和QUEUE类似，除了RSS根据参数把包分散传输到多个队列中。</p>
+<p>注意：RSS哈希结果保存在mbuf的 <code class="docutils literal notranslate"><span class="pre">hash.rss</span></code> 字段，该字段与 <code class="docutils literal notranslate"><span class="pre">hash.fdir.lo</span></code> 重叠。
+因为 <a class="reference internal" href="#mark">动作: MARK</a> 仅设置了 <code class="docutils literal notranslate"><span class="pre">hash.fdir.hi</span></code> 字段，所以这两个字段可以同时被获取。</p>
+<ul class="simple">
+<li>默认为终止动作。</li>
+</ul>
+<span id="table-rte-flow-action-rss"></span><table border="1" class="docutils" id="id66">
+<caption><span class="caption-number">表 8.34 </span><span class="caption-text">RSS</span></caption>
+<colgroup>
+<col width="32%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">rss_conf</span></code></td>
+<td>RSS 参数</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">num</span></code></td>
+<td>queue[] 中实体个数</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">queue[]</span></code></td>
+<td>队列索引列表</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id15">
+<h4>8.2.8.11. 动作: <code class="docutils literal notranslate"><span class="pre">PF</span></code></h4>
+<p>将数据包重定向到当前设备的物理功能(PF)。</p>
+<ul class="simple">
+<li>无配置属性。</li>
+<li>默认为终止动作。</li>
+</ul>
+<span id="table-rte-flow-action-pf"></span><table border="1" class="docutils" id="id67">
+<caption><span class="caption-number">表 8.35 </span><span class="caption-text">PF</span></caption>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>无属性</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id16">
+<h4>8.2.8.12. 动作: <code class="docutils literal notranslate"><span class="pre">VF</span></code></h4>
+<p>将数据包重定向到当前设备的虚拟功能(VF)。</p>
+<p>VF模式项匹配的包可以重定向到包的原始VF上，而不是指定的VF。
+如果VF部分和之前的流规则匹配或者包最开始时不是发送到一个VF上时，
+该参数可能不可用并且不保证其可以正常工作。</p>
+<ul class="simple">
+<li>默认为终止动作。</li>
+</ul>
+<span id="table-rte-flow-action-vf"></span><table border="1" class="docutils" id="id68">
+<caption><span class="caption-number">表 8.36 </span><span class="caption-text">VF</span></caption>
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">original</span></code></td>
+<td>原始的VF ID</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">vf</span></code></td>
+<td>VF ID</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id17">
+<h3>8.2.9. 负数类型</h3>
+<p>所有指定的模式项 (<code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">rte_flow_item_type</span></code>) 和动作
+(<code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">rte_flow_action_type</span></code>) 都使用正数标识符。</p>
+<p>负数预留给PMD运行时产生的动态类型。PMD可能会遇到负数的结果，但不能接收PMD无法识别的负数。</p>
+<p>生成负数的方法待定义。</p>
+</div>
+<div class="section" id="id18">
+<h3>8.2.10. 计划中的类型</h3>
+<p>当有新的协议出现时，模式项类型就会增加。</p>
+<p>各种协议头是通过专门的模式项支持的，比如为了匹配IPv4选项和IPv6扩展头，
+相关的模式项就要放在IPv4/IPv6后面(栈中)。</p>
+<p>其他的动作类型在规划中，但还未定义。其中包括通过多种方式修改包数据，如隧道头的封装/解封。</p>
+</div>
+</div>
+<div class="section" id="id19">
+<h2>8.3. 规则管理</h2>
+<p>非常简单的用于全面管理流规则的API。</p>
+<p>每个创建好的流规则都和一个不透明的，PMD特定的句柄(指针)相关联。
+应用应该在规则销毁前一直保存该指针。</p>
+<p>流规则由 <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_flow</span></code> 表示。</p>
+<div class="section" id="id20">
+<h3>8.3.1. 校验</h3>
+<p>考虑到暴露大量设备能力是不切实际的，所以提供了一个专门的函数用于检查某个流规则是否支持。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span>
+<span class="nf">rte_flow_validate</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">port_id</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_flow_attr</span> <span class="o">*</span><span class="n">attr</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_flow_item</span> <span class="n">pattern</span><span class="p">[],</span>
+                  <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_flow_action</span> <span class="n">actions</span><span class="p">[],</span>
+                  <span class="k">struct</span> <span class="n">rte_flow_error</span> <span class="o">*</span><span class="n">error</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>该函数验证流规则的正确性和设备是否能接收该流规则。对照当前设备模式和队列配置检查流规则。
+流规则也可以对照已存在的流规则和设备资源进行验证。该函数对目标设备没有影响。</p>
+<p>由于可能的冲突或者资源限制(although in such cases <code class="docutils literal notranslate"><span class="pre">EINVAL</span></code> should not be returned)，
+只要在同一时间没有成功调用过 <code class="docutils literal notranslate"><span class="pre">rte_flow_create()</span></code> 或 <code class="docutils literal notranslate"><span class="pre">rte_flow_destroy()</span></code>
+和修改过应用到流规则上的设备参数就可以保证函数返回值合法。</p>
+<p>参数:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">port_id</span></code>: 以太网设备端口标识符。</li>
+<li><code class="docutils literal notranslate"><span class="pre">attr</span></code>: 流规则属性。</li>
+<li><code class="docutils literal notranslate"><span class="pre">pattern</span></code>: 模式说明 (以END项终止的列表)。</li>
+<li><code class="docutils literal notranslate"><span class="pre">actions</span></code>: 相关的动作(以END动作终止的列表)。</li>
+<li><code class="docutils literal notranslate"><span class="pre">error</span></code>: 发生错误时PMD会初始化该结构体用于报告详细的错误信息。</li>
+</ul>
+<p>返回值:</p>
+<ul class="simple">
+<li>流规则合法且可以创建返回0。否则返回负数(<code class="docutils literal notranslate"><span class="pre">rte_errno</span></code> 也会被设置)， 下面定义了一些错误值。</li>
+<li><code class="docutils literal notranslate"><span class="pre">-ENOSYS</span></code>: 底层设备不支持该功能。</li>
+<li><code class="docutils literal notranslate"><span class="pre">-EINVAL</span></code>: 流规则未知或非法。</li>
+<li><code class="docutils literal notranslate"><span class="pre">-ENOTSUP</span></code>: 流规则有效但设备不支持(比如，部分位掩码不支持)。</li>
+<li><code class="docutils literal notranslate"><span class="pre">EEXIST</span></code>: 与已存在的流规则冲突。仅在设备支持流规则冲突检测并且确实检测到冲突时才返回该值。
+没有返回该值并不保证流规不会因为冲突创建失败。</li>
+<li><code class="docutils literal notranslate"><span class="pre">ENOMEM</span></code>: 内存不足，或者设备支持资源验证，资源限制。</li>
+<li><code class="docutils literal notranslate"><span class="pre">-EBUSY</span></code>: 设备忙碌操作无法执行， 可能在受影响队列或整个端口处于停止状态(参考 <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_rx_queue_stop()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_stop()</span></code>)时会成功。</li>
+</ul>
+</div>
+<div class="section" id="id21">
+<h3>8.3.2. 创建</h3>
+<p>创建流规则和验证流规则类似，除了会确实创建流规则并返回流规则句柄。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_flow</span> <span class="o">*</span>
+<span class="nf">rte_flow_create</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">port_id</span><span class="p">,</span>
+                <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_flow_attr</span> <span class="o">*</span><span class="n">attr</span><span class="p">,</span>
+                <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_flow_item</span> <span class="n">pattern</span><span class="p">[],</span>
+                <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_flow_action</span> <span class="o">*</span><span class="n">actions</span><span class="p">[],</span>
+                <span class="k">struct</span> <span class="n">rte_flow_error</span> <span class="o">*</span><span class="n">error</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>参数:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">port_id</span></code>: 以太网设备端口标识符。</li>
+<li><code class="docutils literal notranslate"><span class="pre">attr</span></code>: 流规则属性。</li>
+<li><code class="docutils literal notranslate"><span class="pre">pattern</span></code>: 模式说明 (以END项终止的列表)。</li>
+<li><code class="docutils literal notranslate"><span class="pre">actions</span></code>: 相关的动作(以END动作终止的列表)。</li>
+<li><code class="docutils literal notranslate"><span class="pre">error</span></code>: 发生错误时PMD会初始化该结构体用于报告详细的错误信息。</li>
+</ul>
+<p>返回值:</p>
+<p>成功返回一个合法的句柄，否则返回NULL并且 <code class="docutils literal notranslate"><span class="pre">rte_errno</span></code> 被设置为错误码(为 <code class="docutils literal notranslate"><span class="pre">rte_flow_validate()</span></code> 定义的)的正数版本。</p>
+</div>
+<div class="section" id="id22">
+<h3>8.3.3. 销毁</h3>
+<p>流规则的销毁不是原子操作，在流规则仍绑定在资源(队列或端口)上时，这些资源不应该释放。
+应用必须在释放资源前执行销毁步骤。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span>
+<span class="nf">rte_flow_destroy</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">port_id</span><span class="p">,</span>
+                 <span class="k">struct</span> <span class="n">rte_flow</span> <span class="o">*</span><span class="n">flow</span><span class="p">,</span>
+                 <span class="k">struct</span> <span class="n">rte_flow_error</span> <span class="o">*</span><span class="n">error</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>当一个流规则被其他流规则依赖时，销毁该流规则可能会失败，并且销毁它会导致状态不一致问题。</p>
+<p>该函数仅保证逆序(创建顺序)销毁流规则才会成功。</p>
+<p>参数:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">port_id</span></code>: 以太网设备端口标识符。</li>
+<li><code class="docutils literal notranslate"><span class="pre">flow</span></code>: 要销毁的流规则句柄。</li>
+<li><code class="docutils literal notranslate"><span class="pre">error</span></code>: 发生错误时PMD会初始化该结构体用于报告详细的错误信息。</li>
+</ul>
+<p>返回值:</p>
+<ul class="simple">
+<li>0 成功, 否则返回负数错误码并设置 <code class="docutils literal notranslate"><span class="pre">rte_errno</span></code> 。</li>
+</ul>
+</div>
+<div class="section" id="flush">
+<h3>8.3.4. 刷新(flush)</h3>
+<p>一个简便的函数用于销毁和一个端口相关的所有流规则。
+和连续调用 <code class="docutils literal notranslate"><span class="pre">rte_flow_destroy()</span></code> 销毁流规则一样。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span>
+<span class="nf">rte_flow_flush</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">port_id</span><span class="p">,</span>
+               <span class="k">struct</span> <span class="n">rte_flow_error</span> <span class="o">*</span><span class="n">error</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>如果操作失败(概率很小)，流规则仍被视为销毁了并且不再合法，而端口被假设处于不一致的状态中。</p>
+<p>参数:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">port_id</span></code>: 以太网设备端口标识符。</li>
+<li><code class="docutils literal notranslate"><span class="pre">error</span></code>: 发生错误时PMD会初始化该结构体用于报告详细的错误信息。</li>
+</ul>
+<p>返回值:</p>
+<ul class="simple">
+<li>0 成功, 否则返回负数错误码并设置 <code class="docutils literal notranslate"><span class="pre">rte_errno</span></code> 。</li>
+</ul>
+</div>
+<div class="section" id="id23">
+<h3>8.3.5. 查询</h3>
+<p>查询存在的流规则。</p>
+<p>该函数用于获取流规则的指定数据，比如计数器。
+数据是由特定动作获取的，这些动作必须在流规则定义时传入。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span>
+<span class="nf">rte_flow_query</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">port_id</span><span class="p">,</span>
+               <span class="k">struct</span> <span class="n">rte_flow</span> <span class="o">*</span><span class="n">flow</span><span class="p">,</span>
+               <span class="k">enum</span> <span class="n">rte_flow_action_type</span> <span class="n">action</span><span class="p">,</span>
+               <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span>
+               <span class="k">struct</span> <span class="n">rte_flow_error</span> <span class="o">*</span><span class="n">error</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>参数:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">port_id</span></code>: 以太网设备端口标识符。</li>
+<li><code class="docutils literal notranslate"><span class="pre">flow</span></code>: 流规则句柄。</li>
+<li><code class="docutils literal notranslate"><span class="pre">action</span></code>: 查询的动作类型。</li>
+<li><code class="docutils literal notranslate"><span class="pre">data</span></code>: 用于存储查询结果的指针。</li>
+<li><code class="docutils literal notranslate"><span class="pre">error</span></code>: 发生错误时PMD会初始化该结构体用于报告详细的错误信息。</li>
+</ul>
+<p>返回值:</p>
+<ul class="simple">
+<li>0 成功, 否则返回负数错误码并设置 <code class="docutils literal notranslate"><span class="pre">rte_errno</span></code> 。</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id24">
+<h2>8.4. 详细错误报告</h2>
+<p><em>errno</em> 值对于用户或者应用开发者来说不够精准。有一个专门的错误对象用于提供详细错误信息:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">rte_flow_error_type</span> <span class="p">{</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_NONE</span><span class="p">,</span> <span class="cm">/**&lt; No error. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_UNSPECIFIED</span><span class="p">,</span> <span class="cm">/**&lt; Cause unspecified. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_HANDLE</span><span class="p">,</span> <span class="cm">/**&lt; Flow rule (handle). */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ATTR_GROUP</span><span class="p">,</span> <span class="cm">/**&lt; Group field. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY</span><span class="p">,</span> <span class="cm">/**&lt; Priority field. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ATTR_INGRESS</span><span class="p">,</span> <span class="cm">/**&lt; Ingress field. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ATTR_EGRESS</span><span class="p">,</span> <span class="cm">/**&lt; Egress field. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ATTR</span><span class="p">,</span> <span class="cm">/**&lt; Attributes structure. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ITEM_NUM</span><span class="p">,</span> <span class="cm">/**&lt; Pattern length. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ITEM</span><span class="p">,</span> <span class="cm">/**&lt; Specific pattern item. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ACTION_NUM</span><span class="p">,</span> <span class="cm">/**&lt; Number of actions. */</span>
+    <span class="n">RTE_FLOW_ERROR_TYPE_ACTION</span><span class="p">,</span> <span class="cm">/**&lt; Specific action. */</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">rte_flow_error</span> <span class="p">{</span>
+    <span class="k">enum</span> <span class="n">rte_flow_error_type</span> <span class="n">type</span><span class="p">;</span> <span class="cm">/**&lt; Cause field and error types. */</span>
+    <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">cause</span><span class="p">;</span> <span class="cm">/**&lt; Object responsible for the error. */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">message</span><span class="p">;</span> <span class="cm">/**&lt; Human-readable error message. */</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>错误类型 <code class="docutils literal notranslate"><span class="pre">RTE_FLOW_ERROR_TYPE_NONE</span></code> 代表没有错误, 这种情况下，其他的字段可以忽略。
+其他的错误类型的错误描述为字段 <code class="docutils literal notranslate"><span class="pre">cause</span></code>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">cause</span></code> 指针指向引发错误的对象。对于流规则，可能是模式项或者独立的动作。</p>
+<p><code class="docutils literal notranslate"><span class="pre">message</span></code> 错误描述的字符串。</p>
+<p>该对象正常由应用申请，发生错误时有PMD设置。 <code class="docutils literal notranslate"><span class="pre">message</span></code> 指针是指向字符串常量的，
+应用无需释放，只要相关的DPDK端口保持配置，该指针被视为一直有效。
+关闭底层设备或者卸载PMD会导致 <code class="docutils literal notranslate"><span class="pre">message</span></code> 指针失效。</p>
+</div>
+<div class="section" id="id25">
+<h2>8.5. 注意事项</h2>
+<ul class="simple">
+<li>DPDK不会自动记录流规则定义或者流规则对象。应用可以记录前者，但必须记录后者。
+PMD为了内部需要也可以这样做，但应用一定不要依赖PMD的记录。</li>
+<li>流规则不会在端口初始化之间保持。如果应用在退出时没有释放流规则，
+那么在其重启时必须重建流规则。</li>
+<li>API操作是同步阻塞的(不会返回 <code class="docutils literal notranslate"><span class="pre">EAGAIN</span></code> )。</li>
+<li>虽然没有提供可重入/线程安全，但仍应该防止同时在不同设备间的配置操作。
+PMD可能保护其控制路径。</li>
+<li>管理流规则时不必停止数据路径(TX/RX)。如果无法实现的话，应该返回一个适当的错误码(<code class="docutils literal notranslate"><span class="pre">EBUSY</span></code>)。</li>
+<li>在停止并重启端口或者执行其他受影响的动作时，是PMD而不是应用负责维护流规则的配置。</li>
+</ul>
+<p>设备暴露多个端口，但这些端口共享全局设置，受下面的流规则影响:</p>
+<ul class="simple">
+<li>DPDK控制下的所有端口必须行为一致，PMD要确保一个端口的流规则不会受到其他端口的影响。</li>
+<li>不在DPDK控制下的端口(未受影响的或者由其他应用管理的)，有用于负责管理。
+它们可能影响已存在的流规则并产生未定义的行为。如果PMD感知到这种情况，
+可以阻止流规则的创建。</li>
+</ul>
+</div>
+<div class="section" id="pmd">
+<h2>8.6. PMD接口</h2>
+<p>PMD的接口定义在 <code class="docutils literal notranslate"><span class="pre">rte_flow_driver.h</span></code>。其不受API/ABI的版本限制，
+因为它并不暴露给应用并且可以独立发展。</p>
+<p>当前PMD接口是基于原过滤框架的 <em>RTE_ETH_FILTER_GENERIC</em> 过滤类型实现的，
+该过滤类型接收单一操作 <em>RTE_ETH_FILTER_GET</em> 返回PMD特定的 <em>rte_flow</em> 回调(包装在 <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_flow_ops</span></code> 中)。</p>
+<p>这种做法是为了和原过滤框架保持兼容，最终会被替换掉。</p>
+<ul class="simple">
+<li>PMD回调准确地实现了 <a class="reference internal" href="#id19">规则管理</a> 中描述的接口，
+除了已经被转换成指向底层的 <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_eth_dev</span></code> 指针的端口ID参数。</li>
+<li>公共API函数在调用PMD函数(无基本的错误检查，无任何校验)前不会处理流规则定义。
+它们仅确保这些回调是非NULL的或者返回 <code class="docutils literal notranslate"><span class="pre">ENOSYS</span></code> (不支持的功能)错误。</li>
+</ul>
+<p>此外，该接口定义了以下辅助函数:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">rte_flow_ops_get()</span></code>: 从端口中获取通用流操作结构。</li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_flow_error_set()</span></code>: 初始化通用流错误结构。</li>
+</ul>
+<p>未来会增加更多。</p>
+</div>
+<div class="section" id="id26">
+<h2>8.7. 设备兼容性</h2>
+<p>目前，还没有可以支持所有已描述特性的实现。</p>
+<p>因为性能原因，并不期望在PMD中完全以软件模拟方式来实现硬件不支持的特性。
+部分支持的特性只要硬件执行大部分工作，剩余部分工作可以交给软件完成。
+比如，队列重定向和包识别。</p>
+<p>但是，期望PMD可以尽全力满足应用的请求，PMD可以通过各种方法解除硬件限制，
+只要不影响到已存在流规则的行为。</p>
+<p>以下章节中提供了一些PMD处理兼容性的例子，它们基于旧版本API中的限制。</p>
+<div class="section" id="id27">
+<h3>8.7.1. 全局位掩码</h3>
+<p>每个流规则都有自己的每层位掩码，然而硬件对某层可能只支持一种设备相关的位掩码，
+因此两个IPv4规则不能使用不同的位掩码。</p>
+<p>这种情况下，期望PMD根据第一个创建的流规则的需求自动配置全局位掩码。</p>
+<p>后续创建的流规则如果匹配位掩码则可以创建，否则会返回 <code class="docutils literal notranslate"><span class="pre">EEXIST</span></code> 错误码。</p>
+</div>
+<div class="section" id="id28">
+<h3>8.7.2. 不支持的(协议)层类型</h3>
+<p>很多协议可以通过 <a class="reference internal" href="#raw">数据模式项: RAW</a> 类型模拟。</p>
+<p>PMD通过这种方式模拟支持那些报头无法直接被硬件识别的协议。</p>
+</div>
+<div class="section" id="id29">
+<h3>8.7.3. <code class="docutils literal notranslate"><span class="pre">ANY</span></code> 模式项</h3>
+<p>该模式项代表那些硬件很难解析，特别是在更加特殊类型后面的协议。</p>
+<p>考虑下面的模式:</p>
+<span id="table-rte-flow-unsupported-any"></span><table border="1" class="docutils" id="id69">
+<caption><span class="caption-number">表 8.37 </span><span class="caption-text">L3使用ANY的模式</span></caption>
+<colgroup>
+<col width="25%" />
+<col width="18%" />
+<col width="32%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head" colspan="3">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td colspan="3">ETHER</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>ANY</td>
+<td><code class="docutils literal notranslate"><span class="pre">num</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td colspan="3">TCP</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td colspan="3">END</td>
+</tr>
+</tbody>
+</table>
+<p>要知道TCP是感知不到L3具体协议的，该模式也可以使用下面两个代替:</p>
+<span id="table-rte-flow-unsupported-any-ipv4"></span><table border="1" class="docutils" id="id70">
+<caption><span class="caption-number">表 8.38 </span><span class="caption-text">用IPV4替换ANY</span></caption>
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>ETHER</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>IPV4 (zeroed mask)</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>TCP</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<span id="table-rte-flow-unsupported-any-ipv6"></span><table border="1" class="docutils" id="id71">
+<caption><span class="caption-number">表 8.39 </span><span class="caption-text">用IPV6替换ANY</span></caption>
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Index</th>
+<th class="head">Item</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>ETHER</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>IPV6 (zeroed mask)</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>TCP</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+<p>注意一个ANY规则包括多个协议层，这种做法可能会产生大量隐藏的流规则。
+因此建议仅支持最常见的场景(作为L2或L3)。</p>
+</div>
+<div class="section" id="id30">
+<h3>8.7.4. 不支持的动作</h3>
+<ul class="simple">
+<li>包计数(<a class="reference internal" href="#count">动作: COUNT</a>)和标记(<a class="reference internal" href="#mark">动作: MARK</a> or <a class="reference internal" href="#flag">动作: FLAG</a>) 与
+<a class="reference internal" href="#queue">动作: QUEUE</a> 的组合可以通过软件实现，前提是目标队列仅被单一规则使用。</li>
+<li>指定了 <a class="reference internal" href="#dup">动作: DUP</a> + <a class="reference internal" href="#queue">动作: QUEUE</a> 的规则可以转换成两个结合了
+<a class="reference internal" href="#queue">动作: QUEUE</a> 和 <a class="reference internal" href="#passthru">动作: PASSTHRU</a> 的规则。</li>
+<li>当只提供一个单一目标队列时， <a class="reference internal" href="#rss">动作: RSS</a> 也可以通过 <a class="reference internal" href="#queue">动作: QUEUE</a> 实现。</li>
+</ul>
+</div>
+<div class="section" id="id31">
+<h3>8.7.5. 流规则优先级</h3>
+<p>我们不能假设流规则能够被硬件按照创建顺序执行的几个原因:</p>
+<ul class="simple">
+<li>流规则内部可能是以树或者哈希表存储而不是列表。</li>
+<li>在新增流规则前删除过流规则，那么新增的规则可能会被放到表尾或者重用空闲的实体空间。</li>
+<li>当包匹配多个规则时，可能会发生复制。</li>
+</ul>
+<p>对于重叠的规则(特别是为了使用 <a class="reference internal" href="#passthru">动作: PASSTHRU</a>)仅保证在使用不同优先级时结果可预测。</p>
+<p>优先级不必在硬件中实现，除非有严格的限制(比如，优先级位)。</p>
+<p>因此，优先级可以由PMD纯软件实现。</p>
+<ul class="simple">
+<li>对于希望流规则能够按照正确顺序增加的设备，PMD可以销毁规则并在加入高优先级规则后重建销毁的规则。</li>
+<li>在初始化时可以为后续的高优先级的规则预留位置(通过创建可配置数量的空规则)。</li>
+<li>为了保存优先级，PMD可以评估规则是否冲突并调整优先级。</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id32">
+<h2>8.8. 未来发展</h2>
+<ul class="simple">
+<li>设备配置选择功能，可用于强制永久性配置，而不是依靠现有流程规则自动配置。</li>
+<li>优化带有由PMD生成的动作类型和指定模式项的 <em>rte_flow</em> 规则。
+PMD应该给这些类型分配负数，以免和已存在的类型冲突。参加 <a class="reference internal" href="#id17">负数类型</a></li>
+<li>增加在 <a class="reference internal" href="#id7">属性: 流量方向</a> 中描述的特定出口模式项和动作。</li>
+<li>在PMD无法处理请求的流规则时可以可选的回退该操作，无需应用处理。</li>
+</ul>
+</div>
+<div class="section" id="api">
+<h2>8.9. API 迁移</h2>
+<p>完整的弃用过滤器类型(通常前缀为 <em>RTE_ETH_FILTER_</em>)列表在 <code class="docutils literal notranslate"><span class="pre">rte_eth_ctrl.h</span></code> 中，
+其中还有转换成 <em>rte_flow</em> 规则的方法。</p>
+<div class="section" id="macvlan-to-eth-vf-pf">
+<h3>8.9.1. <code class="docutils literal notranslate"><span class="pre">MACVLAN</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code> → <code class="docutils literal notranslate"><span class="pre">VF</span></code>, <code class="docutils literal notranslate"><span class="pre">PF</span></code></h3>
+<p><em>MACVLAN</em> 可以转换成以 <a class="reference internal" href="#id16">动作: VF</a> 或 <a class="reference internal" href="#id15">动作: PF</a> 终止的 <a class="reference internal" href="#eth">数据模式项: ETH</a> 流规则</p>
+<span id="table-rte-flow-migration-macvlan"></span><table border="1" class="docutils" id="id72">
+<caption><span class="caption-number">表 8.40 </span><span class="caption-text">MACVLAN 转换</span></caption>
+<colgroup>
+<col width="9%" />
+<col width="16%" />
+<col width="31%" />
+<col width="16%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="4">Pattern</th>
+<th class="head">Actions</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3">0</td>
+<td rowspan="3">ETH</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+<td rowspan="3">VF,
+PF</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td colspan="3">END</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="ethertype-to-eth-queue-drop">
+<h3>8.9.2. <code class="docutils literal notranslate"><span class="pre">ETHERTYPE</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code>, <code class="docutils literal notranslate"><span class="pre">DROP</span></code></h3>
+<p><em>ETHERTYPE</em> 基本上就是以 <a class="reference internal" href="#queue">动作: QUEUE</a> or <a class="reference internal" href="#drop">动作: DROP</a> 终止的 <a class="reference internal" href="#eth">数据模式项: ETH</a> 流规则。</p>
+<span id="table-rte-flow-migration-ethertype"></span><table border="1" class="docutils" id="id73">
+<caption><span class="caption-number">表 8.41 </span><span class="caption-text">ETHERTYPE 转换</span></caption>
+<colgroup>
+<col width="9%" />
+<col width="16%" />
+<col width="31%" />
+<col width="16%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="4">Pattern</th>
+<th class="head">Actions</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3">0</td>
+<td rowspan="3">ETH</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+<td rowspan="3">QUEUE,
+DROP</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td colspan="3">END</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="flexible-to-raw-queue">
+<h3>8.9.3. <code class="docutils literal notranslate"><span class="pre">FLEXIBLE</span></code> to <code class="docutils literal notranslate"><span class="pre">RAW</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></h3>
+<p><em>FLEXIBLE</em> 可以转换成以 <a class="reference internal" href="#queue">动作: QUEUE</a> 终止并带有优先级的 <a class="reference internal" href="#raw">数据模式项: RAW</a> 模式。</p>
+<span id="table-rte-flow-migration-flexible"></span><table border="1" class="docutils" id="id74">
+<caption><span class="caption-number">表 8.42 </span><span class="caption-text">FLEXIBLE 转换</span></caption>
+<colgroup>
+<col width="9%" />
+<col width="16%" />
+<col width="31%" />
+<col width="16%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="4">Pattern</th>
+<th class="head">Actions</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3">0</td>
+<td rowspan="3">RAW</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+<td rowspan="3">QUEUE</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td colspan="3">END</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="syn-to-tcp-queue">
+<h3>8.9.4. <code class="docutils literal notranslate"><span class="pre">SYN</span></code> to <code class="docutils literal notranslate"><span class="pre">TCP</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></h3>
+<p><em>SYN</em> 是仅带有启用 <code class="docutils literal notranslate"><span class="pre">syn</span></code> 位并且以 <a class="reference internal" href="#queue">动作: QUEUE</a> 终止的 <a class="reference internal" href="#tcp">数据模式项: TCP</a> 规则。</p>
+<p>可以设置优先级来模拟高优先级位。</p>
+<span id="table-rte-flow-migration-syn"></span><table border="1" class="docutils" id="id75">
+<caption><span class="caption-number">表 8.43 </span><span class="caption-text">SYN 转换</span></caption>
+<colgroup>
+<col width="8%" />
+<col width="15%" />
+<col width="25%" />
+<col width="23%" />
+<col width="8%" />
+<col width="23%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="5">Pattern</th>
+<th class="head">Actions</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3">0</td>
+<td rowspan="3">ETH</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td colspan="2">unset</td>
+<td rowspan="3">QUEUE</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td colspan="2">unset</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td colspan="2">unset</td>
+</tr>
+<tr class="row-odd"><td rowspan="3">1</td>
+<td rowspan="3">IPV4</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td colspan="2">unset</td>
+<td rowspan="6">END</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td colspan="2">unset</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td colspan="2">unset</td>
+</tr>
+<tr class="row-even"><td rowspan="2">2</td>
+<td rowspan="2">TCP</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">syn</span></code></td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">syn</span></code></td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td colspan="4">END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="ntuple-to-ipv4-tcp-udp-queue">
+<h3>8.9.5. <code class="docutils literal notranslate"><span class="pre">NTUPLE</span></code> to <code class="docutils literal notranslate"><span class="pre">IPV4</span></code>, <code class="docutils literal notranslate"><span class="pre">TCP</span></code>, <code class="docutils literal notranslate"><span class="pre">UDP</span></code> → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></h3>
+<p><em>NTUPLE</em> 和指定空L3，<a class="reference internal" href="#ipv4">数据模式项: IPV4</a> 作为L3， <a class="reference internal" href="#tcp">数据模式项: TCP</a> 或 <a class="reference internal" href="#udp">数据模式项: UDP</a> 作为L4并且以 <a class="reference internal" href="#queue">动作: QUEUE</a> 终止的规则类似。</p>
+<p>同样也可以指定优先级。</p>
+<span id="table-rte-flow-migration-ntuple"></span><table border="1" class="docutils" id="id76">
+<caption><span class="caption-number">表 8.44 </span><span class="caption-text">NTUPLE 转换</span></caption>
+<colgroup>
+<col width="9%" />
+<col width="17%" />
+<col width="29%" />
+<col width="20%" />
+<col width="26%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="4">Pattern</th>
+<th class="head">Actions</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3">0</td>
+<td rowspan="3">ETH</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>unset</td>
+<td rowspan="3">QUEUE</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>unset</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>unset</td>
+</tr>
+<tr class="row-odd"><td rowspan="3">1</td>
+<td rowspan="3">IPV4</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+<td rowspan="7">END</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>unset</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-even"><td rowspan="3">2</td>
+<td rowspan="3">TCP,
+UDP</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>unset</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td colspan="3">END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="tunnel-to-eth-ipv4-ipv6-vxlan-or-other-queue">
+<h3>8.9.6. <code class="docutils literal notranslate"><span class="pre">TUNNEL</span></code> to <code class="docutils literal notranslate"><span class="pre">ETH</span></code>, <code class="docutils literal notranslate"><span class="pre">IPV4</span></code>, <code class="docutils literal notranslate"><span class="pre">IPV6</span></code>, <code class="docutils literal notranslate"><span class="pre">VXLAN</span></code> (or other) → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code></h3>
+<p><em>TUNNEL</em> 匹配通用的 IPv4 和 IPv6 L3/L4-based 隧道类型。</p>
+<p>下表中, <a class="reference internal" href="#any">数据模式项: ANY</a> 用于覆盖可选的L4。</p>
+<span id="table-rte-flow-migration-tunnel"></span><table border="1" class="docutils" id="id77">
+<caption><span class="caption-number">表 8.45 </span><span class="caption-text">TUNNEL 转换</span></caption>
+<colgroup>
+<col width="5%" />
+<col width="43%" />
+<col width="17%" />
+<col width="15%" />
+<col width="5%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="5">Pattern</th>
+<th class="head">Actions</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3">0</td>
+<td rowspan="3">ETH</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td colspan="2">any</td>
+<td rowspan="3">QUEUE</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td colspan="2">unset</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td colspan="2">any</td>
+</tr>
+<tr class="row-odd"><td rowspan="3">1</td>
+<td rowspan="3">IPV4, IPV6</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td colspan="2">any</td>
+<td rowspan="10">END</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td colspan="2">unset</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td colspan="2">any</td>
+</tr>
+<tr class="row-even"><td rowspan="3">2</td>
+<td rowspan="3">ANY</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td colspan="2">any</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td colspan="2">unset</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">num</span></code></td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td rowspan="3">3</td>
+<td rowspan="3">VXLAN, GENEVE, TEREDO,
+NVGRE, GRE, ...</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td colspan="2">any</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td colspan="2">unset</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td colspan="2">any</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td colspan="4">END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="fdir-to-most-item-types-queue-drop-passthru">
+<h3>8.9.7. <code class="docutils literal notranslate"><span class="pre">FDIR</span></code> to most item types → <code class="docutils literal notranslate"><span class="pre">QUEUE</span></code>, <code class="docutils literal notranslate"><span class="pre">DROP</span></code>, <code class="docutils literal notranslate"><span class="pre">PASSTHRU</span></code></h3>
+<p><em>FDIR</em> 要比其他类型复杂，有多种方法模拟它的功能。大部分方法总结于下面。</p>
+<p>一些有意不支持的特性:</p>
+<ul>
+<li><p class="first">对整个设备配置匹配输入集和掩码的能力，PMD应该根据请求的流规则自动完成。</p>
+<p>如，设备对每个协议类型仅支持一个位掩码，源/地址IPv4位掩码在第一个创建的规则时就永久的设置了。
+之后的IPv4或TCPv4规则仅在和第一个规则兼容时才能创建成功。</p>
+<p>注意，仅应用在已存在流规则上的协议位掩码是永久不变的，其他的仍可以改变。
+在流规则销毁时，相关的协议位掩码恢复可变状态。</p>
+</li>
+<li><p class="first">使用弹性字节过滤时返回四或八字节的匹配数据。虽然可以通过指定动作实现，
+但它会和超过32位(设备支持的话)标签冲突。</p>
+</li>
+<li><p class="first">整个设备RSS处理的副作用。和当前设备配置冲突的流规则不该存在。
+类似的，当设备配置影响到已存在的流规则时也不该被允许。</p>
+</li>
+<li><p class="first">设备操作模式。不支持&quot;none&quot;，因为只要流规则存在过滤就不能禁用。</p>
+</li>
+<li><p class="first">应该根据创建的流规则自动配置&quot;MAC VLAN&quot; 或 &quot;隧道&quot;的完美匹配模式。</p>
+</li>
+<li><p class="first">签名模式的操作未定义，但如果需要，可以通过特定的模式项类型实现。</p>
+</li>
+</ul>
+<span id="table-rte-flow-migration-fdir"></span><table border="1" class="docutils" id="id78">
+<caption><span class="caption-number">表 8.46 </span><span class="caption-text">FDIR 转换</span></caption>
+<colgroup>
+<col width="5%" />
+<col width="32%" />
+<col width="17%" />
+<col width="8%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="4">Pattern</th>
+<th class="head">Actions</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3">0</td>
+<td rowspan="3">ETH, RAW</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+<td rowspan="3">QUEUE, DROP, PASSTHRU</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-odd"><td rowspan="3">1</td>
+<td rowspan="3">IPV4, IPv6</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+<td rowspan="3">MARK</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-even"><td rowspan="3">2</td>
+<td rowspan="3">TCP, UDP, SCTP</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+<td rowspan="7">END</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-odd"><td rowspan="3">3</td>
+<td rowspan="3">VF, PF (optional)</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>any</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td colspan="3">END</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="hash">
+<h3>8.9.8. <code class="docutils literal notranslate"><span class="pre">HASH</span></code></h3>
+<p>没有和该过滤器类型对应的模式项，因为它转换为全局设备设置而不是模式项。
+设备的配置可以根据创建的流规则自动设置。</p>
+</div>
+<div class="section" id="l2-tunnel-to-void-vxlan">
+<h3>8.9.9. <code class="docutils literal notranslate"><span class="pre">L2_TUNNEL</span></code> to <code class="docutils literal notranslate"><span class="pre">VOID</span></code> → <code class="docutils literal notranslate"><span class="pre">VXLAN</span></code> (或其他)</h3>
+<p>所有数据包都匹配。该类型修改输入包，把它们封装到选定的隧道类型中，也可以把它们重定向到VF。</p>
+<p>标签(基于转发)的目的池可以通过使用了 <a class="reference internal" href="#dup">动作: DUP</a> 的其他流规则模拟。</p>
+<span id="table-rte-flow-migration-l2tunnel"></span><table border="1" class="docutils" id="id79">
+<caption><span class="caption-number">表 8.47 </span><span class="caption-text">L2_TUNNEL 转发</span></caption>
+<colgroup>
+<col width="7%" />
+<col width="14%" />
+<col width="23%" />
+<col width="11%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="4">Pattern</th>
+<th class="head">Actions</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td rowspan="3">0</td>
+<td rowspan="3">VOID</td>
+<td><code class="docutils literal notranslate"><span class="pre">spec</span></code></td>
+<td>N/A</td>
+<td rowspan="3">VXLAN, GENEVE, ...</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">last</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">mask</span></code></td>
+<td>N/A</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td colspan="3" rowspan="2">END</td>
+<td>VF (optional)</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>END</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cryptodev_lib.html" class="btn btn-neutral float-right" title="9. 加密设备库" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="poll_mode_drv.html" class="btn btn-neutral" title="7. 轮询模式驱动" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

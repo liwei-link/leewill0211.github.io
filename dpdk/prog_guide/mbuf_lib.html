@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6. Mbuf库 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="7. 轮询模式驱动" href="poll_mode_drv.html" />
+    <link rel="prev" title="5. 内存池库" href="mempool_lib.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6. Mbuf库</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">6.1. 包缓冲区的设计</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">6.2. 存储在内存池中的缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">6.3. 构造器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.4. 申请和释放mbuf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.5. 操作mbuf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">6.6. 元信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#direct-indirect-buffer">6.7. 直接和间接缓冲区</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">6.8. 调试</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">6.9. 使用案例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>6. Mbuf库</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/mbuf_lib.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mbuf">
+<span id="mbuf-library"></span><h1>6. Mbuf库</h1>
+<p>mbuf库用于申请和释放DPDK应用用于存储消息的缓冲区(mbuf)。消息缓冲区存储于mempool中，使用了 <a class="reference internal" href="mempool_lib.html#mempool-library"><span class="std std-ref">Mempool 库</span></a>。</p>
+<p>rte_mbuf结构体能够承载网络包缓冲区和通用控制缓冲区(由CTRL_MBUF_FLAG标识)，也能被扩展到其他类型。
+rte_mbuf头结构尽可能的小，当前仅使用了两个cache-line，但大多数时候仅使用第一个cache-line。</p>
+<div class="section" id="id1">
+<h2>6.1. 包缓冲区的设计</h2>
+<p>对于包数据(包括协议头)的存储，有两种方法:</p>
+<ol class="arabic simple">
+<li>元数据结构和包数据使用同一个内存缓冲区</li>
+<li>元数据结构和包数据使用不同的内存缓冲区</li>
+</ol>
+<p>第一种的优势是对于一个包的内存申请/释放仅需要一次。而第二种则更加灵活，元数据结构的申请和数据包的申请完全分离。</p>
+<p>DPDK中选择第一种方法。元数据中包含控制信息，如消息类型，长度，数据偏移，指向另外mbuf的指针（用于缓冲区链）</p>
+<p>消息缓冲区是用于承载缓冲区链的网络包的，缓冲区链中需要多个缓冲区才能组成一个完整的包。
+比如由多个mbuf组成的巨帧(mbuf之间通过next字段连接在一起)。</p>
+<p>对于新申请的mbuf，数据区是在缓冲区起始地址后 RTE_PKTMBUF_HEADROOM 字节处，数据区地址是缓存对齐的。
+消息缓冲区可用于在不同实体间承载控制信息，包，事件等。
+消息缓冲区中的缓冲区指针也指向其他消息缓冲区数据段或结构体。</p>
+<p><a class="reference internal" href="#figure-mbuf1"><span class="std std-numref">图 6.1</span></a> 和 <a class="reference internal" href="#figure-mbuf2"><span class="std std-numref">图 6.2</span></a> 展示了一些场景</p>
+<div class="figure" id="id10">
+<span id="figure-mbuf1"></span><img alt="../_images/mbuf1.svg" src="../_images/mbuf1.svg" /><p class="caption"><span class="caption-number">图 6.1 </span><span class="caption-text">一个段的mbuf</span></p>
+</div>
+<div class="figure" id="id11">
+<span id="figure-mbuf2"></span><img alt="../_images/mbuf2.svg" src="../_images/mbuf2.svg" /><p class="caption"><span class="caption-number">图 6.2 </span><span class="caption-text">三个段的mbuf</span></p>
+</div>
+<p>缓冲区管理器实现了一组相当标准的缓冲区访问函数来操作网络数据包。</p>
+</div>
+<div class="section" id="id2">
+<h2>6.2. 存储在内存池中的缓冲区</h2>
+<p>缓冲区管理器使用 <a class="reference internal" href="mempool_lib.html#mempool-library"><span class="std std-ref">Mempool 库</span></a> 申请缓冲区。
+因此，可以确保包头在L3处理时能够最优的分布在不同内存通道。
+mbuf中包含一个指示内存池的字段。调用 rte_ctrlmbuf_free(m) 或者 rte_pktmbuf_free(m)时，mbuf被放回原始的内存池中。</p>
+</div>
+<div class="section" id="id3">
+<h2>6.3. 构造器</h2>
+<p>API提供了数据包和控制消息mbuf的构造器。rte_pktmbuf_init() 和 rte_ctrlmbuf_init() 初始化了mbuf结构体中的部分字段，
+这些字段用户不会修改(如mbuf类型，来源池，缓冲区起始地址等)。在创建池的时候，该函数作为回调函数传递给rte_mempool_create()。</p>
+</div>
+<div class="section" id="id4">
+<h2>6.4. 申请和释放mbuf</h2>
+<p>申请mbuf时需要用户指定内存池，新申请的mbuf包含一个段，且长度为0。数据偏移初始化为头空间大小(RTE_PKTMBUF_HEADROOM)。</p>
+<p>释放mbuf意味着把它归还到来源内存池。归还时mbuf中内容不会被修改(作为一个空闲mbuf)。
+因此，再次申请该mbuf时，已由构造器初始化的字段无需重新初始化。</p>
+<p>释放包含多个段的mbuf时，所有的段都会被归还到其来源内存池中。</p>
+</div>
+<div class="section" id="id5">
+<h2>6.5. 操作mbuf</h2>
+<p>库提供了一些操作mbuf中数据的函数，例如:</p>
+<blockquote>
+<div><ul class="simple">
+<li>获取数据长度</li>
+<li>获取数据起始地址</li>
+<li>在数据段前插入数据</li>
+<li>数据段追加数据</li>
+<li>移除缓冲区起始的数据 (rte_pktmbuf_adj())</li>
+<li>移除缓冲区结尾的数据 (rte_pktmbuf_trim()) 详细参考 <em>DPDK API Reference</em> 。</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id6">
+<h2>6.6. 元信息</h2>
+<p>网络驱动会获取一些信息并存储在mbuf中，这些信息有助于后续的包处理。
+比如，VLAN，RSS哈希结果(参见 <a class="reference internal" href="poll_mode_drv.html#poll-mode-driver"><span class="std std-ref">轮询模式驱动</span></a>)，硬件已完成校验标识。</p>
+<p>An mbuf also contains the input port (where it comes from), and the number of segment mbufs in the chain.
+mbuf中也包含了输入端口(包来源)和链中mbuf段个数。</p>
+<p>对于链缓冲区, 仅在链中第一个mbuf中存储元信息。</p>
+<p>比如，IEEE1588接收上的包时间戳机制，VLAN标签和IP校验。</p>
+<p>在发送上, 应用也可以让硬件处理一些硬件支持的操作。
+比如，PKT_TX_IP_CKSUM标志从应用中卸载IPv4校验和计算，让硬件计算。</p>
+<p>下面的例子解释了如何配置VXLAN封装的TX卸载(把VXLAN封装工作下移到硬件中):
+<code class="docutils literal notranslate"><span class="pre">out_eth/out_ip/out_udp/vxlan/in_eth/in_ip/in_tcp/payload</span></code></p>
+<ul>
+<li><p class="first">计算out_ip的校验和:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mb-&gt;l2_len = len(out_eth)
+mb-&gt;l3_len = len(out_ip)
+mb-&gt;ol_flags |= PKT_TX_IPV4 | PKT_TX_IP_CSUM
+set out_ip checksum to 0 in the packet
+</pre></div>
+</div>
+<p>This is supported on hardware advertising DEV_TX_OFFLOAD_IPV4_CKSUM.</p>
+</li>
+<li><p class="first">计算out_ip 和 out_udp的校验和:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mb-&gt;l2_len = len(out_eth)
+mb-&gt;l3_len = len(out_ip)
+mb-&gt;ol_flags |= PKT_TX_IPV4 | PKT_TX_IP_CSUM | PKT_TX_UDP_CKSUM
+set out_ip checksum to 0 in the packet
+set out_udp checksum to pseudo header using rte_ipv4_phdr_cksum()
+</pre></div>
+</div>
+<p>This is supported on hardware advertising DEV_TX_OFFLOAD_IPV4_CKSUM
+and DEV_TX_OFFLOAD_UDP_CKSUM.</p>
+</li>
+<li><p class="first">计算in_ip的校验和:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mb-&gt;l2_len = len(out_eth + out_ip + out_udp + vxlan + in_eth)
+mb-&gt;l3_len = len(in_ip)
+mb-&gt;ol_flags |= PKT_TX_IPV4 | PKT_TX_IP_CSUM
+set in_ip checksum to 0 in the packet
+</pre></div>
+</div>
+<p>This is similar to case 1), but l2_len is different. It is supported
+on hardware advertising DEV_TX_OFFLOAD_IPV4_CKSUM.
+Note that it can only work if outer L4 checksum is 0.</p>
+</li>
+<li><p class="first">计算in_ip 和 in_tcp的校验和:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mb-&gt;l2_len = len(out_eth + out_ip + out_udp + vxlan + in_eth)
+mb-&gt;l3_len = len(in_ip)
+mb-&gt;ol_flags |= PKT_TX_IPV4 | PKT_TX_IP_CSUM | PKT_TX_TCP_CKSUM
+set in_ip checksum to 0 in the packet
+set in_tcp checksum to pseudo header using rte_ipv4_phdr_cksum()
+</pre></div>
+</div>
+<p>This is similar to case 2), but l2_len is different. It is supported
+on hardware advertising DEV_TX_OFFLOAD_IPV4_CKSUM and
+DEV_TX_OFFLOAD_TCP_CKSUM.
+Note that it can only work if outer L4 checksum is 0.</p>
+</li>
+<li><p class="first">segment inner TCP:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mb-&gt;l2_len = len(out_eth + out_ip + out_udp + vxlan + in_eth)
+mb-&gt;l3_len = len(in_ip)
+mb-&gt;l4_len = len(in_tcp)
+mb-&gt;ol_flags |= PKT_TX_IPV4 | PKT_TX_IP_CKSUM | PKT_TX_TCP_CKSUM |
+  PKT_TX_TCP_SEG;
+set in_ip checksum to 0 in the packet
+set in_tcp checksum to pseudo header without including the IP
+  payload length using rte_ipv4_phdr_cksum()
+</pre></div>
+</div>
+<p>This is supported on hardware advertising DEV_TX_OFFLOAD_TCP_TSO.
+Note that it can only work if outer L4 checksum is 0.</p>
+</li>
+<li><p class="first">计算out_ip, in_ip, in_tcp的校验和:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>mb-&gt;outer_l2_len = len(out_eth)
+mb-&gt;outer_l3_len = len(out_ip)
+mb-&gt;l2_len = len(out_udp + vxlan + in_eth)
+mb-&gt;l3_len = len(in_ip)
+mb-&gt;ol_flags |= PKT_TX_OUTER_IPV4 | PKT_TX_OUTER_IP_CKSUM  | \
+  PKT_TX_IP_CKSUM |  PKT_TX_TCP_CKSUM;
+set out_ip checksum to 0 in the packet
+set in_ip checksum to 0 in the packet
+set in_tcp checksum to pseudo header using rte_ipv4_phdr_cksum()
+</pre></div>
+</div>
+<p>This is supported on hardware advertising DEV_TX_OFFLOAD_IPV4_CKSUM,
+DEV_TX_OFFLOAD_UDP_CKSUM and DEV_TX_OFFLOAD_OUTER_IPV4_CKSUM.</p>
+</li>
+</ul>
+<p>标志的列表和意义在mbuf API文档(rte_mbuf.h)中有详细描述。也可以参考testpmd源码(特别是 csumonly.c 文件)</p>
+</div>
+<div class="section" id="direct-indirect-buffer">
+<span id="id7"></span><h2>6.7. 直接和间接缓冲区</h2>
+<p>直接缓冲区完全分开和独立的。间接缓冲区和直接缓冲区行为相似但是它的缓冲区指针和数据偏移却是指向另外一个直接缓冲区的。
+间接缓冲区用于包复制和分段，因为间接缓冲区可以重用多个缓冲区的同一个包数据。</p>
+<p>通过使用rte_pktmbuf_attach()函数可以让缓冲区“附加”到一个直接缓冲区上，操作完成后“附加”缓冲区就变成间接缓冲区。
+每个缓冲区都有一个引用计数的字段，当间接缓冲区附加到直接缓冲区上时，直接缓冲区的引用计数增加。
+类似地，当间接缓冲区和直接缓冲分离时，直接缓冲区的引用计数减少。
+如果引用计数器等于0，意味着该缓冲区不会再被使用，释放它。</p>
+<p>处理间接缓冲区时有些注意事项。
+首先，间接缓冲区不能附加到间接缓冲区上，
+尝试把缓冲区A附加到已经附加到缓冲区C上的间接缓冲区B上，rte_pktmbuf_attach()会自动地把A附加到C上，等于克隆了B。
+其次，一个缓冲区要想变成间接的，他的引用计数必须等于1，也就是它不能被其他间接缓冲区引用。
+最后，间接缓冲区不能重复附加到直接缓冲区(除非首先分离)</p>
+<p>虽然附加/分离操作可以通过rte_pktmbuf_attach() 和 rte_pktmbuf_detach()被调用，但建议使用高级的 rte_pktmbuf_clone() 函数，
+它会正确的初始化间接缓冲区，克隆多段的缓冲区。</p>
+<p>由于间接缓冲区被认为没有持有任何数据，间接缓冲区内存池应该配置成减少内存占用。
+间接缓冲区内存区初始化的示例(也就是间接缓冲区使用示例)在示例程序中可以找到，如IPv4多播示例程序。</p>
+</div>
+<div class="section" id="id8">
+<h2>6.8. 调试</h2>
+<p>调试模式(CONFIG_RTE_MBUF_DEBUG is enabled)下，mbuf库函数在执行任何操作前都要进行合法性(如，缓冲区损坏，错误类型等)检查。</p>
+</div>
+<div class="section" id="id9">
+<h2>6.9. 使用案例</h2>
+<p>所有网络应用都应该使用mbuf传输网络包。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="poll_mode_drv.html" class="btn btn-neutral float-right" title="7. 轮询模式驱动" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mempool_lib.html" class="btn btn-neutral" title="5. 内存池库" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. dpdk-pdump Application &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="3. dpdk-pmdinfo Application" href="pmdinfo.html" />
+    <link rel="prev" title="1. dpdk-procinfo Application" href="proc_info.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">DPDK Tools User Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="proc_info.html">1. dpdk-procinfo Application</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. dpdk-pdump Application</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-application">2.1. Running the Application</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-pdump-parameters">2.1.1. The <code class="docutils literal notranslate"><span class="pre">--pdump</span></code> parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#example">2.2. Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pmdinfo.html">3. dpdk-pmdinfo Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devbind.html">4. dpdk-devbind Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptoperf.html">5. dpdk-test-crypto-perf Application</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">DPDK Tools User Guides</a> &raquo;</li>
+        
+      <li>2. dpdk-pdump Application</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tools/pdump.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dpdk-pdump-application">
+<h1>2. dpdk-pdump Application</h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">dpdk-pdump</span></code> tool is a Data Plane Development Kit (DPDK) tool that runs as
+a DPDK secondary process and is capable of enabling packet capture on dpdk ports.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">dpdk-pdump</span></code> tool can only be used in conjunction with a primary
+application which has the packet capture framework initialized already.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">dpdk-pdump</span></code> tool depends on libpcap based PMD which is disabled
+by default in the build configuration files,
+owing to an external dependency on the libpcap development files
+which must be installed on the board.
+Once the libpcap development files are installed, the libpcap based PMD
+can be enabled by setting CONFIG_RTE_LIBRTE_PMD_PCAP=y and recompiling the DPDK.</li>
+</ul>
+</div>
+</div></blockquote>
+<div class="section" id="running-the-application">
+<h2>2.1. Running the Application</h2>
+<p>The tool has a number of command line options:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./build/app/dpdk-pdump --</span>
+<span class="go">                       --pdump &#39;(port=&lt;port id&gt; | device_id=&lt;pci id or vdev name&gt;),</span>
+<span class="go">                                (queue=&lt;queue_id&gt;),</span>
+<span class="go">                                (rx-dev=&lt;iface or pcap file&gt; |</span>
+<span class="go">                                 tx-dev=&lt;iface or pcap file&gt;),</span>
+<span class="go">                                [ring-size=&lt;ring size&gt;],</span>
+<span class="go">                                [mbuf-size=&lt;mbuf data size&gt;],</span>
+<span class="go">                                [total-num-mbufs=&lt;number of mbufs&gt;]&#39;</span>
+<span class="go">                       [--server-socket-path=&lt;server socket dir&gt;]</span>
+<span class="go">                       [--client-socket-path=&lt;client socket dir&gt;]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--pdump</span></code> command line option is mandatory and it takes various sub arguments which are described in
+below section.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>Parameters inside the parentheses represents mandatory parameters.</li>
+<li>Parameters inside the square brackets represents optional parameters.</li>
+<li>Multiple instances of <code class="docutils literal notranslate"><span class="pre">--pdump</span></code> can be passed to capture packets on different port and queue combinations.</li>
+</ul>
+</div>
+</div></blockquote>
+<p>The <code class="docutils literal notranslate"><span class="pre">--server-socket-path</span></code> command line option is optional. This represents the server socket directory.
+If no value is passed default values are used i.e. <code class="docutils literal notranslate"><span class="pre">/var/run/.dpdk/</span></code> for root users and <code class="docutils literal notranslate"><span class="pre">~/.dpdk/</span></code>
+for non root users.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--client-socket-path</span></code> command line option is optional. This represents the client socket directory.
+If no value is passed default values are used i.e. <code class="docutils literal notranslate"><span class="pre">/var/run/.dpdk/</span></code> for root users and <code class="docutils literal notranslate"><span class="pre">~/.dpdk/</span></code>
+for non root users.</p>
+<div class="section" id="the-pdump-parameters">
+<h3>2.1.1. The <code class="docutils literal notranslate"><span class="pre">--pdump</span></code> parameters</h3>
+<p><code class="docutils literal notranslate"><span class="pre">port</span></code>:
+Port id of the eth device on which packets should be captured.</p>
+<p><code class="docutils literal notranslate"><span class="pre">device_id</span></code>:
+PCI address (or) name of the eth device on which packets should be captured.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>As of now the <code class="docutils literal notranslate"><span class="pre">dpdk-pdump</span></code> tool cannot capture the packets of virtual devices
+in the primary process due to a bug in the ethdev library. Due to this bug, in a multi process context,
+when the primary and secondary have different ports set, then the secondary process
+(here the <code class="docutils literal notranslate"><span class="pre">dpdk-pdump</span></code> tool) overwrites the <code class="docutils literal notranslate"><span class="pre">rte_eth_devices[]</span></code> entries of the primary process.</li>
+</ul>
+</div>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">queue</span></code>:
+Queue id of the eth device on which packets should be captured. The user can pass a queue value of <code class="docutils literal notranslate"><span class="pre">*</span></code> to enable
+packet capture on all queues of the eth device.</p>
+<p><code class="docutils literal notranslate"><span class="pre">rx-dev</span></code>:
+Can be either a pcap file name or any Linux iface.</p>
+<p><code class="docutils literal notranslate"><span class="pre">tx-dev</span></code>:
+Can be either a pcap file name or any Linux iface.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>To receive ingress packets only, <code class="docutils literal notranslate"><span class="pre">rx-dev</span></code> should be passed.</li>
+<li>To receive egress packets only, <code class="docutils literal notranslate"><span class="pre">tx-dev</span></code> should be passed.</li>
+<li>To receive ingress and egress packets separately <code class="docutils literal notranslate"><span class="pre">rx-dev</span></code> and <code class="docutils literal notranslate"><span class="pre">tx-dev</span></code>
+should both be passed with the different file names or the Linux iface names.</li>
+<li>To receive ingress and egress packets together, <code class="docutils literal notranslate"><span class="pre">rx-dev</span></code> and <code class="docutils literal notranslate"><span class="pre">tx-dev</span></code>
+should both be passed with the same file name or the same Linux iface name.</li>
+</ul>
+</div>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">ring-size</span></code>:
+Size of the ring. This value is used internally for ring creation. The ring will be used to enqueue the packets from
+the primary application to the secondary. This is an optional parameter with default size 16384.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mbuf-size</span></code>:
+Size of the mbuf data. This is used internally for mempool creation. Ideally this value must be same as
+the primary application's mempool's mbuf data size which is used for packet RX. This is an optional parameter with
+default size 2176.</p>
+<p><code class="docutils literal notranslate"><span class="pre">total-num-mbufs</span></code>:
+Total number mbufs in mempool. This is used internally for mempool creation. This is an optional parameter with default
+value 65535.</p>
+</div>
+</div>
+<div class="section" id="example">
+<h2>2.2. Example</h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo ./build/app/dpdk-pdump -- --pdump <span class="s1">&#39;port=0,queue=*,rx-dev=/tmp/rx.pcap&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pmdinfo.html" class="btn btn-neutral float-right" title="3. dpdk-pmdinfo Application" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="proc_info.html" class="btn btn-neutral" title="1. dpdk-procinfo Application" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

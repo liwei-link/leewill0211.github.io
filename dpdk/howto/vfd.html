@@ -1,0 +1,597 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. VF daemon (VFd) &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="6. Virtio_user for Container Networking" href="virtio_user_for_container_networking.html" />
+    <link rel="prev" title="4. PVP reference benchmark setup using testpmd" href="pvp_reference_benchmark.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">HowTo Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="lm_bond_virtio_sriov.html">1. Live Migration of VM with SR-IOV VF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lm_virtio_vhost_user.html">2. Live Migration of VM with Virtio on host running vhost_user</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_bifurcation.html">3. Flow Bifurcation How-to Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pvp_reference_benchmark.html">4. PVP reference benchmark setup using testpmd</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. VF daemon (VFd)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preparing">5.1. Preparing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-functions-of-ixgbe-and-i40e">5.2. Common functions of IXGBE and I40E</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tx-loopback">5.2.1. TX loopback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-mac-address-setting">5.2.2. VF MAC address setting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-mac-anti-spoofing">5.2.3. VF MAC anti-spoofing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-vlan-anti-spoofing">5.2.4. VF VLAN anti-spoofing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-vlan-insertion">5.2.5. VF VLAN insertion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-vlan-stripping">5.2.6. VF VLAN stripping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-vlan-filtering">5.2.7. VF VLAN filtering</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-ixgbe-specific-vfd-functions">5.3. The IXGBE specific VFd functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#all-queues-drop">5.3.1. All queues drop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-packet-drop">5.3.2. VF packet drop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-rate-limit">5.3.3. VF rate limit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-rx-enabling">5.3.4. VF RX enabling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-tx-enabling">5.3.5. VF TX enabling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-rx-mode-setting">5.3.6. VF RX mode setting</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-i40e-specific-vfd-functions">5.4. The I40E specific VFd functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vf-statistics">5.4.1. VF statistics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-statistics-resetting">5.4.2. VF statistics resetting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-link-status-change-notification">5.4.3. VF link status change notification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-mac-broadcast-setting">5.4.4. VF MAC broadcast setting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-mac-multicast-promiscuous-mode">5.4.5. VF MAC multicast promiscuous mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-mac-unicast-promiscuous-mode">5.4.6. VF MAC unicast promiscuous mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-max-bandwidth">5.4.7. VF max bandwidth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-tc-bandwidth-allocation">5.4.8. VF TC bandwidth allocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vf-tc-max-bandwidth">5.4.9. VF TC max bandwidth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tc-strict-priority-scheduling">5.4.10. TC strict priority scheduling</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtio_user_for_container_networking.html">6. Virtio_user for Container Networking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio_user_as_exceptional_path.html">7. Virtio_user as Exceptional Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">HowTo Guides</a> &raquo;</li>
+        
+      <li>5. VF daemon (VFd)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/howto/vfd.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vf-daemon-vfd">
+<h1>5. VF daemon (VFd)</h1>
+<p>VFd (the VF daemon) is a mechanism which can be used to configure features on
+a VF (SR-IOV Virtual Function) without direct access to the PF (SR-IOV
+Physical Function). VFd is an <em>EXPERIMENTAL</em> feature which can only be used in
+the scenario of DPDK PF with a DPDK VF. If the PF port is driven by the Linux
+kernel driver then the VFd feature will not work. Currently VFd is only
+supported by the ixgbe and i40e drivers.</p>
+<p>In general VF features cannot be configured directly by an end user
+application since they are under the control of the PF. The normal approach to
+configuring a feature on a VF is that an application would call the APIs
+provided by the VF driver. If the required feature cannot be configured by the
+VF directly (the most common case) the VF sends a message to the PF through
+the mailbox on ixgbe and i40e. This means that the availability of the feature
+depends on whether the appropriate mailbox messages are defined.</p>
+<p>DPDK leverages the mailbox interface defined by the Linux kernel driver so
+that compatibility with the kernel driver can be guaranteed. The downside of
+this approach is that the availability of messages supported by the kernel
+become a limitation when the user wants to configure features on the VF.</p>
+<p>VFd is a new method of controlling the features on a VF. The VF driver doesn't
+talk directly to the PF driver when configuring a feature on the VF. When a VF
+application (i.e., an application using the VF ports) wants to enable a VF
+feature, it can send a message to the PF application (i.e., the application
+using the PF port, which can be the same as the VF application). The PF
+application will configure the feature for the VF. Obviously, the PF
+application can also configure the VF features without a request from the VF
+application.</p>
+<div class="figure" id="id1">
+<span id="vf-daemon-overview"></span><img alt="../_images/vf_daemon_overview.svg" src="../_images/vf_daemon_overview.svg" /><p class="caption"><span class="caption-number">图 5.4 </span><span class="caption-text">VF daemon (VFd) Overview</span></p>
+</div>
+<p>Compared with the traditional approach the VFd moves the negotiation between
+VF and PF from the driver level to application level. So the application
+should define how the negotiation between the VF and PF works, or even if the
+control should be limited to the PF.</p>
+<p>It is the application's responsibility to use VFd. Consider for example a KVM
+migration, the VF application may transfer from one VM to another. It is
+recommended in this case that the PF control the VF features without
+participation from the VF. Then the VF application has no capability to
+configure the features. So the user doesn't need to define the interface
+between the VF application and the PF application. The service provider should
+take the control of all the features.</p>
+<p>The following sections describe the VFd functionality.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Although VFd is supported by both ixgbe and i40e, please be aware that
+since the hardware capability is different, the functions supported by
+ixgbe and i40e are not the same.</p>
+</div>
+<div class="section" id="preparing">
+<h2>5.1. Preparing</h2>
+<p>VFd only can be used in the scenario of DPDK PF + DPDK VF. Users should bind
+the PF port to <code class="docutils literal notranslate"><span class="pre">igb_uio</span></code>, then create the VFs based on the DPDK PF host.</p>
+<p>The typical procedure to achieve this is as follows:</p>
+<ol class="arabic">
+<li><p class="first">Boot the system without iommu, or with <code class="docutils literal notranslate"><span class="pre">iommu=pt</span></code>.</p>
+</li>
+<li><p class="first">Bind the PF port to <code class="docutils literal notranslate"><span class="pre">igb_uio</span></code>, for example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-devbind.py -b igb_uio 01:00.0
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a Virtual Function:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>echo 1 &gt; /sys/bus/pci/devices/0000:01:00.0/max_vfs
+</pre></div>
+</div>
+</li>
+<li><p class="first">Start a VM with the new VF port bypassed to it.</p>
+</li>
+<li><p class="first">Run a DPDK application on the PF in the host:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>testpmd -l 0-7 -n 4 -- -i --txqflags=0
+</pre></div>
+</div>
+</li>
+<li><p class="first">Bind the VF port to <code class="docutils literal notranslate"><span class="pre">igb_uio</span></code> in the VM:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-devbind.py -b igb_uio 03:00.0
+</pre></div>
+</div>
+</li>
+<li><p class="first">Run a DPDK application on the VF in the VM:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>testpmd -l 0-7 -n 4 -- -i --txqflags=0
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="common-functions-of-ixgbe-and-i40e">
+<h2>5.2. Common functions of IXGBE and I40E</h2>
+<p>The following sections show how to enable PF/VF functionality based on the
+above testpmd setup.</p>
+<div class="section" id="tx-loopback">
+<h3>5.2.1. TX loopback</h3>
+<p>Run a testpmd runtime command on the PF to set TX loopback:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set tx loopback 0 on|off
+</pre></div>
+</div>
+<p>This sets whether the PF port and all the VF ports that belong to it are
+allowed to send the packets to other virtual ports.</p>
+<p>Although it is a VFd function, it is the global setting for the whole
+physical port. When using this function, the PF and all the VFs TX loopback
+will be enabled/disabled.</p>
+</div>
+<div class="section" id="vf-mac-address-setting">
+<h3>5.2.2. VF MAC address setting</h3>
+<p>Run a testpmd runtime command on the PF to set the MAC address for a VF port:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf mac addr 0 0 A0:36:9F:7B:C3:51
+</pre></div>
+</div>
+<p>This testpmd runtime command will change the MAC address of the VF port to
+this new address. If any other addresses are set before, they will be
+overwritten.</p>
+</div>
+<div class="section" id="vf-mac-anti-spoofing">
+<h3>5.2.3. VF MAC anti-spoofing</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable the MAC
+anti-spoofing for a VF port:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf mac antispoof 0 0 on|off
+</pre></div>
+</div>
+<p>When enabling the MAC anti-spoofing, the port will not forward packets whose
+source MAC address is not the same as the port.</p>
+</div>
+<div class="section" id="vf-vlan-anti-spoofing">
+<h3>5.2.4. VF VLAN anti-spoofing</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable the VLAN
+anti-spoofing for a VF port:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf vlan antispoof 0 0 on|off
+</pre></div>
+</div>
+<p>When enabling the VLAN anti-spoofing, the port will not send packets whose
+VLAN ID does not belong to VLAN IDs that this port can receive.</p>
+</div>
+<div class="section" id="vf-vlan-insertion">
+<h3>5.2.5. VF VLAN insertion</h3>
+<p>Run a testpmd runtime command on the PF to set the VLAN insertion for a VF
+port:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf vlan insert 0 0 1
+</pre></div>
+</div>
+<p>When using this testpmd runtime command, an assigned VLAN ID can be inserted
+to the transmitted packets by the hardware.</p>
+<p>The assigned VLAN ID can be 0. It means disabling the VLAN insertion.</p>
+</div>
+<div class="section" id="vf-vlan-stripping">
+<h3>5.2.6. VF VLAN stripping</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable the VLAN stripping
+for a VF port:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf vlan stripq 0 0 on|off
+</pre></div>
+</div>
+<p>This testpmd runtime command is used to enable/disable the RX VLAN stripping
+for a specific VF port.</p>
+</div>
+<div class="section" id="vf-vlan-filtering">
+<h3>5.2.7. VF VLAN filtering</h3>
+<p>Run a testpmd runtime command on the PF to set the VLAN filtering for a VF
+port:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>rx_vlan add 1 port 0 vf 1
+rx_vlan rm  1 port 0 vf 1
+</pre></div>
+</div>
+<p>These two testpmd runtime commands can be used to add or remove the VLAN
+filter for several VF ports. When the VLAN filters are added only the packets
+that have the assigned VLAN IDs can be received. Other packets will be dropped
+by hardware.</p>
+</div>
+</div>
+<div class="section" id="the-ixgbe-specific-vfd-functions">
+<h2>5.3. The IXGBE specific VFd functions</h2>
+<p>The functions in this section are specific to the ixgbe driver.</p>
+<div class="section" id="all-queues-drop">
+<h3>5.3.1. All queues drop</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable the all queues
+drop:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set all queues drop on|off
+</pre></div>
+</div>
+<p>This is a global setting for the PF and all the VF ports of the physical port.</p>
+<p>Enabling the <code class="docutils literal notranslate"><span class="pre">all</span> <span class="pre">queues</span> <span class="pre">drop</span></code> feature means that when there is no available
+descriptor for the received packets they are dropped. The <code class="docutils literal notranslate"><span class="pre">all</span> <span class="pre">queues</span> <span class="pre">drop</span></code>
+feature should be enabled in SR-IOV mode to avoid one queue blocking others.</p>
+</div>
+<div class="section" id="vf-packet-drop">
+<h3>5.3.2. VF packet drop</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable the packet drop for
+a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf split drop 0 0 on|off
+</pre></div>
+</div>
+<p>This is a similar function as <code class="docutils literal notranslate"><span class="pre">all</span> <span class="pre">queues</span> <span class="pre">drop</span></code>. The difference is that this
+function is per VF setting and the previous function is a global setting.</p>
+</div>
+<div class="section" id="vf-rate-limit">
+<h3>5.3.3. VF rate limit</h3>
+<p>Run a testpmd runtime command on the PF to all queues' rate limit for a
+specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set port 0 vf 0 rate 10 queue_mask 1
+</pre></div>
+</div>
+<p>This is a function to set the rate limit for all the queues in the
+<code class="docutils literal notranslate"><span class="pre">queue_mask</span></code> bitmap. It is not used to set the summary of the rate
+limit. The rate limit of every queue will be set equally to the assigned rate
+limit.</p>
+</div>
+<div class="section" id="vf-rx-enabling">
+<h3>5.3.4. VF RX enabling</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable packet receiving for
+a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set port 0 vf 0 rx on|off
+</pre></div>
+</div>
+<p>This function can be used to stop/start packet receiving on a VF.</p>
+</div>
+<div class="section" id="vf-tx-enabling">
+<h3>5.3.5. VF TX enabling</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable packet transmitting
+for a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set port 0 vf 0 tx on|off
+</pre></div>
+</div>
+<p>This function can be used to stop/start packet transmitting on a VF.</p>
+</div>
+<div class="section" id="vf-rx-mode-setting">
+<h3>5.3.6. VF RX mode setting</h3>
+<p>Run a testpmd runtime command on the PF to set the RX mode for a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set port 0 vf 0 rxmode AUPE|ROPE|BAM|MPE on|off
+</pre></div>
+</div>
+<p>This function can be used to enable/disable some RX modes on the VF, including:</p>
+<ul class="simple">
+<li>If it accept untagged packets.</li>
+<li>If it accepts packets matching the MAC filters.</li>
+<li>If it accept MAC broadcast packets,</li>
+<li>If it enables MAC multicast promiscuous mode.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="the-i40e-specific-vfd-functions">
+<h2>5.4. The I40E specific VFd functions</h2>
+<p>The functions in this section are specific to the i40e driver.</p>
+<div class="section" id="vf-statistics">
+<h3>5.4.1. VF statistics</h3>
+<p>This provides an API to get the a specific VF's statistic from PF.</p>
+</div>
+<div class="section" id="vf-statistics-resetting">
+<h3>5.4.2. VF statistics resetting</h3>
+<p>This provides an API to rest the a specific VF's statistic from PF.</p>
+</div>
+<div class="section" id="vf-link-status-change-notification">
+<h3>5.4.3. VF link status change notification</h3>
+<p>This provide an API to let a specific VF know if the physical link status
+changed.</p>
+<p>Normally if a VF received this notification, the driver should notify the
+application to reset the VF port.</p>
+</div>
+<div class="section" id="vf-mac-broadcast-setting">
+<h3>5.4.4. VF MAC broadcast setting</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable MAC broadcast packet
+receiving for a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf broadcast 0 0 on|off
+</pre></div>
+</div>
+</div>
+<div class="section" id="vf-mac-multicast-promiscuous-mode">
+<h3>5.4.5. VF MAC multicast promiscuous mode</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable MAC multicast
+promiscuous mode for a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf allmulti 0 0 on|off
+</pre></div>
+</div>
+</div>
+<div class="section" id="vf-mac-unicast-promiscuous-mode">
+<h3>5.4.6. VF MAC unicast promiscuous mode</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable MAC unicast
+promiscuous mode for a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf promisc 0 0 on|off
+</pre></div>
+</div>
+</div>
+<div class="section" id="vf-max-bandwidth">
+<h3>5.4.7. VF max bandwidth</h3>
+<p>Run a testpmd runtime command on the PF to set the TX maximum bandwidth for a
+specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf tx max-bandwidth 0 0 2000
+</pre></div>
+</div>
+<p>The maximum bandwidth is an absolute value in Mbps.</p>
+</div>
+<div class="section" id="vf-tc-bandwidth-allocation">
+<h3>5.4.8. VF TC bandwidth allocation</h3>
+<p>Run a testpmd runtime command on the PF to set the TCs (traffic class) TX
+bandwidth allocation for a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf tc tx min-bandwidth 0 0 (20,20,20,40)
+</pre></div>
+</div>
+<p>The allocated bandwidth should be set for all the TCs. The allocated bandwidth
+is a relative value as a percentage. The sum of all the bandwidth should
+be 100.</p>
+</div>
+<div class="section" id="vf-tc-max-bandwidth">
+<h3>5.4.9. VF TC max bandwidth</h3>
+<p>Run a testpmd runtime command on the PF to set the TCs TX maximum bandwidth
+for a specific VF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set vf tc tx max-bandwidth 0 0 0 10000
+</pre></div>
+</div>
+<p>The maximum bandwidth is an absolute value in Mbps.</p>
+</div>
+<div class="section" id="tc-strict-priority-scheduling">
+<h3>5.4.10. TC strict priority scheduling</h3>
+<p>Run a testpmd runtime command on the PF to enable/disable several TCs TX
+strict priority scheduling:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set tx strict-link-priority 0 0x3
+</pre></div>
+</div>
+<p>The 0 in the TC bitmap means disabling the strict priority scheduling for this
+TC. To enable use a value of 1.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="virtio_user_for_container_networking.html" class="btn btn-neutral float-right" title="6. Virtio_user for Container Networking" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pvp_reference_benchmark.html" class="btn btn-neutral" title="4. PVP reference benchmark setup using testpmd" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>28. Metrics Library &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="29. 端口热插拔框架" href="port_hotplug_framework.html" />
+    <link rel="prev" title="27. vhost库" href="vhost_lib.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">28. Metrics Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initialising-the-library">28.1. Initialising the library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registering-metrics">28.2. Registering metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#updating-metric-values">28.3. Updating metric values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#querying-metrics">28.4. Querying metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bit-rate-statistics-library">28.5. Bit-rate statistics library</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#initialization">28.5.1. Initialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#controlling-the-sampling-rate">28.5.2. Controlling the sampling rate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#latency-statistics-library">28.6. Latency statistics library</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">28.6.1. Initialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#triggering-statistic-updates">28.6.2. Triggering statistic updates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#library-shutdown">28.6.3. Library shutdown</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>28. Metrics Library</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/metrics_lib.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="metrics-library">
+<span id="id1"></span><h1>28. Metrics Library</h1>
+<p>The Metrics library implements a mechanism by which <em>producers</em> can
+publish numeric information for later querying by <em>consumers</em>. In
+practice producers will typically be other libraries or primary
+processes, whereas consumers will typically be applications.</p>
+<p>Metrics themselves are statistics that are not generated by PMDs. Metric
+information is populated using a push model, where producers update the
+values contained within the metric library by calling an update function
+on the relevant metrics. Consumers receive metric information by querying
+the central metric data, which is held in shared memory.</p>
+<p>For each metric, a separate value is maintained for each port id, and
+when publishing metric values the producers need to specify which port is
+being updated. In addition there is a special id <code class="docutils literal notranslate"><span class="pre">RTE_METRICS_GLOBAL</span></code>
+that is intended for global statistics that are not associated with any
+individual device. Since the metrics library is self-contained, the only
+restriction on port numbers is that they are less than <code class="docutils literal notranslate"><span class="pre">RTE_MAX_ETHPORTS</span></code>
+- there is no requirement for the ports to actually exist.</p>
+<div class="section" id="initialising-the-library">
+<h2>28.1. Initialising the library</h2>
+<p>Before the library can be used, it has to be initialized by calling
+<code class="docutils literal notranslate"><span class="pre">rte_metrics_init()</span></code> which sets up the metric store in shared memory.
+This is where producers will publish metric information to, and where
+consumers will query it from.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">rte_metrics_init</span><span class="p">(</span><span class="n">rte_socket_id</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>This function <strong>must</strong> be called from a primary process, but otherwise
+producers and consumers can be in either primary or secondary processes.</p>
+</div>
+<div class="section" id="registering-metrics">
+<h2>28.2. Registering metrics</h2>
+<p>Metrics must first be <em>registered</em>, which is the way producers declare
+the names of the metrics they will be publishing. Registration can either
+be done individually, or a set of metrics can be registered as a group.
+Individual registration is done using <code class="docutils literal notranslate"><span class="pre">rte_metrics_reg_name()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">id_1</span> <span class="o">=</span> <span class="n">rte_metrics_reg_name</span><span class="p">(</span><span class="s">&quot;mean_bits_in&quot;</span><span class="p">);</span>
+<span class="n">id_2</span> <span class="o">=</span> <span class="n">rte_metrics_reg_name</span><span class="p">(</span><span class="s">&quot;mean_bits_out&quot;</span><span class="p">);</span>
+<span class="n">id_3</span> <span class="o">=</span> <span class="n">rte_metrics_reg_name</span><span class="p">(</span><span class="s">&quot;peak_bits_in&quot;</span><span class="p">);</span>
+<span class="n">id_4</span> <span class="o">=</span> <span class="n">rte_metrics_reg_name</span><span class="p">(</span><span class="s">&quot;peak_bits_out&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>or alternatively, a set of metrics can be registered together using
+<code class="docutils literal notranslate"><span class="pre">rte_metrics_reg_names()</span></code>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="k">const</span> <span class="n">names</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;mean_bits_in&quot;</span><span class="p">,</span> <span class="s">&quot;mean_bits_out&quot;</span><span class="p">,</span>
+    <span class="s">&quot;peak_bits_in&quot;</span><span class="p">,</span> <span class="s">&quot;peak_bits_out&quot;</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">id_set</span> <span class="o">=</span> <span class="n">rte_metrics_reg_names</span><span class="p">(</span><span class="o">&amp;</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If the return value is negative, it means registration failed. Otherwise
+the return value is the <em>key</em> for the metric, which is used when updating
+values. A table mapping together these key values and the metrics' names
+can be obtained using <code class="docutils literal notranslate"><span class="pre">rte_metrics_get_names()</span></code>.</p>
+</div>
+<div class="section" id="updating-metric-values">
+<h2>28.3. Updating metric values</h2>
+<p>Once registered, producers can update the metric for a given port using
+the <code class="docutils literal notranslate"><span class="pre">rte_metrics_update_value()</span></code> function. This uses the metric key
+that is returned when registering the metric, and can also be looked up
+using <code class="docutils literal notranslate"><span class="pre">rte_metrics_get_names()</span></code>.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">rte_metrics_update_value</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_1</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="n">rte_metrics_update_value</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_2</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+<span class="n">rte_metrics_update_value</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_3</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="n">rte_metrics_update_value</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_4</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>if metrics were registered as a single set, they can either be updated
+individually using <code class="docutils literal notranslate"><span class="pre">rte_metrics_update_value()</span></code>, or updated together
+using the <code class="docutils literal notranslate"><span class="pre">rte_metrics_update_values()</span></code> function:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">rte_metrics_update_value</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_set</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="n">rte_metrics_update_value</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_set</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+<span class="n">rte_metrics_update_value</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_set</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="n">rte_metrics_update_value</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_set</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+
+<span class="n">rte_metrics_update_values</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">id_set</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">rte_metrics_update_values()</span></code> cannot be used to update
+metric values from <em>multiple</em> <em>sets</em>, as there is no guarantee two
+sets registered one after the other have contiguous id values.</p>
+</div>
+<div class="section" id="querying-metrics">
+<h2>28.4. Querying metrics</h2>
+<p>Consumers can obtain metric values by querying the metrics library using
+the <code class="docutils literal notranslate"><span class="pre">rte_metrics_get_values()</span></code> function that return an array of
+<code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_metric_value</span></code>. Each entry within this array contains a metric
+value and its associated key. A key-name mapping can be obtained using the
+<code class="docutils literal notranslate"><span class="pre">rte_metrics_get_names()</span></code> function that returns an array of
+<code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">rte_metric_name</span></code> that is indexed by the key. The following will
+print out all metrics for a given port:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">print_metrics</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">rte_metric_name</span> <span class="o">*</span><span class="n">names</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+
+    <span class="n">len</span> <span class="o">=</span> <span class="n">rte_metrics_get_names</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot get metrics count</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;No metrics to display (none have been registered)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">rte_metric_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">len</span><span class="p">);</span>
+    <span class="n">names</span> <span class="o">=</span>  <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">rte_metric_name</span><span class="p">)</span> <span class="o">*</span> <span class="n">len</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">metrics</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">names</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot allocate memory</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">free</span><span class="p">(</span><span class="n">metrics</span><span class="p">);</span>
+        <span class="n">free</span><span class="p">(</span><span class="n">names</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">rte_metrics_get_values</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">len</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">ret</span> <span class="o">&gt;</span> <span class="n">len</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot get metrics values</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="n">free</span><span class="p">(</span><span class="n">metrics</span><span class="p">);</span>
+        <span class="n">free</span><span class="p">(</span><span class="n">names</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Metrics for port %i:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">port_id</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;  %s: %&quot;</span><span class="n">PRIu64</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+            <span class="n">names</span><span class="p">[</span><span class="n">metrics</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">key</span><span class="p">].</span><span class="n">name</span><span class="p">,</span> <span class="n">metrics</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">metrics</span><span class="p">);</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">names</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bit-rate-statistics-library">
+<h2>28.5. Bit-rate statistics library</h2>
+<p>The bit-rate library calculates the exponentially-weighted moving
+average and peak bit-rates for each active port (i.e. network device).
+These statistics are reported via the metrics library using the
+following names:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">mean_bits_in</span></code>: Average inbound bit-rate</li>
+<li><code class="docutils literal notranslate"><span class="pre">mean_bits_out</span></code>:  Average outbound bit-rate</li>
+<li><code class="docutils literal notranslate"><span class="pre">ewma_bits_in</span></code>: Average inbound bit-rate (EWMA smoothed)</li>
+<li><code class="docutils literal notranslate"><span class="pre">ewma_bits_out</span></code>:  Average outbound bit-rate (EWMA smoothed)</li>
+<li><code class="docutils literal notranslate"><span class="pre">peak_bits_in</span></code>:  Peak inbound bit-rate</li>
+<li><code class="docutils literal notranslate"><span class="pre">peak_bits_out</span></code>:  Peak outbound bit-rate</li>
+</ul>
+</div></blockquote>
+<p>Once initialised and clocked at the appropriate frequency, these
+statistics can be obtained by querying the metrics library.</p>
+<div class="section" id="initialization">
+<h3>28.5.1. Initialization</h3>
+<p>Before the library can be used, it has to be initialised by calling
+<code class="docutils literal notranslate"><span class="pre">rte_stats_bitrate_create()</span></code>, which will return a bit-rate
+calculation object. Since the bit-rate library uses the metrics library
+to report the calculated statistics, the bit-rate library then needs to
+register the calculated statistics with the metrics library. This is
+done using the helper function <code class="docutils literal notranslate"><span class="pre">rte_stats_bitrate_reg()</span></code>.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_stats_bitrates</span> <span class="o">*</span><span class="n">bitrate_data</span><span class="p">;</span>
+
+<span class="n">bitrate_data</span> <span class="o">=</span> <span class="n">rte_stats_bitrate_create</span><span class="p">();</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">bitrate_data</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="n">rte_exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">,</span> <span class="s">&quot;Could not allocate bit-rate data.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="n">rte_stats_bitrate_reg</span><span class="p">(</span><span class="n">bitrate_data</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="controlling-the-sampling-rate">
+<h3>28.5.2. Controlling the sampling rate</h3>
+<p>Since the library works by periodic sampling but does not use an
+internal thread, the application has to periodically call
+<code class="docutils literal notranslate"><span class="pre">rte_stats_bitrate_calc()</span></code>. The frequency at which this function
+is called should be the intended sampling rate required for the
+calculated statistics. For instance if per-second statistics are
+desired, this function should be called once a second.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">tics_datum</span> <span class="o">=</span> <span class="n">rte_rdtsc</span><span class="p">();</span>
+<span class="n">tics_per_1sec</span> <span class="o">=</span> <span class="n">rte_get_timer_hz</span><span class="p">();</span>
+
+<span class="k">while</span><span class="p">(</span> <span class="mi">1</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* ... */</span>
+    <span class="n">tics_current</span> <span class="o">=</span> <span class="n">rte_rdtsc</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">tics_current</span> <span class="o">-</span> <span class="n">tics_datum</span> <span class="o">&gt;=</span> <span class="n">tics_per_1sec</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/* Periodic bitrate calculation */</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">idx_port</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">idx_port</span> <span class="o">&lt;</span> <span class="n">cnt_ports</span><span class="p">;</span> <span class="n">idx_port</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">rte_stats_bitrate_calc</span><span class="p">(</span><span class="n">bitrate_data</span><span class="p">,</span> <span class="n">idx_port</span><span class="p">);</span>
+            <span class="n">tics_datum</span> <span class="o">=</span> <span class="n">tics_current</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="latency-statistics-library">
+<h2>28.6. Latency statistics library</h2>
+<p>The latency statistics library calculates the latency of packet
+processing by a DPDK application, reporting the minimum, average,
+and maximum nano-seconds that packet processing takes, as well as
+the jitter in processing delay. These statistics are then reported
+via the metrics library using the following names:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">min_latency_ns</span></code>: Minimum processing latency (nano-seconds)</li>
+<li><code class="docutils literal notranslate"><span class="pre">avg_latency_ns</span></code>:  Average  processing latency (nano-seconds)</li>
+<li><code class="docutils literal notranslate"><span class="pre">mac_latency_ns</span></code>:  Maximum  processing latency (nano-seconds)</li>
+<li><code class="docutils literal notranslate"><span class="pre">jitter_ns</span></code>: Variance in processing latency (nano-seconds)</li>
+</ul>
+</div></blockquote>
+<p>Once initialised and clocked at the appropriate frequency, these
+statistics can be obtained by querying the metrics library.</p>
+<div class="section" id="id2">
+<h3>28.6.1. Initialization</h3>
+<p>Before the library can be used, it has to be initialised by calling
+<code class="docutils literal notranslate"><span class="pre">rte_latencystats_init()</span></code>.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">lcoreid_t</span> <span class="n">latencystats_lcore_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">rte_latencystats_init</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+    <span class="n">rte_exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">,</span> <span class="s">&quot;Could not allocate latency data.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="triggering-statistic-updates">
+<h3>28.6.2. Triggering statistic updates</h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">rte_latencystats_update()</span></code> function needs to be called
+periodically so that latency statistics can be updated.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">latencystats_lcore_id</span> <span class="o">==</span> <span class="n">rte_lcore_id</span><span class="p">())</span>
+    <span class="n">rte_latencystats_update</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="library-shutdown">
+<h3>28.6.3. Library shutdown</h3>
+<p>When finished, <code class="docutils literal notranslate"><span class="pre">rte_latencystats_uninit()</span></code> needs to be called to
+de-initialise the latency library.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">rte_latencystats_uninit</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="port_hotplug_framework.html" class="btn btn-neutral float-right" title="29. 端口热插拔框架" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="vhost_lib.html" class="btn btn-neutral" title="27. vhost库" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

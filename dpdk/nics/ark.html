@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. ARK Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="4. AVP Poll Mode Driver" href="avp.html" />
+    <link rel="prev" title="2. Compiling and testing a PMD for a NIC" href="build_and_test.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Network Interface Controller Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Overview of Networking Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_and_test.html">2. Compiling and testing a PMD for a NIC</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3. ARK Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">3.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#device-parameters">3.2. Device Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-path-interface">3.3. Data Path Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-information">3.4. Configuration Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-dpdk">3.5. Building DPDK</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-ark-rtl-pcie-instances">3.6. Supported ARK RTL PCIe Instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-operating-systems">3.7. Supported Operating Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-features">3.8. Supported Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unsupported-features">3.9. Unsupported Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pre-requisites">3.10. Pre-Requisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage-example">3.11. Usage Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="avp.html">4. AVP Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnx2x.html">5. BNX2X Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnxt.html">6. BNXT Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cxgbe.html">7. CXGBE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2.html">8. DPAA2 Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e1000em.html">9. Driver for VM Emulated Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ena.html">10. ENA Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enic.html">11. ENIC Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fm10k.html">12. FM10K Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i40e.html">13. I40E Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ixgbe.html">14. IXGBE Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intel_vf.html">15. I40E/IXGBE/IGB Virtual Function Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kni.html">16. KNI Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquidio.html">17. LiquidIO VF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx4.html">18. MLX4 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx5.html">19. MLX5 poll mode driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nfp.html">20. NFP poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qede.html">21. QEDE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sfc_efx.html">22. Solarflare libefx-based Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="szedata2.html">23. SZEDATA2 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tap.html">24. Tun/Tap Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thunderx.html">25. ThunderX NICVF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio.html">26. Poll Mode Driver for Emulated Virtio NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost.html">27. Poll Mode Driver that wraps vhost library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmxnet3.html">28. Poll Mode Driver for Paravirtual VMXNET3 NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcap_ring.html">29. Libpcap and Ring Based Poll Mode Drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Network Interface Controller Drivers</a> &raquo;</li>
+        
+      <li>3. ARK Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/nics/ark.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ark-poll-mode-driver">
+<h1>3. ARK Poll Mode Driver</h1>
+<p>The ARK PMD is a DPDK poll-mode driver for the Atomic Rules Arkville
+(ARK) family of devices.</p>
+<p>More information can be found at the <a class="reference external" href="http://atomicrules.com">Atomic Rules website</a>.</p>
+<div class="section" id="overview">
+<h2>3.1. Overview</h2>
+<p>The Atomic Rules Arkville product is DPDK and AXI compliant product
+that marshals packets across a PCIe conduit between host DPDK mbufs and
+FPGA AXI streams.</p>
+<p>The ARK PMD, and the spirit of the overall Arkville product,
+has been to take the DPDK API/ABI as a fixed specification;
+then implement much of the business logic in FPGA RTL circuits.
+The approach of <em>working backwards</em> from the DPDK API/ABI and having
+the GPP host software <em>dictate</em>, while the FPGA hardware <em>copes</em>,
+results in significant performance gains over a naive implementation.</p>
+<p>While this document describes the ARK PMD software, it is helpful to
+understand what the FPGA hardware is and is not. The Arkville RTL
+component provides a single PCIe Physical Function (PF) supporting
+some number of RX/Ingress and TX/Egress Queues. The ARK PMD controls
+the Arkville core through a dedicated opaque Core BAR (CBAR).
+To allow users full freedom for their own FPGA application IP,
+an independent FPGA Application BAR (ABAR) is provided.</p>
+<p>One popular way to imagine Arkville's FPGA hardware aspect is as the
+FPGA PCIe-facing side of a so-called Smart NIC. The Arkville core does
+not contain any MACs, and is link-speed independent, as well as
+agnostic to the number of physical ports the application chooses to
+use. The ARK driver exposes the familiar PMD interface to allow packet
+movement to and from mbufs across multiple queues.</p>
+<p>However FPGA RTL applications could contain a universe of added
+functionality that an Arkville RTL core does not provide or can
+not anticipate. To allow for this expectation of user-defined
+innovation, the ARK PMD provides a dynamic mechanism of adding
+capabilities without having to modify the ARK PMD.</p>
+<p>The ARK PMD is intended to support all instances of the Arkville
+RTL Core, regardless of configuration, FPGA vendor, or target
+board. While specific capabilities such as number of physical
+hardware queue-pairs are negotiated; the driver is designed to
+remain constant over a broad and extendable feature set.</p>
+<p>Intentionally, Arkville by itself DOES NOT provide common NIC
+capabilities such as offload or receive-side scaling (RSS).
+These capabilities would be viewed as a gate-level &quot;tax&quot; on
+Green-box FPGA applications that do not require such function.
+Instead, they can be added as needed with essentially no
+overhead to the FPGA Application.</p>
+<p>The ARK PMD also supports optional user extensions, through dynamic linking.
+The ARK PMD user extensions are a feature of Arkville’s DPDK
+net/ark poll mode driver, allowing users to add their
+own code to extend the net/ark functionality without
+having to make source code changes to the driver. One motivation for
+this capability is that while DPDK provides a rich set of functions
+to interact with NIC-like capabilities (e.g. MAC addresses and statistics),
+the Arkville RTL IP does not include a MAC.  Users can supply their
+own MAC or custom FPGA applications, which may require control from
+the PMD.  The user extension is the means providing the control
+between the user's FPGA application and the existing DPDK features via
+the PMD.</p>
+</div>
+<div class="section" id="device-parameters">
+<h2>3.2. Device Parameters</h2>
+<p>The ARK PMD supports device parameters that are used for packet
+routing and for internal packet generation and packet checking.  This
+section describes the supported parameters.  These features are
+primarily used for diagnostics, testing, and performance verification
+under the guidance of an Arkville specialist.  The nominal use of
+Arkville does not require any configuration using these parameters.</p>
+<p>&quot;Pkt_dir&quot;</p>
+<p>The Packet Director controls connectivity between Arkville's internal
+hardware components. The features of the Pkt_dir are only used for
+diagnostics and testing; it is not intended for nominal use.  The full
+set of features are not published at this level.</p>
+<p>Format:
+Pkt_dir=0x00110F10</p>
+<p>&quot;Pkt_gen&quot;</p>
+<p>The packet generator parameter takes a file as its argument.  The file
+contains configuration parameters used internally for regression
+testing and are not intended to be published at this level.  The
+packet generator is an internal Arkville hardware component.</p>
+<p>Format:
+Pkt_gen=./config/pg.conf</p>
+<p>&quot;Pkt_chkr&quot;</p>
+<p>The packet checker parameter takes a file as its argument.  The file
+contains configuration parameters used internally for regression
+testing and are not intended to be published at this level.  The
+packet checker is an internal Arkville hardware component.</p>
+<p>Format:
+Pkt_chkr=./config/pc.conf</p>
+</div>
+<div class="section" id="data-path-interface">
+<h2>3.3. Data Path Interface</h2>
+<p>Ingress RX and Egress TX operation is by the nominal DPDK API .
+The driver supports single-port, multi-queue for both RX and TX.</p>
+<p>Refer to <code class="docutils literal notranslate"><span class="pre">ark_ethdev.h</span></code> for the list of supported methods to
+act upon RX and TX Queues.</p>
+</div>
+<div class="section" id="configuration-information">
+<h2>3.4. Configuration Information</h2>
+<p><strong>DPDK Configuration Parameters</strong></p>
+<blockquote>
+<div><p>The following configuration options are available for the ARK PMD:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>CONFIG_RTE_LIBRTE_ARK_PMD</strong> (default y): Enables or disables inclusion
+of the ARK PMD driver in the DPDK compilation.</li>
+<li><strong>CONFIG_RTE_LIBRTE_ARK_PAD_TX</strong> (default y):  When enabled TX
+packets are padded to 60 bytes to support downstream MACS.</li>
+<li><strong>CONFIG_RTE_LIBRTE_ARK_DEBUG_RX</strong> (default n): Enables or disables debug
+logging and internal checking of RX ingress logic within the ARK PMD driver.</li>
+<li><strong>CONFIG_RTE_LIBRTE_ARK_DEBUG_TX</strong> (default n): Enables or disables debug
+logging and internal checking of TX egress logic within the ARK PMD driver.</li>
+<li><strong>CONFIG_RTE_LIBRTE_ARK_DEBUG_STATS</strong> (default n): Enables or disables debug
+logging of detailed packet and performance statistics gathered in
+the PMD and FPGA.</li>
+<li><strong>CONFIG_RTE_LIBRTE_ARK_DEBUG_TRACE</strong> (default n): Enables or disables debug
+logging of detailed PMD events and status.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="building-dpdk">
+<h2>3.5. Building DPDK</h2>
+<p>See the <a class="reference internal" href="../linux_gsg/index.html#linux-gsg"><span class="std std-ref">DPDK Getting Started Guide for Linux</span></a> for
+instructions on how to build DPDK.</p>
+<p>By default the ARK PMD library will be built into the DPDK library.</p>
+<p>For configuring and using UIO and VFIO frameworks, please also refer <a class="reference internal" href="../linux_gsg/index.html#linux-gsg"><span class="std std-ref">the
+documentation that comes with DPDK suite</span></a>.</p>
+</div>
+<div class="section" id="supported-ark-rtl-pcie-instances">
+<h2>3.6. Supported ARK RTL PCIe Instances</h2>
+<p>ARK PMD supports the following Arkville RTL PCIe instances including:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">1d6c:100d</span></code> - AR-ARKA-FX0 [Arkville 32B DPDK Data Mover]</li>
+<li><code class="docutils literal notranslate"><span class="pre">1d6c:100e</span></code> - AR-ARKA-FX1 [Arkville 64B DPDK Data Mover]</li>
+</ul>
+</div>
+<div class="section" id="supported-operating-systems">
+<h2>3.7. Supported Operating Systems</h2>
+<p>Any Linux distribution fulfilling the conditions described in <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Requirements</span></code>
+section of <a class="reference internal" href="../linux_gsg/index.html#linux-gsg"><span class="std std-ref">the DPDK documentation</span></a> or refer to <em>DPDK
+Release Notes</em>.  ARM and PowerPC architectures are not supported at this time.</p>
+</div>
+<div class="section" id="supported-features">
+<h2>3.8. Supported Features</h2>
+<ul class="simple">
+<li>Dynamic ARK PMD extensions</li>
+<li>Multiple receive and transmit queues</li>
+<li>Jumbo frames up to 9K</li>
+<li>Hardware Statistics</li>
+</ul>
+</div>
+<div class="section" id="unsupported-features">
+<h2>3.9. Unsupported Features</h2>
+<p>Features that may be part of, or become part of, the Arkville RTL IP that are
+not currently supported or exposed by the ARK PMD include:</p>
+<ul class="simple">
+<li>PCIe SR-IOV Virtual Functions (VFs)</li>
+<li>Arkville's Packet Generator Control and Status</li>
+<li>Arkville's Packet Director Control and Status</li>
+<li>Arkville's Packet Checker Control and Status</li>
+<li>Arkville's Timebase Management</li>
+</ul>
+</div>
+<div class="section" id="pre-requisites">
+<h2>3.10. Pre-Requisites</h2>
+<ol class="arabic simple">
+<li>Prepare the system as recommended by DPDK suite.  This includes environment
+variables, hugepages configuration, tool-chains and configuration</li>
+<li>Insert igb_uio kernel module using the command 'modprobe igb_uio'</li>
+<li>Bind the intended ARK device to igb_uio module</li>
+</ol>
+<p>At this point the system should be ready to run DPDK applications. Once the
+application runs to completion, the ARK PMD can be detached from igb_uio if necessary.</p>
+</div>
+<div class="section" id="usage-example">
+<h2>3.11. Usage Example</h2>
+<p>Follow instructions available in the document
+<a class="reference internal" href="build_and_test.html#pmd-build-and-test"><span class="std std-ref">compiling and testing a PMD for a NIC</span></a> to launch
+<strong>testpmd</strong> with Atomic Rules ARK devices managed by librte_pmd_ark.</p>
+<p>Example output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[...]</span>
+<span class="go">EAL: PCI device 0000:01:00.0 on NUMA socket -1</span>
+<span class="go">EAL:   probe driver: 1d6c:100e rte_ark_pmd</span>
+<span class="go">EAL:   PCI memory mapped at 0x7f9b6c400000</span>
+<span class="go">PMD: eth_ark_dev_init(): Initializing 0:2:0.1</span>
+<span class="go">ARKP PMD CommitID: 378f3a67</span>
+<span class="go">Configuring Port 0 (socket 0)</span>
+<span class="go">Port 0: DC:3C:F6:00:00:01</span>
+<span class="go">Checking link statuses...</span>
+<span class="go">Port 0 Link Up - speed 100000 Mbps - full-duplex</span>
+<span class="go">Done</span>
+<span class="go">testpmd&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="avp.html" class="btn btn-neutral float-right" title="4. AVP Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="build_and_test.html" class="btn btn-neutral" title="2. Compiling and testing a PMD for a NIC" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

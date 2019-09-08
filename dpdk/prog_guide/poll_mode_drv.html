@@ -1,0 +1,648 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7. 轮询模式驱动 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="8. 通用流API (rte_flow)" href="rte_flow.html" />
+    <link rel="prev" title="6. Mbuf库" href="mbuf_lib.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7. 轮询模式驱动</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">7.1. 要求与假设</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">7.2. 设计原则</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nic">7.3. 逻辑核，内存和NIC队列的关系</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">7.4. 设备标识和配置</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">7.4.1. 设备标识</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">7.4.2. 设备配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#on-the-fly-configuration">7.4.3. 热配置(On-the-Fly Configuration)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">7.4.4. 传输队列的配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tx-mbuf">7.4.5. 按需释放Tx mbuf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hardware-offload">7.4.6. 硬件卸载(Hardware Offload)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#api">7.5. 轮询模式驱动API</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">7.5.1. 概论</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">7.5.2. 通用数据包表示</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">7.5.3. 以太网设备API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">7.5.4. 扩展统计API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptodev_lib.html">9. 加密设备库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>7. 轮询模式驱动</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/poll_mode_drv.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="poll-mode-driver">
+<span id="id1"></span><h1>7. 轮询模式驱动</h1>
+<p>DPDK包含了1G、10G、40G比特和virtio半虚拟化轮询模式驱动。</p>
+<p>轮询模式驱动(Poll Mode Driver, PMD)提供了一组API用于设备和队列的配置，以运行在用户态的BSD驱动方式提供。
+另外，PMD不使用中断(除了链路状态变更中断)，而是直接访问设备的RX和TX描述符从而快速的接收，处理和传输数据包。
+本节描述了PMD的要求，和以太网PMD的高级架构与通用外部API的设计原则和建议。</p>
+<div class="section" id="id2">
+<h2>7.1. 要求与假设</h2>
+<p>DPDK包处理应用有两种模型，run-to-completion 和 pipe-line:</p>
+<ul class="simple">
+<li>在 <em>run-to-completion</em>  模型中，端口RX描述符ring通过API不断被轮询用于收包。
+然后接收的包在同一个核上被处理，处理完毕通过API再将包放到端口的TX描述符ring中用于传送。</li>
+<li>在 <em>pipe-line</em>  模型中, 核心通过API轮询一个或更多端口的RX描述符ring。
+接收的数据包通过ring传递到另外一个核上继续处理，处理完的数据包可能会通过API被放到端口的TX描述符ring中发送。</li>
+</ul>
+<p>在同步的 run-to-completion 模型中，每个逻辑核都会执行包处理循环，包括以下步骤:</p>
+<ul class="simple">
+<li>通过PMD的接收API接收输入的包</li>
+<li>每次只处理一个接收的包，直到转发包</li>
+<li>通过PMD传输API发送输出包</li>
+</ul>
+<p>相反地，在异步的 pipe-line 模型中，一些逻辑核专门用于包接收，另外一些逻辑核专门处理前面接收的包。
+逻辑核间通过ring进行包的交换。包接收循环包括以下步骤:</p>
+<ul class="simple">
+<li>通过PMD接收API接收输入包</li>
+<li>通过包队列把接收的包传给专门处理包的核</li>
+</ul>
+<p>包处理循环:</p>
+<ul class="simple">
+<li>从包队列中接收包</li>
+<li>处理接收的包直到重传</li>
+</ul>
+<p>为了避免任何非必要的中断处理开销，执行环境中不允许使用任何异步通知机制。
+必要和合理的异步通信应该尽可能通过使用ring的方式实现。</p>
+<p>多核环境中锁竞争是个关键问题。为了解决这个问题，PMD设计尽可能多的使用 per-core 私有资源工作。
+例如，PMD为每个端口在每个核上维护了分开的传输队列。
+同时，端口的每个接收队列也分配给一个单独的逻辑核(lcore)轮询。</p>
+<p>为了遵守Non-Uniform Memory Access (NUMA)，内存管理被设计成在每个逻辑核本地分配一个私有的缓冲区池，使远程内存访问降低到最少。
+包缓冲区池的配置应该考虑底层物理内存的DIMM，channel和rank方面的架构。
+应用必须确保在创建内存池时提供正确的参数。参见 <a class="reference internal" href="mempool_lib.html#mempool-library"><span class="std std-ref">Mempool 库</span></a></p>
+</div>
+<div class="section" id="id3">
+<h2>7.2. 设计原则</h2>
+<p>Ethernet* PMD的API和架构设计考虑到如下的指导方针。</p>
+<p>PMD必须能帮助上层应用执行全局策略。反方面，NIC PMD函数不应该阻碍上层的全局策略的执行。</p>
+<p>例如，PMD的接收和传输函数都轮询最大数量的包/描述符。
+这允许静态提供run-to-completion处理栈或者通过不同的全局循环策略动态适应，比如：</p>
+<ul class="simple">
+<li>一次只接收处理和传输一个包的零碎方式。</li>
+<li>尽可能多的接收包，然后一起处理和传输所有接收的包。</li>
+<li>接收一定数量的包，处理接收的包，最后把全部处理完成的包一起传输。</li>
+</ul>
+<p>为了获得最佳性能，必须考虑总体软件设计和纯软件优化技术，同时兼顾低级的基于硬件的优化(CPU缓存性能，总线速率，NIC PCI带宽等等)。
+包传输中的猝发式(burst-oriented)网络包传输引擎就是一个软硬件折中优化的例子。
+在最初的情况下，PMD仅提供了一个 rte_eth_tx_one 函数用于在一个队列上一次传输一个包的函数。
+除此以外，可以很容易创建一个 rte_eth_tx_burst 函数，该函数一次调用可以循环调用rte_eth_tx_one函数传输多个包。
+然而，rte_eth_tx_burst 实际是由PMD实现的，其通过下面的优化手段最小化每个包的驱动层面的传输开销:</p>
+<ul class="simple">
+<li>在多个包之间共享调用 rte_eth_tx_one 函数的未摊销开销(un-amortized cost)。</li>
+<li>利用猝发式硬件特性(数据预取到缓存，NIC的头/尾寄存器的使用)使 rte_eth_tx_burst 函数最小化每个包处理的CPU周期数，
+例如，避免不必要的ring传输描述符的内存读取，或者有组织的使用指针数组。* (原文: Enable the rte_eth_tx_burst function to take advantage of burst-oriented hardware features (prefetch data in cache, use of NIC head/tail registers)
+to minimize the number of CPU cycles per packet, for example by avoiding unnecessary read memory accesses to ring transmit descriptors,
+or by systematically using arrays of pointers that exactly fit cache line boundaries and sizes.) *</li>
+<li>应用猝发式软件优化技术，消除不可避免的操作，比如，ring索引回绕管理。</li>
+</ul>
+<p>猝发式函数也被PMD广泛使用的服务API引入。
+这尤其适用于用于填充NIC ring的缓冲区分配器，这种缓冲区分配器可以一次分配或释放多个缓冲区。
+比如，mbuf_multiple_alloc 函数在接收包时就会返回一组指向 rte_mbuf 缓冲区的指针，其提高了PMD接收轮询函数的速度。</p>
+</div>
+<div class="section" id="nic">
+<h2>7.3. 逻辑核，内存和NIC队列的关系</h2>
+<p>DPDK支持NUMA意味着当处理器的逻辑核或者接口利用本地内存时会获得更好的性能。
+因此，与本地 PCIe* 接口相关的mbuf申请应该从本地内存池中申请。
+如果可能的话，缓冲区应该保持在本地处理器上，这样可以获得最佳的性能。并且RX和TX缓冲区应该从本地内存中申请。</p>
+<p>run-to-completion 模型在处理本地内存数据也会表现地更好。对于所有的逻辑核处于同一个处理器的 pipe-line 模型同样适用。</p>
+<p>多个逻辑核不应该共享接收或者传输队列，因为这需要全局锁，必然会导致性能下降。</p>
+</div>
+<div class="section" id="id4">
+<h2>7.4. 设备标识和配置</h2>
+<div class="section" id="id5">
+<h3>7.4.1. 设备标识</h3>
+<p>每个NIC端口都是由PCI标识符(bus/bridge, device, function)唯一确定，P
+CI标识符是在DPDK初始化时通过PCI probing/enumeration函数分配的。
+在PCI标识符基础上，NIC端口又被分配了两个其他的标识符:</p>
+<ul class="simple">
+<li>PMD API函数中用于指定NIC端口的端口索引。</li>
+<li>控制台消息中用于指定端口的端口名，可用于管理或者调试。为了简化使用，端口名中包含了端口索引。</li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h3>7.4.2. 设备配置</h3>
+<p>NIC端口的配置包括以下操作:</p>
+<ul class="simple">
+<li>申请PCI资源</li>
+<li>把硬件重置(发布一个全局重置)到默认状态</li>
+<li>设置物理设备和链路(Set up the PHY and the link)</li>
+<li>初始化统计计数器</li>
+</ul>
+<p>PMD API也必须提供用于启动/停止端口的 all-multicast 特性，和设置/取消端口混杂模式的函数。</p>
+<p>一些硬件卸载特性必须在端口初始化时通过指定的配置参数单独地配置。
+比如接收端扩展(RSS)和数据中心桥(DCB)特性。</p>
+</div>
+<div class="section" id="on-the-fly-configuration">
+<h3>7.4.3. 热配置(On-the-Fly Configuration)</h3>
+<p>设备所有可以热配置(也就是，在不停止设备情况下配置)的特性不需要PMD API提供专门的函数设置。</p>
+<p>需要的是设备PCI寄存器的映射地址，驱动程序外的函数使用该地址可以配置这些特性。</p>
+<p>为此，PMD API提供了一个函数，该函数可在驱动程序外获取设备信息(包括PCI厂商标识符，PCI设备标识符，PCI设备寄存器映射地址和驱动名称)，
+这些信息可用于设置设备的特性。</p>
+<p>这种方式的优势是可以给予特性配置，启用和关闭API充分的自由。</p>
+<p>举例，参考testpmd应用中，Intel® 82576 和 Intel® 82599 的 IEEE1588 特性配置。</p>
+<p>其他的特性如端口的 L3/L4 5-Tuple 包过滤也可以以同样方式配置。
+以太网的流控(帧暂停)可以配置在每个端口上。详细信息参考 testpmd 源码。
+同样，NIC 的 L4 (UDP/TCP/ SCTP)校验和卸载也能根据单独的包开启(只要mbuf配置正确)。详细参考 <a href="#id16"><span class="problematic" id="id17">`Hardware Offload`_</span></a> 。</p>
+</div>
+<div class="section" id="id7">
+<h3>7.4.4. 传输队列的配置</h3>
+<p>每个传输队列的配置都是独立的，可配置的信息有:</p>
+<ul class="simple">
+<li>传输队列描述符数量</li>
+<li>socket标识符，该传输队列ring的内存所在socket</li>
+<li>传输队列的预取(Prefetch)、主机(Host)和回写阀值(Write-Back threshold)寄存器值</li>
+<li>传输包释放最小阀值(tx_free_thresh)。
+当传输包的描述符数量到达阀值，网络适配器应该检查是否有回写描述符。
+配置TX队列时可以传0使用默认阀值。默认 tx_free_thresh 是32。
+这可以确保PMD在处理了32个描述符后再搜寻由NIC处理完成的描述符。</li>
+<li>RS位最小阀值。设置传输描述符的 报告状态(RS) 位需要的最小传输描述符数。
+注意，该参数仅对Intel 10 GbE 网络适配器有效。
+如果从上一个设置了RS位的描述符到传输包的第一个描述符之间的描述符个数达到了传输RS为阀值(tx_rs_thresh)，
+那就为传输包的最后一个描述符设置RS位。
+简言之，该参数控制了哪个传输描述符被网络适配器回写到主机内存。
+配置TX队列时可以传0使用默认阀值。默认 tx_rs_thresh 是32。
+这可以确保在网络适配器回写最近使用的描述符前至少使用了32个描述符。
+TX描述符回写能够节省上游 PCIe* 带宽。
+特别要注意的是，TX回写阀值(TX wthresh)在 tx_rs_thresh 比1大时应该设置为0。
+详细参考 Intel® 82599 10 Gigabit Ethernet Controller 手册</li>
+</ul>
+<p>tx_free_thresh 和 tx_rs_thresh 必须满足以下限制:</p>
+<ul class="simple">
+<li>tx_rs_thresh 大于0</li>
+<li>tx_rs_thresh 小于 size(ring) - 2</li>
+<li>tx_rs_thresh 小于或等于 tx_free_thresh</li>
+<li>tx_free_thresh 大于0</li>
+<li>tx_free_thresh 小于 size(ring) - 3</li>
+<li>为了获得最佳性能，TX回写阀值(TX wthresh)在 tx_rs_thresh 比1大时应该设置为0</li>
+</ul>
+<p>TX ring中的一个描述符作为哨兵，用于消除硬件竞争条件，因为存在最大阀值限制。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在端口初始化配置DCB时，传输队列和接收队列数都必须设置为128。</p>
+</div>
+</div>
+<div class="section" id="tx-mbuf">
+<h3>7.4.5. 按需释放Tx mbuf</h3>
+<p>很多驱动在包传输完成后不会立即把mbuf释放会内存池或者本地缓存。
+而是，放在Tx ring中，要么在到达 <code class="docutils literal notranslate"><span class="pre">tx_rs_thresh</span></code> 时执行批量释放，要么在Tx ring空间不足时释放。</p>
+<p>应用可以通过 <code class="docutils literal notranslate"><span class="pre">rte_eth_tx_done_cleanup()</span></code> API 让驱动释放已用过的mbuf。
+该API让驱动释放不再使用的mbuf，且不依赖 <code class="docutils literal notranslate"><span class="pre">tx_rs_thresh</span></code> 是否到达。
+应用要求立即释放mbuf的场景有两个:</p>
+<ul class="simple">
+<li>数据包需要发送到多个目的接口(二层泛洪或者三层多播)。
+一种选择是拷贝数据包或者拷贝需要操作的包头部分。
+第二种选择是传输数据包，然后轮询 <code class="docutils literal notranslate"><span class="pre">rte_eth_tx_done_cleanup()</span></code> API，直到包的引用计数减少。
+然后同一个数据包可以传输到下一个目的接口。
+应用仍需处理数据包发送到不同目的接口的操作，但是可以省去包拷贝操作。
+该API不在乎包是被传输了或者被丢弃，只知道网络接口不再使用该mbuf。</li>
+<li>有些应用设计成多次运行，比如包生成器。
+为了性能和不同运行之间一致性，应用在不同运行之间可能会需要重置到初始状态，
+初始状态所有的mbuf都归还到内存池。
+这种情况下，可以为每个目的接口调用  <code class="docutils literal notranslate"><span class="pre">rte_eth_tx_done_cleanup()</span></code> API让其释放用过的mbuf。</li>
+</ul>
+<p>可以在 <em>Network Interface Controller Drivers</em> 文档中查看 <em>Free Tx mbuf on demand</em> 特性来判断驱动是否支持该API。</p>
+</div>
+<div class="section" id="hardware-offload">
+<h3>7.4.6. 硬件卸载(Hardware Offload)</h3>
+<p>依赖 <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_info_get()</span></code> 获得的驱动能力，PMD可以支持像校验和、TCP分段和VLAN嵌入(VLAN insertion)这样的硬件卸载特性。</p>
+<p>这些硬件卸载特性的支持依赖rte_mbuf结构中专用的状态位和PMD的接收和传输函数的正确处理。
+标志位列表和详细描述可以在 mbuf API文档中和 <a class="reference internal" href="mbuf_lib.html#mbuf-library"><span class="std std-ref">Mbuf 库</span></a>, 的 &quot;元信息&quot;节中找到。</p>
+</div>
+</div>
+<div class="section" id="api">
+<h2>7.5. 轮询模式驱动API</h2>
+<div class="section" id="id8">
+<h3>7.5.1. 概论</h3>
+<p>默认，PMD导出的函数都是无锁函数(即假定这些函数不会用于不同核同时操作同一个对象)。
+比如，PMD接收函数不能被两个核同时用于在同一个端口的同一个接收队列上接收数据。
+当然，该函数可以被不同核同时用于不同接收队列上接收数据。
+这要上层应用强制遵守该规则。</p>
+<p>如果需要多核并发访问共享队列的话，可以调用基于PMD无锁函数构建的专用的内联有锁函数保护共享队列。</p>
+</div>
+<div class="section" id="id9">
+<h3>7.5.2. 通用数据包表示</h3>
+<p>数据包使用rte_mbuf结构体表示，该结构体是包含了所有必需的管理信息的通用元数据结构体。
+其包含了和硬件卸载特性相关的字段和状态位，如IP头的校验和计算或者VLAN标签。</p>
+<p>rte_mbuf数据结构以一种通用的方式包含了由网络控制器提供的卸载特性。
+对于输入包，rte_mbuf 结构体的大部分字段由PMD接收函数根据接收描述符中包含的信息填充。
+相反，对于输出包，rte_mbuf 结构体的大部分字段被PMD传输函数用来初始化传输描述符。</p>
+<p>mbuf结构体完整描述 <a class="reference internal" href="mbuf_lib.html#mbuf-library"><span class="std std-ref">Mbuf 库</span></a></p>
+</div>
+<div class="section" id="id10">
+<h3>7.5.3. 以太网设备API</h3>
+<p>PMD导出的以太网设备API请参考  <em>DPDK API Reference</em></p>
+</div>
+<div class="section" id="id11">
+<h3>7.5.4. 扩展统计API</h3>
+<p>扩展统计API允许PMD暴露所有可用的统计，包括设备特有的统计。
+每个统计项有三个属性 <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">id</span></code> 和 <code class="docutils literal notranslate"><span class="pre">value</span></code>:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">name</span></code>: 按照某种方案定义的易于阅读的字符串</li>
+<li><code class="docutils literal notranslate"><span class="pre">id</span></code>: 仅代表某种统计项的整数</li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code>: 无符号64位整数的统计值</li>
+</ul>
+<p>注意扩展统计是驱动特有的，所以不同端口可能会有不同的扩展统计。
+该API由各种  <code class="docutils literal notranslate"><span class="pre">rte_eth_xstats_*()</span></code> 函数组成，并且允许应用灵活接收统计信息。</p>
+<div class="section" id="id12">
+<h4>7.5.4.1. 易于阅读的名称定义方案</h4>
+<p>对于统计项暴露给API客户端的名称是有具体的命名方案的。这允许API抓取感兴趣的统计项。
+该命名方案中使用一个下划线 <code class="docutils literal notranslate"><span class="pre">_</span></code> 分割字符串。方案如下:</p>
+<ul class="simple">
+<li>方向</li>
+<li>细节 1</li>
+<li>细节 2</li>
+<li>细节 n</li>
+<li>单位</li>
+</ul>
+<p>遵守上述命名方案的统计项名称的例子:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">rx_bytes</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rx_crc_errors</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">tx_multicast_packets</span></code></li>
+</ul>
+<p>这种方案简单，信息展示灵活。比如 <code class="docutils literal notranslate"><span class="pre">rx_packets</span></code>，分成两部分，
+第一部分 <code class="docutils literal notranslate"><span class="pre">rx</span></code> 指明该统计项统计的是NIC的接收侧。第二部分 <code class="docutils literal notranslate"><span class="pre">packets</span></code> 指明统计单位是包。</p>
+<p>一个复杂的例子 <code class="docutils literal notranslate"><span class="pre">tx_size_128_to_255_packets</span></code>，<code class="docutils literal notranslate"><span class="pre">tx</span></code> 指明是传输, <code class="docutils literal notranslate"><span class="pre">size</span></code>  第一个统计细节,
+<code class="docutils literal notranslate"><span class="pre">128</span></code> 等是细节的细节 <code class="docutils literal notranslate"><span class="pre">packets</span></code> 指明这是个包计数器。</p>
+<p>其他:</p>
+<ul class="simple">
+<li>如果名称中第一部分既不是 <code class="docutils literal notranslate"><span class="pre">rx</span></code> 也不是 <code class="docutils literal notranslate"><span class="pre">tx</span></code>，那么该统计项就和接收或传输没有关系。</li>
+<li>如果第二部分的第一个字母是 <code class="docutils literal notranslate"><span class="pre">q</span></code>，并且 <code class="docutils literal notranslate"><span class="pre">q</span></code> 后面紧跟着一个数字，则该统计项是指定队列的统计。</li>
+</ul>
+<p>使用队列号的例子: <code class="docutils literal notranslate"><span class="pre">tx_q7_bytes</span></code> 是队列7传输的字节数统计信息。</p>
+</div>
+<div class="section" id="id13">
+<h4>7.5.4.2. API设计</h4>
+<p>The xstats API uses the <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">id</span></code>, and <code class="docutils literal notranslate"><span class="pre">value</span></code> to allow performant
+lookup of specific statistics. Performant lookup means two things;
+统计API使用 <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">id</span></code>, 和 <code class="docutils literal notranslate"><span class="pre">value</span></code> 执行特定统计项的查询。查询意味着两件事:</p>
+<ul class="simple">
+<li>快速路径中没有统计项名称的字符串比较</li>
+<li>允许仅查询感兴趣的统计项</li>
+</ul>
+<p>API通过把 <code class="docutils literal notranslate"><span class="pre">name</span></code> 映射到唯一 <code class="docutils literal notranslate"><span class="pre">id</span></code> 保证满足要求。<code class="docutils literal notranslate"><span class="pre">id</span></code> 用作快速路径查找中的key。
+API允许应用请求一组 <code class="docutils literal notranslate"><span class="pre">id</span></code>，以便PMD仅执行请求的计算。预期的使用方式是应用扫描每个统计项的 <code class="docutils literal notranslate"><span class="pre">name</span></code>,
+并缓存感兴趣统计项的 <code class="docutils literal notranslate"><span class="pre">id</span></code>。在快速路径中，可以通过整数 <code class="docutils literal notranslate"><span class="pre">id</span></code> 来获取代表的统计项实际 <code class="docutils literal notranslate"><span class="pre">value</span></code>。</p>
+</div>
+<div class="section" id="id14">
+<h4>7.5.4.3. API函数</h4>
+<p>扩展统计API是由少量函数组成的，这些函数可用于获取统计项数量和这些统计项的名称，ID以及值。</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">rte_eth_xstats_get_names_by_id()</span></code>: 返回统计项数量. 当给该函数传递 <code class="docutils literal notranslate"><span class="pre">NULL</span></code> 参数时，
+该函数返回所有可用统计项数量。</li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_eth_xstats_get_id_by_name()</span></code>: 根据名称搜索ID，如果找到了就设置整数 <code class="docutils literal notranslate"><span class="pre">id</span></code>。</li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_eth_xstats_get_by_id()</span></code>: 根据提供的 <code class="docutils literal notranslate"><span class="pre">id</span></code> 数组，填充对应的 <code class="docutils literal notranslate"><span class="pre">uint64_t</span></code> 值数组。
+如果 <code class="docutils literal notranslate"><span class="pre">id</span></code> 数组是NULL，则返回所有可用的统计项。</li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h4>7.5.4.4. 应用的使用方法</h4>
+<p>假设应用想要查看丢包数。如果没有丢包，因为性能原因应用不会读取任何其他指标。
+如果有丢包，应用会有个特有的统计项集合。该统计项集合允许应用决定下一步执行什么。
+下面的代码片段展示了扩展统计API如何达到这个目标。</p>
+<p>第一步获取所有统计名称并列出来:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_eth_xstat_name</span> <span class="o">*</span><span class="n">xstats_names</span><span class="p">;</span>
+<span class="kt">uint64_t</span> <span class="o">*</span><span class="n">values</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">len</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>
+
+<span class="cm">/* Get number of stats */</span>
+<span class="n">len</span> <span class="o">=</span> <span class="n">rte_eth_xstats_get_names_by_id</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot get xstats count</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">xstats_names</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">rte_eth_xstat_name</span><span class="p">)</span> <span class="o">*</span> <span class="n">len</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">xstats_names</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot allocate memory for xstat names</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Retrieve xstats names, passing NULL for IDs to return all statistics */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">!=</span> <span class="n">rte_eth_xstats_get_names_by_id</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">xstats_names</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">len</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot get xstat names</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">values</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">*</span> <span class="n">len</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">values</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot allocate memory for xstats</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Getting xstats values */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">!=</span> <span class="n">rte_eth_xstats_get_by_id</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">len</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot get xstat values</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Print all xstats names and values */</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s: %&quot;</span><span class="n">PRIu64</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">xstats_names</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>应用已经获得了PMD暴露的所有统计项名称。应用可以决定哪些统计项是感兴趣的，
+并通过这些统计项名称查询并缓存id:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">uint64_t</span> <span class="n">id</span><span class="p">;</span>
+<span class="kt">uint64_t</span> <span class="n">value</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">xstat_name</span> <span class="o">=</span> <span class="s">&quot;rx_errors&quot;</span><span class="p">;</span>
+
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">rte_eth_xstats_get_id_by_name</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">xstat_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">id</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">rte_eth_xstats_get_by_id</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">id</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s: %&quot;</span><span class="n">PRIu64</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">xstat_name</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Cannot find xstats with a given name</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">goto</span> <span class="n">err</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>API给应用提供了极大灵活性，因此应用可以通过 <code class="docutils literal notranslate"><span class="pre">id</span></code> 数组查询多个统计项。
+这可以降低获取统计项的函数调用开销，并使应用的多统计项查询更加容易。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define APP_NUM_STATS 4</span>
+<span class="cm">/* application cached these ids previously; see above */</span>
+<span class="kt">uint64_t</span> <span class="n">ids_array</span><span class="p">[</span><span class="n">APP_NUM_STATS</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">21</span><span class="p">};</span>
+<span class="kt">uint64_t</span> <span class="n">value_array</span><span class="p">[</span><span class="n">APP_NUM_STATS</span><span class="p">];</span>
+
+<span class="cm">/* Getting multiple xstats values from array of IDs */</span>
+<span class="n">rte_eth_xstats_get_by_id</span><span class="p">(</span><span class="n">port_id</span><span class="p">,</span> <span class="n">ids_array</span><span class="p">,</span> <span class="n">value_array</span><span class="p">,</span> <span class="n">APP_NUM_STATS</span><span class="p">);</span>
+
+<span class="kt">uint32_t</span> <span class="n">i</span><span class="p">;</span>
+<span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">APP_NUM_STATS</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d: %&quot;</span><span class="n">PRIu64</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">ids_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">value_array</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>扩展统计API的成组查询允许应用创建“统计组”，统计组里的这些ID对应的值使用一个API调用即可查询到。
+最终，应用可以通过以下方式达成目标，应用先不断监测单个统计项(本例中就是&quot;rx_errors&quot;)，
+如果该统计项显示出有丢包发生，则应用通过给函数 <code class="docutils literal notranslate"><span class="pre">rte_eth_xstats_get_by_id</span></code> 传递一组统计项ID，
+从而获取更多的统计信息。</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rte_flow.html" class="btn btn-neutral float-right" title="8. 通用流API (rte_flow)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mbuf_lib.html" class="btn btn-neutral" title="6. Mbuf库" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

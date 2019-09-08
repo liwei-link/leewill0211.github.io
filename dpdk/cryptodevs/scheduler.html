@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>9. Cryptodev Scheduler Poll Mode Driver Library &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="10. SNOW 3G Crypto Poll Mode Driver" href="snow3g.html" />
+    <link rel="prev" title="8. Null Crypto Poll Mode Driver" href="null.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Crypto Device Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Crypto Device Supported Functionality Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_mb.html">2. AESN-NI Multi Buffer Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_gcm.html">3. AES-NI GCM Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="armv8.html">4. ARMv8 Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2_sec.html">5. NXP DPAA2 CAAM (DPAA2_SEC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kasumi.html">6. KASUMI Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openssl.html">7. OpenSSL Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="null.html">8. Null Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">9. Cryptodev Scheduler Poll Mode Driver Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">9.1. Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">9.2. Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialization">9.3. Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cryptodev-scheduler-modes-overview">9.4. Cryptodev Scheduler Modes Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="snow3g.html">10. SNOW 3G Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qat.html">11. Intel(R) QuickAssist (QAT) Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zuc.html">12. ZUC Crypto Poll Mode Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Crypto Device Drivers</a> &raquo;</li>
+        
+      <li>9. Cryptodev Scheduler Poll Mode Driver Library</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cryptodevs/scheduler.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cryptodev-scheduler-poll-mode-driver-library">
+<h1>9. Cryptodev Scheduler Poll Mode Driver Library</h1>
+<p>Scheduler PMD is a software crypto PMD, which has the capabilities of
+attaching hardware and/or software cryptodevs, and distributes ingress
+crypto ops among them in a certain manner.</p>
+<div class="figure" id="id1">
+<img alt="../_images/scheduler-overview.svg" src="../_images/scheduler-overview.svg" /><p class="caption"><span class="caption-number">图 9.1 </span><span class="caption-text">Cryptodev Scheduler Overview</span></p>
+</div>
+<p>The Cryptodev Scheduler PMD library (<strong>librte_pmd_crypto_scheduler</strong>) acts as
+a software crypto PMD and shares the same API provided by librte_cryptodev.
+The PMD supports attaching multiple crypto PMDs, software or hardware, as
+slaves, and distributes the crypto workload to them with certain behavior.
+The behaviors are categorizes as different &quot;modes&quot;. Basically, a scheduling
+mode defines certain actions for scheduling crypto ops to its slaves.</p>
+<p>The librte_pmd_crypto_scheduler library exports a C API which provides an API
+for attaching/detaching slaves, set/get scheduling modes, and enable/disable
+crypto ops reordering.</p>
+<div class="section" id="limitations">
+<h2>9.1. Limitations</h2>
+<ul class="simple">
+<li>Sessionless crypto operation is not supported</li>
+<li>OOP crypto operation is not supported when the crypto op reordering feature
+is enabled.</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>9.2. Installation</h2>
+<p>To build DPDK with CRYTPO_SCHEDULER_PMD the user is required to set
+CONFIG_RTE_LIBRTE_PMD_CRYPTO_SCHEDULER=y in config/common_base, and
+recompile DPDK</p>
+</div>
+<div class="section" id="initialization">
+<h2>9.3. Initialization</h2>
+<p>To use the PMD in an application, user must:</p>
+<ul class="simple">
+<li>Call rte_vdev_init(&quot;crpyto_scheduler&quot;) within the application.</li>
+<li>Use --vdev=&quot;crpyto_scheduler&quot; in the EAL options, which will call
+rte_vdev_init() internally.</li>
+</ul>
+<p>The following parameters (all optional) can be provided in the previous
+two calls:</p>
+<ul class="simple">
+<li>socket_id: Specify the socket where the memory for the device is going
+to be allocated (by default, socket_id will be the socket where the core
+that is creating the PMD is running on).</li>
+<li>max_nb_sessions: Specify the maximum number of sessions that can be
+created. This value may be overwritten internally if there are too
+many devices are attached.</li>
+<li>slave: If a cryptodev has been initialized with specific name, it can be
+attached to the scheduler using this parameter, simply filling the name
+here. Multiple cryptodevs can be attached initially by presenting this
+parameter multiple times.</li>
+<li>mode: Specify the scheduling mode of the PMD. The supported scheduling
+mode parameter values are specified in the &quot;Cryptodev Scheduler Modes
+Overview&quot; section.</li>
+<li>ordering: Specify the status of the crypto operations ordering feature.
+The value of this parameter can be &quot;enable&quot; or &quot;disable&quot;. This feature
+is disabled by default.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">... --vdev &quot;crypto_aesni_mb_pmd,name=aesni_mb_1&quot; --vdev &quot;crypto_aesni_mb_pmd,name=aesni_mb_2&quot; --vdev &quot;crypto_scheduler_pmd,slave=aesni_mb_1,slave=aesni_mb_2&quot; ...</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>The scheduler cryptodev cannot be started unless the scheduling mode
+is set and at least one slave is attached. Also, to configure the
+scheduler in the run-time, like attach/detach slave(s), change
+scheduling mode, or enable/disable crypto op ordering, one should stop
+the scheduler first, otherwise an error will be returned.</li>
+<li>The crypto op reordering feature requires using the userdata field of
+every mbuf to be processed to store temporary data. By the end of
+processing, the field is set to pointing to NULL, any previously
+stored value of this field will be lost.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="cryptodev-scheduler-modes-overview">
+<h2>9.4. Cryptodev Scheduler Modes Overview</h2>
+<p>Currently the Crypto Scheduler PMD library supports following modes of
+operation:</p>
+<ul class="simple">
+<li><strong>CDEV_SCHED_MODE_ROUNDROBIN:</strong></li>
+</ul>
+<blockquote>
+<div><p><em>Initialization mode parameter</em>: <strong>round-robin</strong></p>
+<p>Round-robin mode, which distributes the enqueued burst of crypto ops
+among its slaves in a round-robin manner. This mode may help to fill
+the throughput gap between the physical core and the existing cryptodevs
+to increase the overall performance.</p>
+</div></blockquote>
+<ul class="simple">
+<li><strong>CDEV_SCHED_MODE_PKT_SIZE_DISTR:</strong></li>
+</ul>
+<blockquote>
+<div><p><em>Initialization mode parameter</em>: <strong>packet-size-distr</strong></p>
+<p>Packet-size based distribution mode, which works with 2 slaves, the primary
+slave and the secondary slave, and distributes the enqueued crypto
+operations to them based on their data lengths. A crypto operation will be
+distributed to the primary slave if its data length is equal to or bigger
+than the designated threshold, otherwise it will be handled by the secondary
+slave.</p>
+<p>A typical usecase in this mode is with the QAT cryptodev as the primary and
+a software cryptodev as the secondary slave. This may help applications to
+process additional crypto workload than what the QAT cryptodev can handle on
+its own, by making use of the available CPU cycles to deal with smaller
+crypto workloads.</p>
+<p>The threshold is set to 128 bytes by default. It can be updated by calling
+function <strong>rte_cryptodev_scheduler_option_set</strong>. The parameter of
+<strong>option_type</strong> must be <strong>CDEV_SCHED_OPTION_THRESHOLD</strong> and <strong>option</strong> should
+point to a rte_cryptodev_scheduler_threshold_option structure filled with
+appropriate threshold value. Please NOTE this threshold has be a power-of-2
+unsigned integer.</p>
+</div></blockquote>
+<ul class="simple">
+<li><strong>CDEV_SCHED_MODE_FAILOVER:</strong></li>
+</ul>
+<blockquote>
+<div><p><em>Initialization mode parameter</em>: <strong>fail-over</strong></p>
+<p>Fail-over mode, which works with 2 slaves, the primary slave and the
+secondary slave. In this mode, the scheduler will enqueue the incoming
+crypto operation burst to the primary slave. When one or more crypto
+operations fail to be enqueued, then they will be enqueued to the secondary
+slave.</p>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="snow3g.html" class="btn btn-neutral float-right" title="10. SNOW 3G Crypto Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="null.html" class="btn btn-neutral" title="8. Null Crypto Poll Mode Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

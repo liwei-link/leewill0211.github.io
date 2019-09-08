@@ -1,0 +1,495 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. Flow Bifurcation How-to Guide &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="4. PVP reference benchmark setup using testpmd" href="pvp_reference_benchmark.html" />
+    <link rel="prev" title="2. Live Migration of VM with Virtio on host running vhost_user" href="lm_virtio_vhost_user.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">HowTo Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="lm_bond_virtio_sriov.html">1. Live Migration of VM with SR-IOV VF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lm_virtio_vhost_user.html">2. Live Migration of VM with Virtio on host running vhost_user</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3. Flow Bifurcation How-to Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-flow-bifurcation-on-ixgbe-in-linux">3.1. Using Flow Bifurcation on IXGBE in Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-flow-bifurcation-on-i40e-in-linux">3.2. Using Flow Bifurcation on I40E in Linux</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pvp_reference_benchmark.html">4. PVP reference benchmark setup using testpmd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vfd.html">5. VF daemon (VFd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio_user_for_container_networking.html">6. Virtio_user for Container Networking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio_user_as_exceptional_path.html">7. Virtio_user as Exceptional Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">HowTo Guides</a> &raquo;</li>
+        
+      <li>3. Flow Bifurcation How-to Guide</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/howto/flow_bifurcation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="flow-bifurcation-how-to-guide">
+<h1>3. Flow Bifurcation How-to Guide</h1>
+<p>Flow Bifurcation is a mechanism which uses hardware capable Ethernet devices
+to split traffic between Linux user space and kernel space. Since it is a
+hardware assisted feature this approach can provide line rate processing
+capability. Other than <a class="reference internal" href="../prog_guide/kernel_nic_interface.html#kni"><span class="std std-ref">KNI</span></a>, the software is just required to
+enable device configuration, there is no need to take care of the packet
+movement during the traffic split. This can yield better performance with
+less CPU overhead.</p>
+<p>The Flow Bifurcation splits the incoming data traffic to user space
+applications (such as DPDK applications) and/or kernel space programs (such as
+the Linux kernel stack). It can direct some traffic, for example data plane
+traffic, to DPDK, while directing some other traffic, for example control
+plane traffic, to the traditional Linux networking stack.</p>
+<p>There are a number of technical options to achieve this. A typical example is
+to combine the technology of SR-IOV and packet classification filtering.</p>
+<p>SR-IOV is a PCI standard that allows the same physical adapter to be split as
+multiple virtual functions. Each virtual function (VF) has separated queues
+with physical functions (PF). The network adapter will direct traffic to a
+virtual function with a matching destination MAC address. In a sense, SR-IOV
+has the capability for queue division.</p>
+<p>Packet classification filtering is a hardware capability available on most
+network adapters. Filters can be configured to direct specific flows to a
+given receive queue by hardware. Different NICs may have different filter
+types to direct flows to a Virtual Function or a queue that belong to it.</p>
+<p>In this way the Linux networking stack can receive specific traffic through
+the kernel driver while a DPDK application can receive specific traffic
+bypassing the Linux kernel by using drivers like VFIO or the DPDK <code class="docutils literal notranslate"><span class="pre">igb_uio</span></code>
+module.</p>
+<div class="figure" id="id1">
+<span id="figure-flow-bifurcation-overview"></span><img alt="../_images/flow_bifurcation_overview.svg" src="../_images/flow_bifurcation_overview.svg" /><p class="caption"><span class="caption-number">图 3.3 </span><span class="caption-text">Flow Bifurcation Overview</span></p>
+</div>
+<div class="section" id="using-flow-bifurcation-on-ixgbe-in-linux">
+<h2>3.1. Using Flow Bifurcation on IXGBE in Linux</h2>
+<p>On Intel 82599 10 Gigabit Ethernet Controller series NICs Flow Bifurcation can
+be achieved by SR-IOV and Intel Flow Director technologies. Traffic can be
+directed to queues by the Flow Director capability, typically by matching
+5-tuple of UDP/TCP packets.</p>
+<p>The typical procedure to achieve this is as follows:</p>
+<ol class="arabic">
+<li><p class="first">Boot the system without iommu, or with <code class="docutils literal notranslate"><span class="pre">iommu=pt</span></code>.</p>
+</li>
+<li><p class="first">Create Virtual Functions:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">echo 2 &gt; /sys/bus/pci/devices/0000:01:00.0/sriov_numvfs</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Enable and set flow filters:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ethtool -K eth1 ntuple on</span>
+<span class="go">ethtool -N eth1 flow-type udp4 src-ip 192.0.2.2 dst-ip 198.51.100.2 \</span>
+<span class="go">        action $queue_index_in_VF0</span>
+<span class="go">ethtool -N eth1 flow-type udp4 src-ip 198.51.100.2 dst-ip 192.0.2.2 \</span>
+<span class="go">        action $queue_index_in_VF1</span>
+</pre></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">$queue_index_in_VFn</span></code>: Bits 39:32 of the variable defines VF id + 1; the lower 32 bits indicates the queue index of the VF. Thus:<ul>
+<li><code class="docutils literal notranslate"><span class="pre">$queue_index_in_VF0</span></code> = <code class="docutils literal notranslate"><span class="pre">(0x1</span> <span class="pre">&amp;</span> <span class="pre">0xFF)</span> <span class="pre">&lt;&lt;</span> <span class="pre">32</span> <span class="pre">+</span> <span class="pre">[queue</span> <span class="pre">index]</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">$queue_index_in_VF1</span></code> = <code class="docutils literal notranslate"><span class="pre">(0x2</span> <span class="pre">&amp;</span> <span class="pre">0xFF)</span> <span class="pre">&lt;&lt;</span> <span class="pre">32</span> <span class="pre">+</span> <span class="pre">[queue</span> <span class="pre">index]</span></code>.</li>
+</ul>
+</li>
+</ul>
+<div class="figure" id="figure-ixgbe-bifu-queue-idx">
+<img alt="../_images/ixgbe_bifu_queue_idx.svg" src="../_images/ixgbe_bifu_queue_idx.svg" /></div>
+</li>
+<li><p class="first">Compile the DPDK application and insert <code class="docutils literal notranslate"><span class="pre">igb_uio</span></code> or probe the <code class="docutils literal notranslate"><span class="pre">vfio-pci</span></code> kernel modules as normal.</p>
+</li>
+<li><p class="first">Bind the virtual functions:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">modprobe vfio-pci</span>
+<span class="go">dpdk-devbind.py -b vfio-pci 01:10.0</span>
+<span class="go">dpdk-devbind.py -b vfio-pci 01:10.1</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Run a DPDK application on the VFs:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd -l 0-7 -n 4 -- -i -w 01:10.0 -w 01:10.1 --forward-mode=mac</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>In this example, traffic matching the rules will go through the VF by matching
+the filter rule. All other traffic, not matching the rules, will go through
+the default queue or scaling on queues in the PF. That is to say UDP packets
+with the specified IP source and destination addresses will go through the
+DPDK application. All other traffic, with different hosts or different
+protocols, will go through the Linux networking stack.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last">
+<li><p class="first">The above steps work on the Linux kernel v4.2.</p>
+</li>
+<li><p class="first">The Flow Bifurcation is implemented in Linux kernel and ixgbe kernel driver using the following patches:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://patchwork.ozlabs.org/patch/476511/">ethtool: Add helper routines to pass vf to rx_flow_spec</a></li>
+<li><a class="reference external" href="https://patchwork.ozlabs.org/patch/476516/">ixgbe: Allow flow director to use entire queue space</a></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">The Ethtool version used in this example is 3.18.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-flow-bifurcation-on-i40e-in-linux">
+<h2>3.2. Using Flow Bifurcation on I40E in Linux</h2>
+<p>On Intel X710/XL710 series Ethernet Controllers Flow Bifurcation can be
+achieved by SR-IOV, Cloud Filter and L3 VEB switch. The traffic can be
+directed to queues by the Cloud Filter and L3 VEB switch's matching rule.</p>
+<ul>
+<li><p class="first">L3 VEB filters work for non-tunneled packets. It can direct a packet just by
+the Destination IP address to a queue in a VF.</p>
+</li>
+<li><p class="first">Cloud filters work for the following types of tunneled packets.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Inner mac.</li>
+<li>Inner mac + VNI.</li>
+<li>Outer mac + Inner mac + VNI.</li>
+<li>Inner mac + Inner vlan + VNI.</li>
+<li>Inner mac + Inner vlan.</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>The typical procedure to achieve this is as follows:</p>
+<ol class="arabic">
+<li><p class="first">Boot the system without iommu, or with <code class="docutils literal notranslate"><span class="pre">iommu=pt</span></code>.</p>
+</li>
+<li><p class="first">Build and insert the <code class="docutils literal notranslate"><span class="pre">i40e.ko</span></code> module.</p>
+</li>
+<li><p class="first">Create Virtual Functions:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">echo 2 &gt; /sys/bus/pci/devices/0000:01:00.0/sriov_numvfs</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Add udp port offload to the NIC if using cloud filter:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ip li add vxlan0 type vxlan id 42 group 239.1.1.1 local 10.16.43.214 dev &lt;name&gt;</span>
+<span class="go">ifconfig vxlan0 up</span>
+<span class="go">ip -d li show vxlan0</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Output such as <code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">vxlan</span> <span class="pre">port</span> <span class="pre">8472,</span> <span class="pre">index</span> <span class="pre">0</span> <span class="pre">success</span></code> should be
+found in the system log.</p>
+</div>
+</li>
+<li><p class="first">Examples of enabling and setting flow filters:</p>
+<ul>
+<li><p class="first">L3 VEB filter, for a route whose destination IP is 192.168.50.108 to VF
+0's queue 2.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ethtool -N &lt;dev_name&gt; flow-type ip4 dst-ip 192.168.50.108 \</span>
+<span class="go">        user-def 0xffffffff00000000 action 2 loc 8</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Inner mac, for a route whose inner destination mac is 0:0:0:0:9:0 to
+PF's queue 6.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ethtool -N &lt;dev_name&gt; flow-type ether dst 00:00:00:00:00:00 \</span>
+<span class="go">        m ff:ff:ff:ff:ff:ff src 00:00:00:00:09:00 m 00:00:00:00:00:00 \</span>
+<span class="go">        user-def 0xffffffff00000003 action 6 loc 1</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Inner mac + VNI, for a route whose inner destination mac is 0:0:0:0:9:0
+and VNI is 8 to PF's queue 4.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ethtool -N &lt;dev_name&gt; flow-type ether dst 00:00:00:00:00:00 \</span>
+<span class="go">        m ff:ff:ff:ff:ff:ff src 00:00:00:00:09:00 m 00:00:00:00:00:00 \</span>
+<span class="go">        user-def 0x800000003 action 4 loc 4</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Outer mac + Inner mac + VNI, for a route whose outer mac is
+68:05:ca:24:03:8b, inner destination mac is c2:1a:e1:53:bc:57, and VNI
+is 8 to PF's queue 2.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ethtool -N &lt;dev_name&gt; flow-type ether dst 68:05:ca:24:03:8b \</span>
+<span class="go">        m 00:00:00:00:00:00 src c2:1a:e1:53:bc:57 m 00:00:00:00:00:00 \</span>
+<span class="go">        user-def 0x800000003 action 2 loc 2</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Inner mac + Inner vlan + VNI, for a route whose inner destination mac is
+00:00:00:00:20:00, inner vlan is 10, and VNI is 8 to VF 0's queue 1.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ethtool -N &lt;dev_name&gt; flow-type ether dst 00:00:00:00:01:00 \</span>
+<span class="go">        m ff:ff:ff:ff:ff:ff src 00:00:00:00:20:00 m 00:00:00:00:00:00 \</span>
+<span class="go">        vlan 10 user-def 0x800000000 action 1 loc 5</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Inner mac + Inner vlan, for a route whose inner destination mac is
+00:00:00:00:20:00, and inner vlan is 10 to VF 0's queue 1.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ethtool -N &lt;dev_name&gt; flow-type ether dst 00:00:00:00:01:00 \</span>
+<span class="go">        m ff:ff:ff:ff:ff:ff src 00:00:00:00:20:00 m 00:00:00:00:00:00 \</span>
+<span class="go">        vlan 10 user-def 0xffffffff00000000 action 1 loc 5</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>If the upper 32 bits of 'user-def' are <code class="docutils literal notranslate"><span class="pre">0xffffffff</span></code>, then the
+filter can be used for programming an L3 VEB filter, otherwise the
+upper 32 bits of 'user-def' can carry the tenant ID/VNI if
+specified/required.</li>
+<li>Cloud filters can be defined with inner mac, outer mac, inner ip,
+inner vlan and VNI as part of the cloud tuple. It is always the
+destination (not source) mac/ip that these filters use. For all
+these examples dst and src mac address fields are overloaded dst ==
+outer, src == inner.</li>
+<li>The filter will direct a packet matching the rule to a vf id
+specified in the lower 32 bit of user-def to the queue specified by
+'action'.</li>
+<li>If the vf id specified by the lower 32 bit of user-def is greater
+than or equal to <code class="docutils literal notranslate"><span class="pre">max_vfs</span></code>, then the filter is for the PF queues.</li>
+</ul>
+</div>
+</li>
+<li><p class="first">Compile the DPDK application and insert <code class="docutils literal notranslate"><span class="pre">igb_uio</span></code> or probe the <code class="docutils literal notranslate"><span class="pre">vfio-pci</span></code>
+kernel modules as normal.</p>
+</li>
+<li><p class="first">Bind the virtual function:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">modprobe vfio-pci</span>
+<span class="go">dpdk-devbind.py -b vfio-pci 01:10.0</span>
+<span class="go">dpdk-devbind.py -b vfio-pci 01:10.1</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">run DPDK application on VFs:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">testpmd -l 0-7 -n 4 -- -i -w 01:10.0 -w 01:10.1 --forward-mode=mac</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>The above steps work on the i40e Linux kernel driver v1.5.16.</li>
+<li>The Ethtool version used in this example is 3.18. The mask <code class="docutils literal notranslate"><span class="pre">ff</span></code> means
+'not involved', while <code class="docutils literal notranslate"><span class="pre">00</span></code> or no mask means 'involved'.</li>
+<li>For more details of the configuration, refer to the
+<a class="reference external" href="http://dpdk.org/browse/tools/dts/tree/test_plans/cloud_filter_test_plan.rst">cloud filter test plan</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pvp_reference_benchmark.html" class="btn btn-neutral float-right" title="4. PVP reference benchmark setup using testpmd" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lm_virtio_vhost_user.html" class="btn btn-neutral" title="2. Live Migration of VM with Virtio on host running vhost_user" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

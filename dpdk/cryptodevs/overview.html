@@ -1,0 +1,1357 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. Crypto Device Supported Functionality Matrices &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="2. AESN-NI Multi Buffer Crypto Poll Mode Driver" href="aesni_mb.html" />
+    <link rel="prev" title="Crypto Device Drivers" href="index.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Crypto Device Drivers</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1. Crypto Device Supported Functionality Matrices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#supported-feature-flags">1.1. Supported Feature Flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-cipher-algorithms">1.2. Supported Cipher Algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-authentication-algorithms">1.3. Supported Authentication Algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-aead-algorithms">1.4. Supported AEAD Algorithms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_mb.html">2. AESN-NI Multi Buffer Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_gcm.html">3. AES-NI GCM Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="armv8.html">4. ARMv8 Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2_sec.html">5. NXP DPAA2 CAAM (DPAA2_SEC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kasumi.html">6. KASUMI Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openssl.html">7. OpenSSL Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="null.html">8. Null Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scheduler.html">9. Cryptodev Scheduler Poll Mode Driver Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snow3g.html">10. SNOW 3G Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qat.html">11. Intel(R) QuickAssist (QAT) Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zuc.html">12. ZUC Crypto Poll Mode Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Crypto Device Drivers</a> &raquo;</li>
+        
+      <li>1. Crypto Device Supported Functionality Matrices</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cryptodevs/overview.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="crypto-device-supported-functionality-matrices">
+<h1>1. Crypto Device Supported Functionality Matrices</h1>
+<div class="section" id="supported-feature-flags">
+<h2>1.1. Supported Feature Flags</h2>
+<style>
+   .wy-nav-content {
+      opacity: .99;
+   }
+   table#id1 {
+      cursor: default;
+      overflow: hidden;
+   }
+   table#id1 th, table#id1 td {
+      text-align: center;
+   }
+   table#id1 th {
+      font-size: 80%;
+      white-space: pre-wrap;
+      vertical-align: top;
+      padding: 2px;
+   }
+   table#id1 th:first-child {
+      vertical-align: bottom;
+   }
+   table#id1 td {
+      font-size: 70%;
+      padding: 1px;
+   }
+   table#id1 td:first-child {
+      padding-left: 1em;
+      text-align: left;
+   }
+   table#id1 tr:nth-child(2n-1) td {
+      background-color: rgba(210, 210, 210, 0.2);
+   }
+   table#id1 th:not(:first-child):hover,
+   table#id1 td:not(:first-child):hover {
+      position: relative;
+   }
+   table#id1 th:not(:first-child):hover::after,
+   table#id1 td:not(:first-child):hover::after {
+      content: '';
+      height: 6000px;
+      top: -3000px;
+      width: 100%;
+      left: 0;
+      position: absolute;
+      z-index: -1;
+      background-color: #ffb;
+   }
+   table#id1 tr:hover td {
+      background-color: #ffb;
+   }
+</style><table border="1" class="docutils" id="id1">
+<caption><span class="caption-number">表 1.2 </span><span class="caption-text">Features availability in crypto drivers</span></caption>
+<colgroup>
+<col width="71%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Feature</th>
+<th class="head">a
+e
+s
+n
+i
+_
+g
+c
+m</th>
+<th class="head">a
+e
+s
+n
+i
+_
+m
+b</th>
+<th class="head">a
+r
+m
+v
+8</th>
+<th class="head">d
+p
+a
+a
+2
+_
+s
+e
+c</th>
+<th class="head">k
+a
+s
+u
+m
+i</th>
+<th class="head">n
+u
+l
+l</th>
+<th class="head">o
+p
+e
+n
+s
+s
+l</th>
+<th class="head">q
+a
+t</th>
+<th class="head">s
+n
+o
+w
+3
+g</th>
+<th class="head">z
+u
+c</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Symmetric crypto</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td>Asymmetric crypto</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>Sym operation chaining</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td>HW Accelerated</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>CPU SSE</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>CPU AVX</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>CPU AVX2</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>CPU AVX512</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>CPU AESNI</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>CPU NEON</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>CPU ARM CE</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="supported-cipher-algorithms">
+<h2>1.2. Supported Cipher Algorithms</h2>
+<style>
+   .wy-nav-content {
+      opacity: .99;
+   }
+   table#id2 {
+      cursor: default;
+      overflow: hidden;
+   }
+   table#id2 th, table#id2 td {
+      text-align: center;
+   }
+   table#id2 th {
+      font-size: 80%;
+      white-space: pre-wrap;
+      vertical-align: top;
+      padding: 2px;
+   }
+   table#id2 th:first-child {
+      vertical-align: bottom;
+   }
+   table#id2 td {
+      font-size: 70%;
+      padding: 1px;
+   }
+   table#id2 td:first-child {
+      padding-left: 1em;
+      text-align: left;
+   }
+   table#id2 tr:nth-child(2n-1) td {
+      background-color: rgba(210, 210, 210, 0.2);
+   }
+   table#id2 th:not(:first-child):hover,
+   table#id2 td:not(:first-child):hover {
+      position: relative;
+   }
+   table#id2 th:not(:first-child):hover::after,
+   table#id2 td:not(:first-child):hover::after {
+      content: '';
+      height: 6000px;
+      top: -3000px;
+      width: 100%;
+      left: 0;
+      position: absolute;
+      z-index: -1;
+      background-color: #ffb;
+   }
+   table#id2 tr:hover td {
+      background-color: #ffb;
+   }
+</style><table border="1" class="docutils" id="id2">
+<caption><span class="caption-number">表 1.3 </span><span class="caption-text">Cipher algorithms in crypto drivers</span></caption>
+<colgroup>
+<col width="71%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Cipher algorithm</th>
+<th class="head">a
+e
+s
+n
+i
+_
+g
+c
+m</th>
+<th class="head">a
+e
+s
+n
+i
+_
+m
+b</th>
+<th class="head">a
+r
+m
+v
+8</th>
+<th class="head">d
+p
+a
+a
+2
+_
+s
+e
+c</th>
+<th class="head">k
+a
+s
+u
+m
+i</th>
+<th class="head">n
+u
+l
+l</th>
+<th class="head">o
+p
+e
+n
+s
+s
+l</th>
+<th class="head">q
+a
+t</th>
+<th class="head">s
+n
+o
+w
+3
+g</th>
+<th class="head">z
+u
+c</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>NULL</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>AES CBC (128)</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>AES CBC (192)</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>AES CBC (256)</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>AES CTR (128)</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>AES CTR (192)</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>AES CTR (256)</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>AES DOCSIS BPI</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>3DES CBC</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>3DES CTR</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>DES CBC</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>DES DOCSIS BPI</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>SNOW3G UEA2</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>KASUMI F8</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>ZUC EEA3</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="supported-authentication-algorithms">
+<h2>1.3. Supported Authentication Algorithms</h2>
+<style>
+   .wy-nav-content {
+      opacity: .99;
+   }
+   table#id3 {
+      cursor: default;
+      overflow: hidden;
+   }
+   table#id3 th, table#id3 td {
+      text-align: center;
+   }
+   table#id3 th {
+      font-size: 80%;
+      white-space: pre-wrap;
+      vertical-align: top;
+      padding: 2px;
+   }
+   table#id3 th:first-child {
+      vertical-align: bottom;
+   }
+   table#id3 td {
+      font-size: 70%;
+      padding: 1px;
+   }
+   table#id3 td:first-child {
+      padding-left: 1em;
+      text-align: left;
+   }
+   table#id3 tr:nth-child(2n-1) td {
+      background-color: rgba(210, 210, 210, 0.2);
+   }
+   table#id3 th:not(:first-child):hover,
+   table#id3 td:not(:first-child):hover {
+      position: relative;
+   }
+   table#id3 th:not(:first-child):hover::after,
+   table#id3 td:not(:first-child):hover::after {
+      content: '';
+      height: 6000px;
+      top: -3000px;
+      width: 100%;
+      left: 0;
+      position: absolute;
+      z-index: -1;
+      background-color: #ffb;
+   }
+   table#id3 tr:hover td {
+      background-color: #ffb;
+   }
+</style><table border="1" class="docutils" id="id3">
+<caption><span class="caption-number">表 1.4 </span><span class="caption-text">Authentication algorithms in crypto drivers</span></caption>
+<colgroup>
+<col width="71%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Authentication algorithm</th>
+<th class="head">a
+e
+s
+n
+i
+_
+g
+c
+m</th>
+<th class="head">a
+e
+s
+n
+i
+_
+m
+b</th>
+<th class="head">a
+r
+m
+v
+8</th>
+<th class="head">d
+p
+a
+a
+2
+_
+s
+e
+c</th>
+<th class="head">k
+a
+s
+u
+m
+i</th>
+<th class="head">n
+u
+l
+l</th>
+<th class="head">o
+p
+e
+n
+s
+s
+l</th>
+<th class="head">q
+a
+t</th>
+<th class="head">s
+n
+o
+w
+3
+g</th>
+<th class="head">z
+u
+c</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>NULL</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>MD5</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>MD5 HMAC</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>SHA1</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>SHA1 HMAC</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>SHA224</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>SHA224 HMAC</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>SHA256</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>SHA256 HMAC</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>SHA384</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>SHA384 HMAC</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>SHA512</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>SHA512 HMAC</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>AES XCBC MAC</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>AES GMAC</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>SNOW3G UIA2</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>KASUMI F9</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>ZUC EIA3</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>Y</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="supported-aead-algorithms">
+<h2>1.4. Supported AEAD Algorithms</h2>
+<style>
+   .wy-nav-content {
+      opacity: .99;
+   }
+   table#id4 {
+      cursor: default;
+      overflow: hidden;
+   }
+   table#id4 th, table#id4 td {
+      text-align: center;
+   }
+   table#id4 th {
+      font-size: 80%;
+      white-space: pre-wrap;
+      vertical-align: top;
+      padding: 2px;
+   }
+   table#id4 th:first-child {
+      vertical-align: bottom;
+   }
+   table#id4 td {
+      font-size: 70%;
+      padding: 1px;
+   }
+   table#id4 td:first-child {
+      padding-left: 1em;
+      text-align: left;
+   }
+   table#id4 tr:nth-child(2n-1) td {
+      background-color: rgba(210, 210, 210, 0.2);
+   }
+   table#id4 th:not(:first-child):hover,
+   table#id4 td:not(:first-child):hover {
+      position: relative;
+   }
+   table#id4 th:not(:first-child):hover::after,
+   table#id4 td:not(:first-child):hover::after {
+      content: '';
+      height: 6000px;
+      top: -3000px;
+      width: 100%;
+      left: 0;
+      position: absolute;
+      z-index: -1;
+      background-color: #ffb;
+   }
+   table#id4 tr:hover td {
+      background-color: #ffb;
+   }
+</style><table border="1" class="docutils" id="id4">
+<caption><span class="caption-number">表 1.5 </span><span class="caption-text">AEAD algorithms in crypto drivers</span></caption>
+<colgroup>
+<col width="71%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">AEAD algorithm</th>
+<th class="head">a
+e
+s
+n
+i
+_
+g
+c
+m</th>
+<th class="head">a
+e
+s
+n
+i
+_
+m
+b</th>
+<th class="head">a
+r
+m
+v
+8</th>
+<th class="head">d
+p
+a
+a
+2
+_
+s
+e
+c</th>
+<th class="head">k
+a
+s
+u
+m
+i</th>
+<th class="head">n
+u
+l
+l</th>
+<th class="head">o
+p
+e
+n
+s
+s
+l</th>
+<th class="head">q
+a
+t</th>
+<th class="head">s
+n
+o
+w
+3
+g</th>
+<th class="head">z
+u
+c</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>AES GCM (128)</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>AES GCM (192)</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td>AES GCM (256)</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>Y</td>
+<td>Y</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="aesni_mb.html" class="btn btn-neutral float-right" title="2. AESN-NI Multi Buffer Crypto Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Crypto Device Drivers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

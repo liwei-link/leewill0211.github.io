@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7. OpenSSL Crypto Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="8. Null Crypto Poll Mode Driver" href="null.html" />
+    <link rel="prev" title="6. KASUMI Crypto Poll Mode Driver" href="kasumi.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Crypto Device Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Crypto Device Supported Functionality Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_mb.html">2. AESN-NI Multi Buffer Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aesni_gcm.html">3. AES-NI GCM Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="armv8.html">4. ARMv8 Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2_sec.html">5. NXP DPAA2 CAAM (DPAA2_SEC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kasumi.html">6. KASUMI Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7. OpenSSL Crypto Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features">7.1. Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">7.2. Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialization">7.3. Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">7.4. Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="null.html">8. Null Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scheduler.html">9. Cryptodev Scheduler Poll Mode Driver Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snow3g.html">10. SNOW 3G Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qat.html">11. Intel(R) QuickAssist (QAT) Crypto Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zuc.html">12. ZUC Crypto Poll Mode Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Crypto Device Drivers</a> &raquo;</li>
+        
+      <li>7. OpenSSL Crypto Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cryptodevs/openssl.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="openssl-crypto-poll-mode-driver">
+<h1>7. OpenSSL Crypto Poll Mode Driver</h1>
+<p>This code provides the initial implementation of the openssl poll mode
+driver. All cryptography operations are using Openssl library crypto API.
+Each algorithm uses EVP interface from openssl API - which is recommended
+by Openssl maintainers.</p>
+<p>For more details about openssl library please visit openssl webpage:
+<a class="reference external" href="https://www.openssl.org/">https://www.openssl.org/</a></p>
+<div class="section" id="features">
+<h2>7.1. Features</h2>
+<p>OpenSSL PMD has support for:</p>
+<p>Supported cipher algorithms:
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_3DES_CBC</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_AES_CBC</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_AES_CTR</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_3DES_CTR</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_AES_GCM</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_CIPHER_DES_DOCSISBPI</span></code></p>
+<p>Supported authentication algorithms:
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_AES_GMAC</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_MD5</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA1</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA224</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA256</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA384</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA512</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_MD5_HMAC</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA1_HMAC</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA224_HMAC</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA256_HMAC</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA384_HMAC</span></code>
+* <code class="docutils literal notranslate"><span class="pre">RTE_CRYPTO_AUTH_SHA512_HMAC</span></code></p>
+</div>
+<div class="section" id="installation">
+<h2>7.2. Installation</h2>
+<p>To compile openssl PMD, it has to be enabled in the config/common_base file
+and appropriate openssl packages have to be installed in the build environment.</p>
+<p>The newest openssl library version is supported:
+* 1.0.2h-fips  3 May 2016.
+Older versions that were also verified:
+* 1.0.1f 6 Jan 2014
+* 1.0.1 14 Mar 2012</p>
+<p>For Ubuntu 14.04 LTS these packages have to be installed in the build system:
+sudo apt-get install openssl
+sudo apt-get install libc6-dev-i386 (for i686-native-linuxapp-gcc target)</p>
+<p>This code was also verified on Fedora 24.
+This code was NOT yet verified on FreeBSD.</p>
+</div>
+<div class="section" id="initialization">
+<h2>7.3. Initialization</h2>
+<p>User can use app/test application to check how to use this pmd and to verify
+crypto processing.</p>
+<p>Test name is cryptodev_openssl_autotest.
+For performance test cryptodev_openssl_perftest can be used.</p>
+<p>To verify real traffic l2fwd-crypto example can be used with this command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sudo ./build/l2fwd-crypto -l 0-1 -n 4 --vdev &quot;crypto_openssl&quot;</span>
+<span class="go">--vdev &quot;crypto_openssl&quot;-- -p 0x3 --chain CIPHER_HASH</span>
+<span class="go">--cipher_op ENCRYPT --cipher_algo AES_CBC</span>
+<span class="go">--cipher_key 00:01:02:03:04:05:06:07:08:09:0a:0b:0c:0d:0e:0f</span>
+<span class="go">--iv 00:01:02:03:04:05:06:07:08:09:0a:0b:0c:0d:0e:ff</span>
+<span class="go">--auth_op GENERATE --auth_algo SHA1_HMAC</span>
+<span class="go">--auth_key 11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11</span>
+<span class="go">:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11</span>
+<span class="go">:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11:11</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="limitations">
+<h2>7.4. Limitations</h2>
+<ul class="simple">
+<li>Maximum number of sessions is 2048.</li>
+<li>Chained mbufs are supported only for source mbuf (destination must be
+contiguous).</li>
+<li>Hash only is not supported for GCM and GMAC.</li>
+<li>Cipher only is not supported for GCM and GMAC.</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="null.html" class="btn btn-neutral float-right" title="8. Null Crypto Poll Mode Driver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="kasumi.html" class="btn btn-neutral" title="6. KASUMI Crypto Poll Mode Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

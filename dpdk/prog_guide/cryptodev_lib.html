@@ -1,0 +1,683 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>9. 加密设备库 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="10. 链路聚合轮询模式驱动库" href="link_bonding_poll_mode_drv_lib.html" />
+    <link rel="prev" title="8. 通用流API (rte_flow)" href="rte_flow.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">开发者指南</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">1. 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">2. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="env_abstraction_layer.html">3. 环境抽象层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ring_lib.html">4. Ring库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mempool_lib.html">5. 内存池库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mbuf_lib.html">6. Mbuf库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poll_mode_drv.html">7. 轮询模式驱动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rte_flow.html">8. 通用流API (rte_flow)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">9. 加密设备库</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">9.1. 设计原则</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">9.2. 设备管理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">9.2.1. 设备创建</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">9.2.2. 设备标识</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">9.2.3. 设备配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">9.2.4. 队列对的配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">9.2.5. 逻辑核，内存和队列对的关系</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">9.3. 设备特性和能力</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">9.3.1. 设备特性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">9.3.2. 设备操作能力</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">9.3.3. 功能发现</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">9.4. 操作处理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#api">9.4.1. 批量入队/出队 API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">9.4.2. 操作的表示</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">9.4.3. 操作管理和申请</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">9.5. 对称加密的支持</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id17">9.5.1. 会话和会话管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">9.5.2. 转换和转换链</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19">9.5.3. 对称操作</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">9.6. 非对称加密</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id21">9.6.1. 加密设备API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="link_bonding_poll_mode_drv_lib.html">10. 链路聚合轮询模式驱动库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_lib.html">11. 定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_lib.html">12. Hash库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="efd_lib.html">13. Elastic Flow Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm_lib.html">14. LPM库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lpm6_lib.html">15. LPM6库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_distrib_lib.html">16. Packet Distributor Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reorder_lib.html">17. Reorder库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ip_fragment_reassembly_lib.html">18. IP分片和重组库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump_lib.html">19. librte_pdump库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_proc_support.html">20. 多进程支持</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kernel_nic_interface.html">21. 内核NIC接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread_safety_dpdk_functions.html">22. DPDK函数的线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qos_framework.html">23. 服务质量框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="power_man.html">24. 电源管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_classif_access_ctrl.html">25. 包分类和访问控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_framework.html">26. 包框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost_lib.html">27. vhost库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metrics_lib.html">28. Metrics Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port_hotplug_framework.html">29. 端口热插拔框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_org.html">30. 源代码组织</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_build_system.html">31. 开发工具构建系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dev_kit_root_make_help.html">32. 开发套件根Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend_dpdk.html">33. 扩展DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_app.html">34. 构建你的应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ext_app_lib_make_help.html">35. 额外应用/库Makefile帮助</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perf_opt_guidelines.html">36. 性能优化指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing_efficient_code.html">37. 编写高效的代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_app.html">38. Profile Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">39. 术语</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">开发者指南</a> &raquo;</li>
+        
+      <li>9. 加密设备库</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/prog_guide/cryptodev_lib.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>9. 加密设备库</h1>
+<p>cryptodev库提供了加密设备的框架，通过定义通用API(支持一组加密操作)进行管理和配置软硬件加密轮询模式驱动。
+该框架当前仅支持密码、认证、链式密码/认证和AEAD对称加密操作。</p>
+<div class="section" id="id2">
+<h2>9.1. 设计原则</h2>
+<p>cryptodev库遵守和DPDK以太网设备框架相同的基本设计原则。加密框架提供了通用的加密设备框架，
+支持物理(硬件)和虚拟(软件)加密设备。通用加密API可以管理和配置加密设备，
+并且支持由加密轮询模式驱动提供的加密操作。</p>
+</div>
+<div class="section" id="id3">
+<h2>9.2. 设备管理</h2>
+<div class="section" id="id4">
+<h3>9.2.1. 设备创建</h3>
+<p>物理加密设备是在DPDK初始化阶段通过PCI探测发现的，
+每个PCI设备都有唯一标识符(PCI BDF，bus/bridge, device, function)。
+物理加密设备可以通过EAL命令行选项加入到DPDK的白/黑名单中。</p>
+<p>虚拟设备可以通过两种机制创建，一种使用EAL命令行参数，另外一种在应用中直接调用EAL的API创建。</p>
+<p>通过命令行参数 --vdev 创建</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">--vdev  &#39;cryptodev_aesni_mb_pmd0,max_nb_queue_pairs=2,max_nb_sessions=1024,socket_id=0&#39;</span>
+</pre></div>
+</div>
+<p>在应用中使用 rte_vdev_init 创建</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">rte_vdev_init</span><span class="p">(</span><span class="s">&quot;cryptodev_aesni_mb_pmd&quot;</span><span class="p">,</span>
+                  <span class="s">&quot;max_nb_queue_pairs=2,max_nb_sessions=1024,socket_id=0&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>所有虚拟加密设备都支持以下初始化参数:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">max_nb_queue_pairs</span></code> - 设备支持的&quot;队列对&quot;数量</li>
+<li><code class="docutils literal notranslate"><span class="pre">max_nb_sessions</span></code> - 设备支持的会话数量</li>
+<li><code class="docutils literal notranslate"><span class="pre">socket_id</span></code> - 设备所在的socket</li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h3>9.2.2. 设备标识</h3>
+<p>每个设备无论是虚拟或者物理的都由两个标识符唯一标识:</p>
+<ul class="simple">
+<li>设备的唯一索引，用于在cryptodev API暴露的所有函数中指定加密设备。</li>
+<li>设备名称，用于管理或调试时在控制台消息中显示加密设备。为了便于使用，端口名中包含了端口索引。</li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h3>9.2.3. 设备配置</h3>
+<p>加密设备的配置包含下面的操作:</p>
+<ul class="simple">
+<li>资源申请，包括硬件资源(如果是物理设备)。</li>
+<li>设备重置到默认状态。</li>
+<li>统计计数器的初始化。</li>
+</ul>
+<p>rte_cryptodev_configure 用于配置加密设备。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">rte_cryptodev_configure</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">dev_id</span><span class="p">,</span>
+                            <span class="k">struct</span> <span class="n">rte_cryptodev_config</span> <span class="o">*</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">rte_cryptodev_config</span></code> 结构用于传递配置参数。
+它包含所选择的socket、队列对的数量和会话内存池的配置。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_cryptodev_config</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">socket_id</span><span class="p">;</span>
+    <span class="cm">/**&lt; Socket to allocate resources on */</span>
+    <span class="kt">uint16_t</span> <span class="n">nb_queue_pairs</span><span class="p">;</span>
+    <span class="cm">/**&lt; Number of queue pairs to configure on device */</span>
+
+    <span class="k">struct</span> <span class="p">{</span>
+        <span class="kt">uint32_t</span> <span class="n">nb_objs</span><span class="p">;</span>
+        <span class="kt">uint32_t</span> <span class="n">cache_size</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">session_mp</span><span class="p">;</span>
+    <span class="cm">/**&lt; Session mempool configuration */</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>9.2.4. 队列对的配置</h3>
+<p>每个加密设备队列对都是通过 <code class="docutils literal notranslate"><span class="pre">rte_cryptodev_queue_pair_setup</span></code> 独立配置的。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">rte_cryptodev_queue_pair_setup</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">dev_id</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">queue_pair_id</span><span class="p">,</span>
+            <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_cryptodev_qp_conf</span> <span class="o">*</span><span class="n">qp_conf</span><span class="p">,</span>
+            <span class="kt">int</span> <span class="n">socket_id</span><span class="p">)</span>
+
+<span class="k">struct</span> <span class="n">rte_cryptodev_qp_conf</span> <span class="p">{</span>
+    <span class="kt">uint32_t</span> <span class="n">nb_descriptors</span><span class="p">;</span> <span class="cm">/**&lt; Number of descriptors per queue pair */</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>9.2.5. 逻辑核，内存和队列对的关系</h3>
+<p>对于处理器的逻辑核和接口使用本地内存时，加密设备库和PMD库一样支持NUMA。
+因此加密操作和对称加密操作所使用的会话和mbuf应该从本地内存池(从本地内存中创建的内存池)中申请。
+如果可能的话，应该保持缓冲区在本地处理器上，这样可以获得最佳性能，
+缓冲区描述符应该使用从本地内存池中申请的mbuf填充。</p>
+<p>在加密操作、加密会话和数据缓冲区都在本地内存时，run-to-completion模型可以表现的更好，
+尤其对于虚拟加密设备。当工作的逻辑核都在同一个处理器上时，pipe-line模型也是这样的。</p>
+<p>在同一个加密设备上千万不要让多个逻辑核对同一个队列对进行出或入队操作，
+因为这需要全局锁会导致性能下降。但是，可以让一个逻辑核从&quot;由另外一个逻辑核入队的队列&quot;中出队一个操作。
+这意味着在包处理流水线中，加密的批量(crypto burst)出入队API是一个逻辑核间信息传递的逻辑场所。</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>9.3. 设备特性和能力</h2>
+<p>加密设备通过两种机制定义功能，全局设备特性和算法能力。全局设备特性是设备等级的特性，
+适用于整个设备，比如硬件加速或者支持对称加密操作。</p>
+<p>算法能力机制定义设备支持的独立算法/功能，比如特定对称加密密码或认证操作。</p>
+<div class="section" id="id10">
+<h3>9.3.1. 设备特性</h3>
+<p>当前定义的加密设备特性:</p>
+<ul class="simple">
+<li>对称加密操作</li>
+<li>非对称加密操作</li>
+<li>对称加密操作链</li>
+<li>SSE 加速的 SIMD 向量操作</li>
+<li>AVX 加速的 SIMD 向量操作</li>
+<li>AVX2 加速的 SIMD 向量操作</li>
+<li>AESNI 加速的指令</li>
+<li>硬件卸载处理</li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3>9.3.2. 设备操作能力</h3>
+<p>特殊算法(加密PMD支持)的加密功能由操作类型，操作转换，转换标识符和转换细节定义。
+完整的加密能力结构体定义参考 <em>DPDK API Reference</em>。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_cryptodev_capabilities</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>每个加密轮询模式驱动都为支持的操作定义了一组私有的能力。下面是支持SHA1_HMAC认证算法和AES_CBC密码算法的PMD的能力示例。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_cryptodev_capabilities</span> <span class="n">pmd_capabilities</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span>    <span class="cm">/* SHA1 HMAC */</span>
+        <span class="p">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">RTE_CRYPTO_OP_TYPE_SYMMETRIC</span><span class="p">,</span>
+        <span class="p">.</span><span class="n">sym</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="p">.</span><span class="n">xform_type</span> <span class="o">=</span> <span class="n">RTE_CRYPTO_SYM_XFORM_AUTH</span><span class="p">,</span>
+            <span class="p">.</span><span class="n">auth</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="p">.</span><span class="n">algo</span> <span class="o">=</span> <span class="n">RTE_CRYPTO_AUTH_SHA1_HMAC</span><span class="p">,</span>
+                <span class="p">.</span><span class="n">block_size</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+                <span class="p">.</span><span class="n">key_size</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="p">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+                    <span class="p">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+                    <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="p">},</span>
+                <span class="p">.</span><span class="n">digest_size</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="p">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+                    <span class="p">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+                    <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="p">},</span>
+                <span class="p">.</span><span class="n">aad_size</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">0</span> <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>    <span class="cm">/* AES CBC */</span>
+        <span class="p">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">RTE_CRYPTO_OP_TYPE_SYMMETRIC</span><span class="p">,</span>
+        <span class="p">.</span><span class="n">sym</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="p">.</span><span class="n">xform_type</span> <span class="o">=</span> <span class="n">RTE_CRYPTO_SYM_XFORM_CIPHER</span><span class="p">,</span>
+            <span class="p">.</span><span class="n">cipher</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="p">.</span><span class="n">algo</span> <span class="o">=</span> <span class="n">RTE_CRYPTO_CIPHER_AES_CBC</span><span class="p">,</span>
+                <span class="p">.</span><span class="n">block_size</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+                <span class="p">.</span><span class="n">key_size</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="p">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+                    <span class="p">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+                    <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">8</span>
+                <span class="p">},</span>
+                <span class="p">.</span><span class="n">iv_size</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="p">.</span><span class="n">min</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+                    <span class="p">.</span><span class="n">max</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+                    <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3>9.3.3. 功能发现</h3>
+<p>加密设备的轮询模式驱动通过 <code class="docutils literal notranslate"><span class="pre">rte_cryptodev_info_get</span></code> 函数发现特性和能力。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">rte_cryptodev_info_get</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">dev_id</span><span class="p">,</span>
+                            <span class="k">struct</span> <span class="n">rte_cryptodev_info</span> <span class="o">*</span><span class="n">dev_info</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>用户可以调用该函数查询指定加密PMD并获取所有设备特性和能力。
+<code class="docutils literal notranslate"><span class="pre">rte_cryptodev_info</span></code> 结构体包含所有与设备相关信息。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_cryptodev_info</span> <span class="p">{</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">driver_name</span><span class="p">;</span>
+    <span class="k">enum</span> <span class="n">rte_cryptodev_type</span> <span class="n">dev_type</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">rte_pci_device</span> <span class="o">*</span><span class="n">pci_dev</span><span class="p">;</span>
+
+    <span class="kt">uint64_t</span> <span class="n">feature_flags</span><span class="p">;</span>
+
+    <span class="k">const</span> <span class="k">struct</span> <span class="n">rte_cryptodev_capabilities</span> <span class="o">*</span><span class="n">capabilities</span><span class="p">;</span>
+
+    <span class="kt">unsigned</span> <span class="n">max_nb_queue_pairs</span><span class="p">;</span>
+
+    <span class="k">struct</span> <span class="p">{</span>
+        <span class="kt">unsigned</span> <span class="n">max_nb_sessions</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">sym</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>9.4. 操作处理</h2>
+<p>DPDK数据路径上加密操作的调度是通过一组猝发式异步API执行的。加密设备的队列对通过批量入队API接收一批加密操作。在物理加密设备上，
+批量入队API会把操作放到设备的硬件输入队列中。而对虚拟设备，加密操作的处理通常在调用入队操作期间就已经完成。
+批量出队API会从加密设备的队列对中获取任何已处理过的可用操作，对于物理设备，
+通常是直接从设备的已处理队列中获取，对于虚拟设备则是从存放已处理(入队时)操作的 <code class="docutils literal notranslate"><span class="pre">rte_ring</span></code> 中获取。</p>
+<div class="section" id="api">
+<h3>9.4.1. 批量入队/出队 API</h3>
+<p>批量入队API使用加密设备标识符和队列对标识符指定要调度处理的加密设备队列对。
+<code class="docutils literal notranslate"><span class="pre">ops</span></code> 是待处理操作数组，数组元素是 <code class="docutils literal notranslate"><span class="pre">rte_crypto_op</span></code> 结构体。<code class="docutils literal notranslate"><span class="pre">nb_ops</span></code> 参数是 <code class="docutils literal notranslate"><span class="pre">ops</span></code> 数组的大小。
+函数返回实际入队处理操作的数量，返回值等于 <code class="docutils literal notranslate"><span class="pre">nb_ops</span></code> 意味着所有的包都已入队。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">uint16_t</span> <span class="n">rte_cryptodev_enqueue_burst</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">dev_id</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">qp_id</span><span class="p">,</span>
+                                     <span class="k">struct</span> <span class="n">rte_crypto_op</span> <span class="o">**</span><span class="n">ops</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">nb_ops</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>出队API和入队API的格式一样，只是 <code class="docutils literal notranslate"><span class="pre">nb_ops</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ops</span></code>
+参数用于指定用户希望获取已处理操作的最大数量和存放具体操作的数组。
+返回值是实际返回操作的数量，该值一定不会大于 <code class="docutils literal notranslate"><span class="pre">nb_ops</span></code>。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">uint16_t</span> <span class="n">rte_cryptodev_dequeue_burst</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">dev_id</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">qp_id</span><span class="p">,</span>
+                                     <span class="k">struct</span> <span class="n">rte_crypto_op</span> <span class="o">**</span><span class="n">ops</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">nb_ops</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3>9.4.2. 操作的表示</h3>
+<p>加密操作由 rte_crypto_op 结构体表示，该结构中存储了所有加密操作需要的信息。</p>
+<div class="figure">
+<img alt="../_images/crypto_op.svg" src="../_images/crypto_op.svg" /></div>
+<p>操作结构体中包含操作类型和操作状态，操作特有数据的引用，该数据的大小和内容依赖提供的操作而变化。
+如果操作是从内存池中申请的，结构体中也包含源内存池。最后还有一个指向用户特定数据的不透明的指针。</p>
+<p>如果加密操作是从加密操作内存池中申请的(参加下一节)，也可以通过该操作为应用申请私有内存。</p>
+<p>加密PMD处理操作所需要的操作必须要由应用软件指定到 <code class="docutils literal notranslate"><span class="pre">rte_crypto_op</span></code> 结构体中。</p>
+</div>
+<div class="section" id="id15">
+<h3>9.4.3. 操作管理和申请</h3>
+<p>加密操作利用Mempool库申请操作缓冲区，cryptodev库提供给了一组API用于管理这些加密操作。
+因此，可以确保加密操作在channel和rank间交叉分布，进而获取最近的处理性能。
+<code class="docutils literal notranslate"><span class="pre">rte_crypto_op</span></code> 中包含了一个指明内存池的字段。调用 <code class="docutils literal notranslate"><span class="pre">rte_crypto_op_free(op)</span></code> 时，
+操作被释放回原始的操作池中。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span> <span class="k">struct</span> <span class="n">rte_mempool</span> <span class="o">*</span>
+<span class="nf">rte_crypto_op_pool_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="k">enum</span> <span class="n">rte_crypto_op_type</span> <span class="n">type</span><span class="p">,</span>
+                          <span class="kt">unsigned</span> <span class="n">nb_elts</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">cache_size</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">priv_size</span><span class="p">,</span>
+                          <span class="kt">int</span> <span class="n">socket_id</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>在资源池创建时，会调用 <code class="docutils literal notranslate"><span class="pre">rte_crypto_op_init()</span></code> 初始化每一个加密操作，然后调用
+<code class="docutils literal notranslate"><span class="pre">__rte_crypto_op_reset()</span></code> 根据指定的类型参数配置操作的指定字段。</p>
+<p><code class="docutils literal notranslate"><span class="pre">rte_crypto_op_alloc()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">rte_crypto_op_bulk_alloc()</span></code> 用于从给定的加密操作内存池中申请指定类型的加密操作。
+在每个操作返回给申请的用户前会调用 <code class="docutils literal notranslate"><span class="pre">__rte_crypto_op_reset()</span></code> ，因此在应用使用前操作总是处于可知的状态。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_crypto_op</span> <span class="o">*</span><span class="n">rte_crypto_op_alloc</span><span class="p">(</span><span class="k">struct</span> <span class="n">rte_mempool</span> <span class="o">*</span><span class="n">mempool</span><span class="p">,</span>
+                                          <span class="k">enum</span> <span class="n">rte_crypto_op_type</span> <span class="n">type</span><span class="p">)</span>
+
+<span class="kt">unsigned</span> <span class="n">rte_crypto_op_bulk_alloc</span><span class="p">(</span><span class="k">struct</span> <span class="n">rte_mempool</span> <span class="o">*</span><span class="n">mempool</span><span class="p">,</span>
+                                  <span class="k">enum</span> <span class="n">rte_crypto_op_type</span> <span class="n">type</span><span class="p">,</span>
+                                  <span class="k">struct</span> <span class="n">rte_crypto_op</span> <span class="o">**</span><span class="n">ops</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">nb_ops</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">rte_crypto_op_free()</span></code> 用于应用把操作释放会操作池中。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="n">rte_crypto_op_free</span><span class="p">(</span><span class="k">struct</span> <span class="n">rte_crypto_op</span> <span class="o">*</span><span class="n">op</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id16">
+<h2>9.5. 对称加密的支持</h2>
+<p>当前cryptodev库支持以下对称加密操作；密码，认证，包括这些操作链，也支持AEAD操作。</p>
+<div class="section" id="id17">
+<h3>9.5.1. 会话和会话管理</h3>
+<p>会话用于对称加密中存储固定不变的数据，这些数据定义在密码转换中，用于包流的操作处理。
+会话中管理了诸如扩展密码索引、HMAC IPADs 和 OPAD这类信息，这些信息需要为特定加密操作计算，
+但对于一个流的包基础来说这些信息却是固定不变的。加密会话以最佳方法为底层PMD缓存固定不变的数据，
+进而加速了加密操作。</p>
+<div class="figure">
+<img alt="../_images/cryptodev_sym_sess.svg" src="../_images/cryptodev_sym_sess.svg" /></div>
+<p>加密设备框架提供一组利用Mempool库的会话池管理API用于创建和释放会话。</p>
+<p>框架也提供了钩子函数(因此PMD可以传入私有会话参数所需的内存数量)用于会话参数的配置和释放功能，
+因此PMD可以在销毁会话时管理内存。</p>
+<p><strong>注意</strong>: 在某个特定设备上创建的会话只能用在相同类型的加密设备上，如果尝试在不同类型的设备上使用，
+加密操作会失败。</p>
+<p><code class="docutils literal notranslate"><span class="pre">rte_cryptodev_sym_session_create()</span></code> 用于在加密设备上创建对称会话。
+对称的转换链用于指定特定操作和它的参数。转换的相关信息参加下面的章节。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_cryptodev_sym_session</span> <span class="o">*</span> <span class="nf">rte_cryptodev_sym_session_create</span><span class="p">(</span>
+       <span class="kt">uint8_t</span> <span class="n">dev_id</span><span class="p">,</span> <span class="k">struct</span> <span class="n">rte_crypto_sym_xform</span> <span class="o">*</span><span class="n">xform</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>注意</strong>: 对于AEAD操作，所选的认证和加密算法必须是对齐的(aligned)，比如AES_GCM。</p>
+</div>
+<div class="section" id="id18">
+<h3>9.5.2. 转换和转换链</h3>
+<p>对称加密转换(<code class="docutils literal notranslate"><span class="pre">rte_crypto_sym_xform</span></code>)是一种用于指定加密操作细节的机制。
+对于对称操作链，比如密码加密和认证生成，<code class="docutils literal notranslate"><span class="pre">next</span></code> 指针把转换链接在一起。
+支持链的加密设备必须设置对称加密操作链特性的标志。</p>
+<p>当前有两种转换类型(密码和认证)指定给AEAD操作。AEAD操作需要把密码和认证转换链接在一起。
+同时也很重要的是，转换传递的顺序就是链的顺序。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_crypto_sym_xform</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">rte_crypto_sym_xform</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+    <span class="cm">/**&lt; next xform in chain */</span>
+    <span class="k">enum</span> <span class="n">rte_crypto_sym_xform_type</span> <span class="n">type</span><span class="p">;</span>
+    <span class="cm">/**&lt; xform type */</span>
+    <span class="k">union</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">rte_crypto_auth_xform</span> <span class="n">auth</span><span class="p">;</span>
+        <span class="cm">/**&lt; Authentication / hash xform */</span>
+        <span class="k">struct</span> <span class="n">rte_crypto_cipher_xform</span> <span class="n">cipher</span><span class="p">;</span>
+        <span class="cm">/**&lt; Cipher xform */</span>
+    <span class="p">};</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>API不会限制链在一起的转换数，但是处理该操作的底层的加密设备PMD会限制。</p>
+<div class="figure">
+<img alt="../_images/crypto_xform_chain.svg" src="../_images/crypto_xform_chain.svg" /></div>
+</div>
+<div class="section" id="id19">
+<h3>9.5.3. 对称操作</h3>
+<p>对称加密操作的结构体包含所有和对称加密操作相关的可变数据。该结构体用于加密，认证，AEAD或者链式操作。</p>
+<p>对称操作必须至少有一个源数据缓冲区(<code class="docutils literal notranslate"><span class="pre">m_src</span></code>)、会话类型(session-based/less)、
+一个合法的会话(或者session-less模式下的转换)和
+根据在会话或转换链中指定的操作类型所需的认证/加密参数。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">rte_crypto_sym_op</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">rte_mbuf</span> <span class="o">*</span><span class="n">m_src</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">rte_mbuf</span> <span class="o">*</span><span class="n">m_dst</span><span class="p">;</span>
+
+    <span class="k">enum</span> <span class="n">rte_crypto_sym_op_sess_type</span> <span class="n">type</span><span class="p">;</span>
+
+    <span class="k">union</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">rte_cryptodev_sym_session</span> <span class="o">*</span><span class="n">session</span><span class="p">;</span>
+        <span class="cm">/**&lt; Handle for the initialised session context */</span>
+        <span class="k">struct</span> <span class="n">rte_crypto_sym_xform</span> <span class="o">*</span><span class="n">xform</span><span class="p">;</span>
+        <span class="cm">/**&lt; Session-less API Crypto operation parameters */</span>
+    <span class="p">};</span>
+
+    <span class="k">struct</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="p">{</span>
+            <span class="kt">uint32_t</span> <span class="n">offset</span><span class="p">;</span>
+            <span class="kt">uint32_t</span> <span class="n">length</span><span class="p">;</span>
+        <span class="p">}</span> <span class="n">data</span><span class="p">;</span>   <span class="cm">/**&lt; Data offsets and length for ciphering */</span>
+
+        <span class="k">struct</span> <span class="p">{</span>
+            <span class="kt">uint8_t</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+            <span class="n">phys_addr_t</span> <span class="n">phys_addr</span><span class="p">;</span>
+            <span class="kt">uint16_t</span> <span class="n">length</span><span class="p">;</span>
+        <span class="p">}</span> <span class="n">iv</span><span class="p">;</span>     <span class="cm">/**&lt; Initialisation vector parameters */</span>
+    <span class="p">}</span> <span class="n">cipher</span><span class="p">;</span>
+
+    <span class="k">struct</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="p">{</span>
+            <span class="kt">uint32_t</span> <span class="n">offset</span><span class="p">;</span>
+            <span class="kt">uint32_t</span> <span class="n">length</span><span class="p">;</span>
+        <span class="p">}</span> <span class="n">data</span><span class="p">;</span>   <span class="cm">/**&lt; Data offsets and length for authentication */</span>
+
+        <span class="k">struct</span> <span class="p">{</span>
+            <span class="kt">uint8_t</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+            <span class="n">phys_addr_t</span> <span class="n">phys_addr</span><span class="p">;</span>
+            <span class="kt">uint16_t</span> <span class="n">length</span><span class="p">;</span>
+        <span class="p">}</span> <span class="n">digest</span><span class="p">;</span> <span class="cm">/**&lt; Digest parameters */</span>
+
+        <span class="k">struct</span> <span class="p">{</span>
+            <span class="kt">uint8_t</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+            <span class="n">phys_addr_t</span> <span class="n">phys_addr</span><span class="p">;</span>
+            <span class="kt">uint16_t</span> <span class="n">length</span><span class="p">;</span>
+        <span class="p">}</span> <span class="n">aad</span><span class="p">;</span>    <span class="cm">/**&lt; Additional authentication parameters */</span>
+    <span class="p">}</span> <span class="n">auth</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id20">
+<h2>9.6. 非对称加密</h2>
+<p>cryptodev API当前还不支持非对称功能。</p>
+<div class="section" id="id21">
+<h3>9.6.1. 加密设备API</h3>
+<p>cryptodev库API在文档 <em>DPDK API Reference</em> 中有所描述。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="link_bonding_poll_mode_drv_lib.html" class="btn btn-neutral float-right" title="10. 链路聚合轮询模式驱动库" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rte_flow.html" class="btn btn-neutral" title="8. 通用流API (rte_flow)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

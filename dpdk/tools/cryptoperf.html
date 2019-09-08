@@ -1,0 +1,686 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. dpdk-test-crypto-perf Application &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Testpmd Application User Guide" href="../testpmd_app_ug/index.html" />
+    <link rel="prev" title="4. dpdk-devbind Application" href="devbind.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">DPDK Tools User Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="proc_info.html">1. dpdk-procinfo Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pdump.html">2. dpdk-pdump Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pmdinfo.html">3. dpdk-pmdinfo Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devbind.html">4. dpdk-devbind Application</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. dpdk-test-crypto-perf Application</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">5.1. Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compiling-the-application">5.2. Compiling the Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-application">5.3. Running the Application</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#eal-options">5.3.1. EAL Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#appication-options">5.3.2. Appication Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#test-vector-file">5.3.3. Test Vector File</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">5.4. Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">DPDK Tools User Guides</a> &raquo;</li>
+        
+      <li>5. dpdk-test-crypto-perf Application</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tools/cryptoperf.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dpdk-test-crypto-perf-application">
+<h1>5. dpdk-test-crypto-perf Application</h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">dpdk-test-crypto-perf</span></code> tool is a Data Plane Development Kit (DPDK)
+utility that allows measuring performance parameters of PMDs available in the
+crypto tree. There are available two measurement types: throughput and latency.
+User can use multiply cores to run tests on but only
+one type of crypto PMD can be measured during single application
+execution. Cipher parameters, type of device, type of operation and
+chain mode have to be specified in the command line as application
+parameters. These parameters are checked using device capabilities
+structure.</p>
+<div class="section" id="limitations">
+<h2>5.1. Limitations</h2>
+<p>On hardware devices the cycle-count doesn't always represent the actual offload
+cost. The cycle-count only represents the offload cost when the hardware
+accelerator is not fully loaded, when loaded the cpu cycles freed up by the
+offload are still consumed by the test tool and included in the cycle-count.
+These cycles are consumed by retries and inefficient API calls enqueuing and
+dequeuing smaller bursts than specified by the cmdline parameter. This results
+in a larger cycle-count measurement and should not be interpreted as an offload
+cost measurement.</p>
+<p>On hardware devices the throughput measurement is not necessarily the maximum
+possible for the device, e.g. it may be necessary to use multiple cores to keep
+the hardware accelerator fully loaded and so measure maximum throughput.</p>
+</div>
+<div class="section" id="compiling-the-application">
+<h2>5.2. Compiling the Application</h2>
+<p><strong>Step 1: PMD setting</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">dpdk-test-crypto-perf</span></code> tool depends on crypto device drivers PMD which
+are disabled by default in the build configuration file <code class="docutils literal notranslate"><span class="pre">common_base</span></code>.
+The crypto device drivers PMD which should be tested can be enabled by setting:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CONFIG_RTE_LIBRTE_PMD_&lt;name&gt;=y
+</pre></div>
+</div>
+<p>Setting example for open ssl PMD:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CONFIG_RTE_LIBRTE_PMD_OPENSSL=y
+</pre></div>
+</div>
+<p><strong>Step 2: Linearization setting</strong></p>
+<p>It is possible linearized input segmented packets just before crypto operation
+for devices which doesn't support scatter-gather, and allows to measure
+performance also for this use case.</p>
+<p>To set on the linearization options add below definition to the
+<code class="docutils literal notranslate"><span class="pre">cperf_ops.h</span></code> file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#define CPERF_LINEARIZATION_ENABLE
+</pre></div>
+</div>
+<p><strong>Step 3: Build the application</strong></p>
+<p>Execute the <code class="docutils literal notranslate"><span class="pre">dpdk-setup.sh</span></code> script to build the DPDK library together with the
+<code class="docutils literal notranslate"><span class="pre">dpdk-test-crypto-perf</span></code> applcation.</p>
+<p>Initially, the user must select a DPDK target to choose the correct target type
+and compiler options to use when building the libraries.
+The user must have all libraries, modules, updates and compilers installed
+in the system prior to this,
+as described in the earlier chapters in this Getting Started Guide.</p>
+</div>
+<div class="section" id="running-the-application">
+<h2>5.3. Running the Application</h2>
+<p>The tool application has a number of command line options:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">dpdk-test-crypto-perf [EAL Options] -- [Application Options]</span>
+</pre></div>
+</div>
+<div class="section" id="eal-options">
+<h3>5.3.1. EAL Options</h3>
+<p>The following are the EAL command-line options that can be used in conjunction
+with the <code class="docutils literal notranslate"><span class="pre">dpdk-test-crypto-perf</span></code> applcation.
+See the DPDK Getting Started Guides for more information on these options.</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;COREMASK&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">-l</span> <span class="pre">&lt;CORELIST&gt;</span></code></p>
+<blockquote>
+<div><p>Set the hexadecimal bitmask of the cores to run on. The corelist is a
+list cores to use.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-w</span> <span class="pre">&lt;PCI&gt;</span></code></p>
+<blockquote>
+<div><p>Add a PCI device in white list.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--vdev</span> <span class="pre">&lt;driver&gt;&lt;id&gt;</span></code></p>
+<blockquote>
+<div><p>Add a virtual device.</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="appication-options">
+<h3>5.3.2. Appication Options</h3>
+<p>The following are the appication command-line options:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--ptest</span> <span class="pre">type</span></code></p>
+<blockquote>
+<div><p>Set test type, where <code class="docutils literal notranslate"><span class="pre">type</span></code> is one of the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>throughput
+latency
+verify
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--silent</span></code></p>
+<blockquote>
+<div><p>Disable options dump.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--pool-sz</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the number of mbufs to be allocated in the mbuf pool.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--total-ops</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the number of total operations performed.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--burst-sz</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the number of packets per burst.</p>
+<dl class="docutils">
+<dt>This can be set as:</dt>
+<dd><ul class="first last simple">
+<li>Single value (i.e. <code class="docutils literal notranslate"><span class="pre">--burst-sz</span> <span class="pre">16</span></code>)</li>
+<li>Range of values, using the following structure <code class="docutils literal notranslate"><span class="pre">min:inc:max</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">min</span></code> is minimum size, <code class="docutils literal notranslate"><span class="pre">inc</span></code> is the increment size and <code class="docutils literal notranslate"><span class="pre">max</span></code>
+is the maximum size (i.e. <code class="docutils literal notranslate"><span class="pre">--burst-sz</span> <span class="pre">16:2:32</span></code>)</li>
+<li>List of values, up to 32 values, separated in commas (i.e. <code class="docutils literal notranslate"><span class="pre">--burst-sz</span> <span class="pre">16,24,32</span></code>)</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--buffer-sz</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the size of single packet (plaintext or ciphertext in it).</p>
+<dl class="docutils">
+<dt>This can be set as:</dt>
+<dd><ul class="first last simple">
+<li>Single value (i.e. <code class="docutils literal notranslate"><span class="pre">--buffer-sz</span> <span class="pre">16</span></code>)</li>
+<li>Range of values, using the following structure <code class="docutils literal notranslate"><span class="pre">min:inc:max</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">min</span></code> is minimum size, <code class="docutils literal notranslate"><span class="pre">inc</span></code> is the increment size and <code class="docutils literal notranslate"><span class="pre">max</span></code>
+is the maximum size (i.e. <code class="docutils literal notranslate"><span class="pre">--buffer-sz</span> <span class="pre">16:2:32</span></code>)</li>
+<li>List of values, up to 32 values, separated in commas (i.e. <code class="docutils literal notranslate"><span class="pre">--buffer-sz</span> <span class="pre">32,64,128</span></code>)</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--segments-nb</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the number of segments per packet.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--devtype</span> <span class="pre">&lt;name&gt;</span></code></p>
+<blockquote>
+<div><p>Set device type, where <code class="docutils literal notranslate"><span class="pre">name</span></code> is one of the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>crypto_null
+crypto_aesni_mb
+crypto_aesni_gcm
+crypto_openssl
+crypto_qat
+crypto_snow3g
+crypto_kasumi
+crypto_zuc
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--optype</span> <span class="pre">&lt;name&gt;</span></code></p>
+<blockquote>
+<div><p>Set operation type, where <code class="docutils literal notranslate"><span class="pre">name</span></code> is one of the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cipher-only
+auth-only
+cipher-then-auth
+auth-then-cipher
+aead
+</pre></div>
+</div>
+<p>For GCM/CCM algorithms you should use aead flag.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--sessionless</span></code></p>
+<blockquote>
+<div><p>Enable session-less crypto operations mode.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--out-of-place</span></code></p>
+<blockquote>
+<div><p>Enable out-of-place crypto operations mode.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--test-file</span> <span class="pre">&lt;name&gt;</span></code></p>
+<blockquote>
+<div><p>Set test vector file path. See the Test Vector File chapter.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--test-name</span> <span class="pre">&lt;name&gt;</span></code></p>
+<blockquote>
+<div><p>Set specific test name section in the test vector file.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--cipher-algo</span> <span class="pre">&lt;name&gt;</span></code></p>
+<blockquote>
+<div><p>Set cipher algorithm name, where <code class="docutils literal notranslate"><span class="pre">name</span></code> is one of the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>3des-cbc
+3des-ecb
+3des-ctr
+aes-cbc
+aes-ccm
+aes-ctr
+aes-ecb
+aes-gcm
+aes-f8
+aes-xts
+arc4
+null
+kasumi-f8
+snow3g-uea2
+zuc-eea3
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--cipher-op</span> <span class="pre">&lt;mode&gt;</span></code></p>
+<blockquote>
+<div><p>Set cipher operation mode, where <code class="docutils literal notranslate"><span class="pre">mode</span></code> is one of the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>encrypt
+decrypt
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--cipher-key-sz</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the size of cipher key.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--cipher-iv-sz</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the size of cipher iv.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--auth-algo</span> <span class="pre">&lt;name&gt;</span></code></p>
+<blockquote>
+<div><p>Set authentication algorithm name, where <code class="docutils literal notranslate"><span class="pre">name</span></code> is one
+of the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>3des-cbc
+aes-cbc-mac
+aes-ccm
+aes-cmac
+aes-gcm
+aes-gmac
+aes-xcbc-mac
+md5
+md5-hmac
+sha1
+sha1-hmac
+sha2-224
+sha2-224-hmac
+sha2-256
+sha2-256-hmac
+sha2-384
+sha2-384-hmac
+sha2-512
+sha2-512-hmac
+kasumi-f9
+snow3g-uia2
+zuc-eia3
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--auth-op</span> <span class="pre">&lt;mode&gt;</span></code></p>
+<blockquote>
+<div><p>Set authentication operation mode, where <code class="docutils literal notranslate"><span class="pre">mode</span></code> is one of
+the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>verify
+generate
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--auth-key-sz</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the size of authentication key.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--auth-digest-sz</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the size of authentication digest.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--auth-aad-sz</span> <span class="pre">&lt;n&gt;</span></code></p>
+<blockquote>
+<div><p>Set the size of authentication aad.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">--csv-friendly</span></code></p>
+<blockquote>
+<div><p>Enable test result output CSV friendly rather than human friendly.</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="test-vector-file">
+<h3>5.3.3. Test Vector File</h3>
+<p>The test vector file is a text file contain information about test vectors.
+The file is made of the sections. The first section doesn't have header.
+It contain global information used in each test variant vectors -
+typicaly information about plaintext, ciphertext, cipher key, aut key,
+initial vector. All other sections begin header.
+The sections contain particular information typicaly digest.</p>
+<p><strong>Format of the file:</strong></p>
+<p>Each line beginig with sign '#' contain comment and it is ignored by parser:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># &lt;comment&gt;
+</pre></div>
+</div>
+<p>Header line is just name in square bracket:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[&lt;section name&gt;]
+</pre></div>
+</div>
+<p>Data line contain information tocken then sign '=' and
+a string of bytes in C byte array format:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tocken&gt; = &lt;C byte array&gt;
+</pre></div>
+</div>
+<p><strong>Tockens list:</strong></p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">plaintext</span></code></p>
+<blockquote>
+<div><p>Original plaintext to be crypted.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">ciphertext</span></code></p>
+<blockquote>
+<div><p>Encrypted plaintext string.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">cipher_key</span></code></p>
+<blockquote>
+<div><p>Key used in cipher operation.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">auth_key</span></code></p>
+<blockquote>
+<div><p>Key used in auth operation.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">iv</span></code></p>
+<blockquote>
+<div><p>Initial vector.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">aad</span></code></p>
+<blockquote>
+<div><p>Additional data.</p>
+</div></blockquote>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">digest</span></code></p>
+<blockquote>
+<div><p>Digest string.</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>5.4. Examples</h2>
+<p>Call application for performance throughput test of single Aesni MB PMD
+for cipher encryption aes-cbc and auth generation sha1-hmac,
+one milion operations, burst size 32, packet size 64:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-test-crypto-perf -l 6-7 --vdev crypto_aesni_mb_pmd -w 0000:00:00.0 --
+--ptest throughput --devtype crypto_aesni_mb --optype cipher-then-auth
+--cipher-algo aes-cbc --cipher-op encrypt --cipher-key-sz 16 --auth-algo
+sha1-hmac --auth-op generate --auth-key-sz 64 --auth-digest-sz 12
+--total-ops 10000000 --burst-sz 32 --buffer-sz 64
+</pre></div>
+</div>
+<p>Call application for performance latency test of two Aesni MB PMD executed
+on two cores for cipher encryption aes-cbc, ten operations in silent mode:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-test-crypto-perf -l 4-7 --vdev crypto_aesni_mb_pmd1
+--vdev crypto_aesni_mb_pmd2 -w 0000:00:00.0 -- --devtype crypto_aesni_mb
+--cipher-algo aes-cbc --cipher-key-sz 16 --cipher-iv-sz 16
+--cipher-op encrypt --optype cipher-only --silent
+--ptest latency --total-ops 10
+</pre></div>
+</div>
+<p>Call application for verification test of single open ssl PMD
+for cipher encryption aes-gcm and auth generation aes-gcm,ten operations
+in silent mode, test vector provide in file &quot;test_aes_gcm.data&quot;
+with packet verification:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dpdk-test-crypto-perf -l 4-7 --vdev crypto_openssl -w 0000:00:00.0 --
+--devtype crypto_openssl --cipher-algo aes-gcm --cipher-key-sz 16
+--cipher-iv-sz 16 --cipher-op encrypt --auth-algo aes-gcm --auth-key-sz 16
+--auth-digest-sz 16 --auth-aad-sz 16 --auth-op generate --optype aead
+--silent --ptest verify --total-ops 10
+--test-file test_aes_gcm.data
+</pre></div>
+</div>
+<p>Test vector file for cipher algorithm aes cbc 256 with authorization sha:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Global Section
+plaintext =
+0xff, 0xca, 0xfb, 0xf1, 0x38, 0x20, 0x2f, 0x7b, 0x24, 0x98, 0x26, 0x7d, 0x1d, 0x9f, 0xb3, 0x93,
+0xd9, 0xef, 0xbd, 0xad, 0x4e, 0x40, 0xbd, 0x60, 0xe9, 0x48, 0x59, 0x90, 0x67, 0xd7, 0x2b, 0x7b,
+0x8a, 0xe0, 0x4d, 0xb0, 0x70, 0x38, 0xcc, 0x48, 0x61, 0x7d, 0xee, 0xd6, 0x35, 0x49, 0xae, 0xb4,
+0xaf, 0x6b, 0xdd, 0xe6, 0x21, 0xc0, 0x60, 0xce, 0x0a, 0xf4, 0x1c, 0x2e, 0x1c, 0x8d, 0xe8, 0x7b
+ciphertext =
+0x77, 0xF9, 0xF7, 0x7A, 0xA3, 0xCB, 0x68, 0x1A, 0x11, 0x70, 0xD8, 0x7A, 0xB6, 0xE2, 0x37, 0x7E,
+0xD1, 0x57, 0x1C, 0x8E, 0x85, 0xD8, 0x08, 0xBF, 0x57, 0x1F, 0x21, 0x6C, 0xAD, 0xAD, 0x47, 0x1E,
+0x0D, 0x6B, 0x79, 0x39, 0x15, 0x4E, 0x5B, 0x59, 0x2D, 0x76, 0x87, 0xA6, 0xD6, 0x47, 0x8F, 0x82,
+0xB8, 0x51, 0x91, 0x32, 0x60, 0xCB, 0x97, 0xDE, 0xBE, 0xF0, 0xAD, 0xFC, 0x23, 0x2E, 0x22, 0x02
+cipher_key =
+0xE4, 0x23, 0x33, 0x8A, 0x35, 0x64, 0x61, 0xE2, 0x49, 0x03, 0xDD, 0xC6, 0xB8, 0xCA, 0x55, 0x7A,
+0xd0, 0xe7, 0x4b, 0xfb, 0x5d, 0xe5, 0x0c, 0xe7, 0x6f, 0x21, 0xb5, 0x52, 0x2a, 0xbb, 0xc7, 0xf7
+auth_key =
+0xaf, 0x96, 0x42, 0xf1, 0x8c, 0x50, 0xdc, 0x67, 0x1a, 0x43, 0x47, 0x62, 0xc7, 0x04, 0xab, 0x05,
+0xf5, 0x0c, 0xe7, 0xa2, 0xa6, 0x23, 0xd5, 0x3d, 0x95, 0xd8, 0xcd, 0x86, 0x79, 0xf5, 0x01, 0x47,
+0x4f, 0xf9, 0x1d, 0x9d, 0x36, 0xf7, 0x68, 0x1a, 0x64, 0x44, 0x58, 0x5d, 0xe5, 0x81, 0x15, 0x2a,
+0x41, 0xe4, 0x0e, 0xaa, 0x1f, 0x04, 0x21, 0xff, 0x2c, 0xf3, 0x73, 0x2b, 0x48, 0x1e, 0xd2, 0xf7
+iv =
+0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
+# Section sha 1 hmac buff 32
+[sha1_hmac_buff_32]
+digest =
+0x36, 0xCA, 0x49, 0x6A, 0xE3, 0x54, 0xD8, 0x4F, 0x0B, 0x76, 0xD8, 0xAA, 0x78, 0xEB, 0x9D, 0x65,
+0x2C, 0xCA, 0x1F, 0x97
+# Section sha 256 hmac buff 32
+[sha256_hmac_buff_32]
+digest =
+0x1C, 0xB2, 0x3D, 0xD1, 0xF9, 0xC7, 0x6C, 0x49, 0x2E, 0xDA, 0x94, 0x8B, 0xF1, 0xCF, 0x96, 0x43,
+0x67, 0x50, 0x39, 0x76, 0xB5, 0xA1, 0xCE, 0xA1, 0xD7, 0x77, 0x10, 0x07, 0x43, 0x37, 0x05, 0xB4
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../testpmd_app_ug/index.html" class="btn btn-neutral float-right" title="Testpmd Application User Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="devbind.html" class="btn btn-neutral" title="4. dpdk-devbind Application" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

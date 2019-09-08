@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>22. Solarflare libefx-based Poll Mode Driver &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="23. SZEDATA2 poll mode driver library" href="szedata2.html" />
+    <link rel="prev" title="21. QEDE Poll Mode Driver" href="qede.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Network Interface Controller Drivers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1. Overview of Networking Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_and_test.html">2. Compiling and testing a PMD for a NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ark.html">3. ARK Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="avp.html">4. AVP Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnx2x.html">5. BNX2X Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bnxt.html">6. BNXT Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cxgbe.html">7. CXGBE Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dpaa2.html">8. DPAA2 Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e1000em.html">9. Driver for VM Emulated Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ena.html">10. ENA Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enic.html">11. ENIC Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fm10k.html">12. FM10K Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="i40e.html">13. I40E Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ixgbe.html">14. IXGBE Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intel_vf.html">15. I40E/IXGBE/IGB Virtual Function Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kni.html">16. KNI Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="liquidio.html">17. LiquidIO VF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx4.html">18. MLX4 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx5.html">19. MLX5 poll mode driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nfp.html">20. NFP poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qede.html">21. QEDE Poll Mode Driver</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">22. Solarflare libefx-based Poll Mode Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features">22.1. Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#non-supported-features">22.2. Non-supported Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">22.3. Limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flow-api-support">22.4. Flow API support</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ethernet-destinaton-individual-group-match">22.4.1. Ethernet destinaton individual/group match</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-nics">22.5. Supported NICs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">22.6. Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pre-installation-configuration">22.7. Pre-Installation Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#config-file-options">22.7.1. Config File Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#per-device-parameters">22.7.2. Per-Device Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="szedata2.html">23. SZEDATA2 poll mode driver library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tap.html">24. Tun/Tap Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thunderx.html">25. ThunderX NICVF Poll Mode Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio.html">26. Poll Mode Driver for Emulated Virtio NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost.html">27. Poll Mode Driver that wraps vhost library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmxnet3.html">28. Poll Mode Driver for Paravirtual VMXNET3 NIC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcap_ring.html">29. Libpcap and Ring Based Poll Mode Drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Network Interface Controller Drivers</a> &raquo;</li>
+        
+      <li>22. Solarflare libefx-based Poll Mode Driver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/nics/sfc_efx.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="solarflare-libefx-based-poll-mode-driver">
+<h1>22. Solarflare libefx-based Poll Mode Driver</h1>
+<p>The SFC EFX PMD (<strong>librte_pmd_sfc_efx</strong>) provides poll mode driver support
+for <strong>Solarflare SFN7xxx and SFN8xxx</strong> family of 10/40 Gbps adapters.
+SFC EFX PMD has support for the latest Linux and FreeBSD operating systems.</p>
+<p>More information can be found at <a class="reference external" href="http://solarflare.com">Solarflare Communications website</a>.</p>
+<div class="section" id="features">
+<h2>22.1. Features</h2>
+<p>SFC EFX PMD has support for:</p>
+<ul class="simple">
+<li>Multiple transmit and receive queues</li>
+<li>Link state information including link status change interrupt</li>
+<li>IPv4/IPv6 TCP/UDP transmit checksum offload</li>
+<li>Port hardware statistics</li>
+<li>Extended statistics (see Solarflare Server Adapter User's Guide for
+the statistics description)</li>
+<li>Basic flow control</li>
+<li>MTU update</li>
+<li>Jumbo frames up to 9K</li>
+<li>Promiscuous mode</li>
+<li>Allmulticast mode</li>
+<li>TCP segmentation offload (TSO)</li>
+<li>Multicast MAC filter</li>
+<li>IPv4/IPv6 TCP/UDP receive checksum offload</li>
+<li>Received packet type information</li>
+<li>Receive side scaling (RSS)</li>
+<li>RSS hash</li>
+<li>Scattered Rx DMA for packet that are larger that a single Rx descriptor</li>
+<li>Deferred receive and transmit queue start</li>
+<li>Transmit VLAN insertion (if running firmware variant supports it)</li>
+<li>Flow API</li>
+</ul>
+</div>
+<div class="section" id="non-supported-features">
+<h2>22.2. Non-supported Features</h2>
+<p>The features not yet supported include:</p>
+<ul class="simple">
+<li>Receive queue interupts</li>
+<li>Priority-based flow control</li>
+<li>Loopback</li>
+<li>Configurable RX CRC stripping (always stripped)</li>
+<li>Header split on receive</li>
+<li>VLAN filtering</li>
+<li>VLAN stripping</li>
+<li>LRO</li>
+</ul>
+</div>
+<div class="section" id="limitations">
+<h2>22.3. Limitations</h2>
+<p>Due to requirements on receive buffer alignment and usage of the receive
+buffer for the auxiliary packet information provided by the NIC up to
+extra 269 (14 bytes prefix plus up to 255 bytes for end padding) bytes may be
+required in the receive buffer.
+It should be taken into account when mbuf pool for receive is created.</p>
+</div>
+<div class="section" id="flow-api-support">
+<h2>22.4. Flow API support</h2>
+<p>Supported attributes:</p>
+<ul class="simple">
+<li>Ingress</li>
+</ul>
+<p>Supported pattern items:</p>
+<ul class="simple">
+<li>VOID</li>
+<li>ETH (exact match of source/destination addresses, individual/group match
+of destination address, EtherType)</li>
+<li>VLAN (exact match of VID, double-tagging is supported)</li>
+<li>IPV4 (exact match of source/destination addresses,
+IP transport protocol)</li>
+<li>IPV6 (exact match of source/destination addresses,
+IP transport protocol)</li>
+<li>TCP (exact match of source/destination ports)</li>
+<li>UDP (exact match of source/destination ports)</li>
+</ul>
+<p>Supported actions:</p>
+<ul class="simple">
+<li>VOID</li>
+<li>QUEUE</li>
+</ul>
+<p>Validating flow rules depends on the firmware variant.</p>
+<div class="section" id="ethernet-destinaton-individual-group-match">
+<h3>22.4.1. Ethernet destinaton individual/group match</h3>
+<p>Ethernet item supports I/G matching, if only the corresponding bit is set
+in the mask of destination address. If destinaton address in the spec is
+multicast, it matches all multicast (and broadcast) packets, oherwise it
+matches unicast packets that are not filtered by other flow rules.</p>
+</div>
+</div>
+<div class="section" id="supported-nics">
+<h2>22.5. Supported NICs</h2>
+<ul>
+<li><p class="first">Solarflare Flareon [Ultra] Server Adapters:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Solarflare SFN8522 Dual Port SFP+ Server Adapter</li>
+<li>Solarflare SFN8542 Dual Port QSFP+ Server Adapter</li>
+<li>Solarflare SFN7002F Dual Port SFP+ Server Adapter</li>
+<li>Solarflare SFN7004F Quad Port SFP+ Server Adapter</li>
+<li>Solarflare SFN7042Q Dual Port QSFP+ Server Adapter</li>
+<li>Solarflare SFN7122F Dual Port SFP+ Server Adapter</li>
+<li>Solarflare SFN7124F Quad Port SFP+ Server Adapter</li>
+<li>Solarflare SFN7142Q Dual Port QSFP+ Server Adapter</li>
+<li>Solarflare SFN7322F Precision Time Synchronization Server Adapter</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="prerequisites">
+<h2>22.6. Prerequisites</h2>
+<ul>
+<li><p class="first">Requires firmware version:</p>
+<blockquote>
+<div><ul class="simple">
+<li>SFN7xxx: <strong>4.7.1.1001</strong> or higher</li>
+<li>SFN8xxx: <strong>6.0.2.1004</strong> or higher</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>Visit <a class="reference external" href="https://support.solarflare.com">Solarflare Support Downloads</a> to get
+Solarflare Utilities (either Linux or FreeBSD) with the latest firmware.
+Follow instructions from Solarflare Server Adapter User's Guide to
+update firmware and configure the adapter.</p>
+</div>
+<div class="section" id="pre-installation-configuration">
+<h2>22.7. Pre-Installation Configuration</h2>
+<div class="section" id="config-file-options">
+<h3>22.7.1. Config File Options</h3>
+<p>The following options can be modified in the <code class="docutils literal notranslate"><span class="pre">.config</span></code> file.
+Please note that enabling debugging options may affect system performance.</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_SFC_EFX_PMD</span></code> (default <strong>y</strong>)</p>
+<p>Enable compilation of Solarflare libefx-based poll-mode driver.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">CONFIG_RTE_LIBRTE_SFC_EFX_DEBUG</span></code> (default <strong>n</strong>)</p>
+<p>Enable compilation of the extra run-time consistency checks.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="per-device-parameters">
+<h3>22.7.2. Per-Device Parameters</h3>
+<p>The following per-device parameters can be passed via EAL PCI device
+whitelist option like &quot;-w 02:00.0,arg1=value1,...&quot;.</p>
+<p>Case-insensitive 1/y/yes/on or 0/n/no/off may be used to specify
+boolean parameters value.</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">rx_datapath</span></code> [auto|efx|ef10] (default <strong>auto</strong>)</p>
+<p>Choose receive datapath implementation.
+<strong>auto</strong> allows the driver itself to make a choice based on firmware
+features available and required by the datapath implementation.
+<strong>efx</strong> chooses libefx-based datapath which supports Rx scatter.
+<strong>ef10</strong> chooses EF10 (SFN7xxx, SFN8xxx) native datapath which is
+more efficient than libefx-based and provides richer packet type
+classification, but lacks Rx scatter support.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">tx_datapath</span></code> [auto|efx|ef10|ef10_simple] (default <strong>auto</strong>)</p>
+<p>Choose transmit datapath implementation.
+<strong>auto</strong> allows the driver itself to make a choice based on firmware
+features available and required by the datapath implementation.
+<strong>efx</strong> chooses libefx-based datapath which supports VLAN insertion
+(full-feature firmware variant only), TSO and multi-segment mbufs.
+<strong>ef10</strong> chooses EF10 (SFN7xxx, SFN8xxx) native datapath which is
+more efficient than libefx-based but has no VLAN insertion and TSO
+support yet.
+<strong>ef10_simple</strong> chooses EF10 (SFN7xxx, SFN8xxx) native datapath which
+is even more faster then <strong>ef10</strong> but does not support multi-segment
+mbufs.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">perf_profile</span></code> [auto|throughput|low-latency] (default <strong>throughput</strong>)</p>
+<p>Choose hardware tunning to be optimized for either throughput or
+low-latency.
+<strong>auto</strong> allows NIC firmware to make a choice based on
+installed licences and firmware variant configured using <strong>sfboot</strong>.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">debug_init</span></code> [bool] (default <strong>n</strong>)</p>
+<p>Enable extra logging during device intialization and startup.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">mcdi_logging</span></code> [bool] (default <strong>n</strong>)</p>
+<p>Enable extra logging of the communication with the NIC's management CPU.
+The logging is done using RTE_LOG() with INFO level and PMD type.
+The format is consumed by the Solarflare netlogdecode cross-platform tool.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">stats_update_period_ms</span></code> [long] (default <strong>1000</strong>)</p>
+<p>Adjust period in milliseconds to update port hardware statistics.
+The accepted range is 0 to 65535. The value of <strong>0</strong> may be used
+to disable periodic statistics update. One should note that it's
+only possible to set an arbitrary value on SFN8xxx provided that
+firmware version is 6.2.1.1033 or higher, otherwise any positive
+value will select a fixed update period of <strong>1000</strong> milliseconds</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="szedata2.html" class="btn btn-neutral float-right" title="23. SZEDATA2 poll mode driver library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="qede.html" class="btn btn-neutral" title="21. QEDE Poll Mode Driver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

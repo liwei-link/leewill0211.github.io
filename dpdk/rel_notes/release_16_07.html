@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. DPDK Release 16.07 &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="6. DPDK Release 16.04" href="release_16_04.html" />
+    <link rel="prev" title="4. DPDK Release 16.11" href="release_16_11.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Release Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="rel_description.html">1. Description of Release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_17_05.html">2. DPDK Release 17.05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_17_02.html">3. DPDK Release 17.02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_16_11.html">4. DPDK Release 16.11</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. DPDK Release 16.07</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#new-features">5.1. New Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resolved-issues">5.2. Resolved Issues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#eal">5.2.1. EAL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#drivers">5.2.2. Drivers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libraries">5.2.3. Libraries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">5.2.4. Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other">5.2.5. Other</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#known-issues">5.3. Known Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#api-changes">5.4. API Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#abi-changes">5.5. ABI Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#shared-library-versions">5.6. Shared Library Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tested-platforms">5.7. Tested Platforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tested-nics">5.8. Tested NICs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tested-oses">5.9. Tested OSes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="release_16_04.html">6. DPDK Release 16.04</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_2.html">7. DPDK Release 2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_1.html">8. DPDK Release 2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_0.html">9. DPDK Release 2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_1_8.html">10. DPDK Release 1.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="supported_os.html">11. Supported Operating Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="known_issues.html">12. Known Issues and Limitations in Legacy Releases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecation.html">13. ABI and API Deprecation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Release Notes</a> &raquo;</li>
+        
+      <li>5. DPDK Release 16.07</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rel_notes/release_16_07.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dpdk-release-16-07">
+<h1>5. DPDK Release 16.07</h1>
+<div class="section" id="new-features">
+<h2>5.1. New Features</h2>
+<ul>
+<li><p class="first"><strong>Removed the mempool cache memory if caching is not being used.</strong></p>
+<p>The size of the mempool structure is reduced if the per-lcore cache is disabled.</p>
+</li>
+<li><p class="first"><strong>Added mempool external cache for non-EAL thread.</strong></p>
+<p>Added new functions to create, free or flush a user-owned mempool
+cache for non-EAL threads. Previously the caching was always disabled
+on these threads.</p>
+</li>
+<li><p class="first"><strong>Changed the memory allocation scheme in the mempool library.</strong></p>
+<ul class="simple">
+<li>Added the ability to allocate a large mempool in fragmented virtual memory.</li>
+<li>Added new APIs to populate a mempool with memory.</li>
+<li>Added an API to free a mempool.</li>
+<li>Modified the API of the <code class="docutils literal notranslate"><span class="pre">rte_mempool_obj_iter()</span></code> function.</li>
+<li>Dropped the specific Xen Dom0 code.</li>
+<li>Dropped the specific anonymous mempool code in testpmd.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added a new driver for Broadcom NetXtreme-C devices.</strong></p>
+<p>Added the new bnxt driver for Broadcom NetXtreme-C devices. See the
+&quot;Network Interface Controller Drivers&quot; document for more details on this
+new driver.</p>
+</li>
+<li><p class="first"><strong>Added a new driver for ThunderX nicvf devices.</strong></p>
+<p>Added the new thunderx net driver for ThunderX nicvf devices. See the
+&quot;Network Interface Controller Drivers&quot; document for more details on this new
+driver.</p>
+</li>
+<li><p class="first"><strong>Added mailbox interrupt support for ixgbe and igb VFs.</strong></p>
+<p>When the physical NIC link comes up or down, the PF driver will send a
+mailbox message to notify each VF. To handle this link up/down event,
+support have been added for a mailbox interrupt to receive the message and
+allow the application to register a callback for it.</p>
+</li>
+<li><p class="first"><strong>Updated the ixgbe base driver.</strong></p>
+<p>The ixgbe base driver was updated with changes including the
+following:</p>
+<ul class="simple">
+<li>Added sgmii link for X550.</li>
+<li>Added MAC link setup for X550a SFP and SFP+.</li>
+<li>Added KR support for X550em_a.</li>
+<li>Added new PHY definitions for M88E1500.</li>
+<li>Added support for the VLVF to be bypassed when adding/removing a VFTA entry.</li>
+<li>Added X550a flow control auto negotiation support.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Updated the i40e base driver.</strong></p>
+<p>Updated the i40e base driver including support for new devices IDs.</p>
+</li>
+<li><p class="first"><strong>Updated the enic driver.</strong></p>
+<p>The enic driver was updated with changes including the following:</p>
+<ul class="simple">
+<li>Optimized the Tx function.</li>
+<li>Added Scattered Rx capability.</li>
+<li>Improved packet type identification.</li>
+<li>Added MTU update in non Scattered Rx mode and enabled MTU of up to 9208
+with UCS Software release 2.2 on 1300 series VICs.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Updated the mlx5 driver.</strong></p>
+<p>The mlx5 driver was updated with changes including the following:</p>
+<ul class="simple">
+<li>Data path was refactored to bypass Verbs to improve RX and TX performance.</li>
+<li>Removed compilation parameters for inline send, <code class="docutils literal notranslate"><span class="pre">MLX5_MAX_INLINE</span></code>, and
+added command line parameter instead, <code class="docutils literal notranslate"><span class="pre">txq_inline</span></code>.</li>
+<li>Improved TX scatter gather support:
+Removed compilation parameter <code class="docutils literal notranslate"><span class="pre">MLX5_PMD_SGE_WR_N</span></code>.
+Scatter-gather elements is set to the maximum value the NIC supports.
+Removed linearization logic, this decreases the memory consumption of the PMD.</li>
+<li>Improved jumbo frames support, by dynamically setting RX scatter gather elements
+according to the MTU and mbuf size,
+no need for compilation parameter <code class="docutils literal notranslate"><span class="pre">MLX5_PMD_SGE_WR_N</span></code></li>
+</ul>
+</li>
+<li><p class="first"><strong>Added support for virtio on IBM POWER8.</strong></p>
+<p>The ioports are mapped in memory when using Linux UIO.</p>
+</li>
+<li><p class="first"><strong>Added support for Virtio in containers.</strong></p>
+<p>Add a new virtual device, named virtio_user, to support virtio for containers.</p>
+<p>Known limitations:</p>
+<ul class="simple">
+<li>Control queue and multi-queue are not supported yet.</li>
+<li>Doesn't work with <code class="docutils literal notranslate"><span class="pre">--huge-unlink</span></code>.</li>
+<li>Doesn't work with <code class="docutils literal notranslate"><span class="pre">--no-huge</span></code>.</li>
+<li>Doesn't work when there are more than <code class="docutils literal notranslate"><span class="pre">VHOST_MEMORY_MAX_NREGIONS(8)</span></code> hugepages.</li>
+<li>Root privilege is required for sorting hugepages by physical address.</li>
+<li>Can only be used with the vhost user backend.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added vhost-user client mode.</strong></p>
+<p>DPDK vhost-user now supports client mode as well as server mode. Client mode
+is enabled when the <code class="docutils literal notranslate"><span class="pre">RTE_VHOST_USER_CLIENT</span></code> flag is set while calling
+<code class="docutils literal notranslate"><span class="pre">rte_vhost_driver_register</span></code>.</p>
+<p>When DPDK vhost-user restarts from an normal or abnormal exit (such as a
+crash), the client mode allows DPDK to establish the connection again. Note
+that QEMU version v2.7 or above is required for this feature.</p>
+<p>DPDK vhost-user will also try to reconnect by default when:</p>
+<ul class="simple">
+<li>The first connect fails (for example when QEMU is not started yet).</li>
+<li>The connection is broken (for example when QEMU restarts).</li>
+</ul>
+<p>It can be turned off by setting the <code class="docutils literal notranslate"><span class="pre">RTE_VHOST_USER_NO_RECONNECT</span></code> flag.</p>
+</li>
+<li><p class="first"><strong>Added NSH packet recognition in i40e.</strong></p>
+</li>
+<li><p class="first"><strong>Added AES-CTR support to AESNI MB PMD.</strong></p>
+<p>Now AESNI MB PMD supports 128/192/256-bit counter mode AES encryption and
+decryption.</p>
+</li>
+<li><p class="first"><strong>Added AES counter mode support for Intel QuickAssist devices.</strong></p>
+<p>Enabled support for the AES CTR algorithm for Intel QuickAssist devices.
+Provided support for algorithm-chaining operations.</p>
+</li>
+<li><p class="first"><strong>Added KASUMI SW PMD.</strong></p>
+<p>A new Crypto PMD has been added, which provides KASUMI F8 (UEA1) ciphering
+and KASUMI F9 (UIA1) hashing.</p>
+</li>
+<li><p class="first"><strong>Added multi-writer support for RTE Hash with Intel TSX.</strong></p>
+<p>The following features/modifications have been added to rte_hash library:</p>
+<ul class="simple">
+<li>Enabled application developers to use an extra flag for <code class="docutils literal notranslate"><span class="pre">rte_hash</span></code>
+creation to specify default behavior (multi-thread safe/unsafe) with the
+<code class="docutils literal notranslate"><span class="pre">rte_hash_add_key</span></code> function.</li>
+<li>Changed the Cuckoo Hash Search algorithm to breadth first search for
+multi-writer routines and split Cuckoo Hash Search and Move operations in
+order to reduce transactional code region and improve TSX performance.</li>
+<li>Added a hash multi-writer test case to the test app.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Improved IP Pipeline Application.</strong></p>
+<p>The following features have been added to the ip_pipeline application:</p>
+<ul class="simple">
+<li>Configure the MAC address in the routing pipeline and automatic route
+updates with change in link state.</li>
+<li>Enable RSS per network interface through the configuration file.</li>
+<li>Streamline the CLI code.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added keepalive enhancements.</strong></p>
+<p>Added support for reporting of core states other than &quot;dead&quot; to
+monitoring applications, enabling the support of broader liveness
+reporting to external processes.</p>
+</li>
+<li><p class="first"><strong>Added packet capture framework.</strong></p>
+<ul class="simple">
+<li>A new library <code class="docutils literal notranslate"><span class="pre">librte_pdump</span></code> is added to provide a packet capture API.</li>
+<li>A new <code class="docutils literal notranslate"><span class="pre">app/pdump</span></code> tool is added to demonstrate capture packets in DPDK.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Added floating VEB support for i40e PF driver.</strong></p>
+<p>A &quot;floating VEB&quot; is a special Virtual Ethernet Bridge (VEB) which does not
+have an upload port, but instead is used for switching traffic between
+virtual functions (VFs) on a port.</p>
+<p>For information on this feature,  please see the &quot;I40E Poll Mode Driver&quot;
+section of the &quot;Network Interface Controller Drivers&quot; document.</p>
+</li>
+<li><p class="first"><strong>Added support for live migration of a VM with SRIOV VF.</strong></p>
+<p>Live migration of a VM with Virtio and VF PMD's using the bonding PMD.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="resolved-issues">
+<h2>5.2. Resolved Issues</h2>
+<div class="section" id="eal">
+<h3>5.2.1. EAL</h3>
+<ul>
+<li><p class="first"><strong>igb_uio: Fixed possible mmap failure for Linux &gt;= 4.5.</strong></p>
+<p>The mmaping of the iomem range of the PCI device fails for kernels that
+enabled the <code class="docutils literal notranslate"><span class="pre">CONFIG_IO_STRICT_DEVMEM</span></code> option. The error seen by the
+user is as similar to the following:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>EAL: pci_map_resource():
+
+    cannot mmap(39, 0x7f1c51800000, 0x100000, 0x0):
+    Invalid argument (0xffffffffffffffff)
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">CONFIG_IO_STRICT_DEVMEM</span></code> kernel option was introduced in Linux v4.5.</p>
+<p>The issues was resolve by updating <code class="docutils literal notranslate"><span class="pre">igb_uio</span></code> to stop reserving PCI memory
+resources. From the kernel point of view the iomem region looks like idle
+and mmap works again. This matches the <code class="docutils literal notranslate"><span class="pre">uio_pci_generic</span></code> usage.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="drivers">
+<h3>5.2.2. Drivers</h3>
+<ul>
+<li><p class="first"><strong>i40e: Fixed vlan stripping from inner header.</strong></p>
+<p>Previously, for tunnel packets, such as VXLAN/NVGRE, the vlan
+tags of the inner header will be stripped without putting vlan
+info to descriptor.
+Now this issue is fixed by disabling vlan stripping from inner header.</p>
+</li>
+<li><p class="first"><strong>i40e: Fixed the type issue of a single VLAN type.</strong></p>
+<p>Currently, if a single VLAN header is added in a packet, it's treated
+as inner VLAN. But generally, a single VLAN header is treated as the
+outer VLAN header.
+This issue is fixed by changing corresponding register for single VLAN.</p>
+</li>
+<li><p class="first"><strong>enic: Fixed several issues when stopping then restarting ports and queues.</strong></p>
+<p>Fixed several crashes related to stopping then restarting ports and queues.
+Fixed possible crash when re-configuring the number of Rx queue descriptors.</p>
+</li>
+<li><p class="first"><strong>enic: Fixed Rx data mis-alignment if mbuf data offset modified.</strong></p>
+<p>Fixed possible Rx corruption when mbufs were returned to a pool with data
+offset other than RTE_PKTMBUF_HEADROOM.</p>
+</li>
+<li><p class="first"><strong>enic: Fixed Tx IP/UDP/TCP checksum offload and VLAN insertion.</strong></p>
+</li>
+<li><p class="first"><strong>enic: Fixed Rx error and missed counters.</strong></p>
+</li>
+</ul>
+</div>
+<div class="section" id="libraries">
+<h3>5.2.3. Libraries</h3>
+<ul>
+<li><p class="first"><strong>mbuf: Fixed refcnt update when detaching.</strong></p>
+<p>Fix the <code class="docutils literal notranslate"><span class="pre">rte_pktmbuf_detach()</span></code> function to decrement the direct mbuf's
+reference counter. The previous behavior was not to affect the reference
+counter. This lead to a memory leak of the direct mbuf.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="examples">
+<h3>5.2.4. Examples</h3>
+</div>
+<div class="section" id="other">
+<h3>5.2.5. Other</h3>
+</div>
+</div>
+<div class="section" id="known-issues">
+<h2>5.3. Known Issues</h2>
+</div>
+<div class="section" id="api-changes">
+<h2>5.4. API Changes</h2>
+<ul class="simple">
+<li>The following counters are removed from the <code class="docutils literal notranslate"><span class="pre">rte_eth_stats</span></code> structure:<ul>
+<li><code class="docutils literal notranslate"><span class="pre">ibadcrc</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">ibadlen</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">imcasts</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">fdirmatch</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">fdirmiss</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">tx_pause_xon</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rx_pause_xon</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">tx_pause_xoff</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rx_pause_xoff</span></code></li>
+</ul>
+</li>
+<li>The extended statistics are fetched by ids with <code class="docutils literal notranslate"><span class="pre">rte_eth_xstats_get</span></code>
+after a lookup by name <code class="docutils literal notranslate"><span class="pre">rte_eth_xstats_get_names</span></code>.</li>
+<li>The function <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_info_get</span></code> fill the new fields <code class="docutils literal notranslate"><span class="pre">nb_rx_queues</span></code>
+and <code class="docutils literal notranslate"><span class="pre">nb_tx_queues</span></code> in the structure <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_info</span></code>.</li>
+<li>The vhost function <code class="docutils literal notranslate"><span class="pre">rte_vring_available_entries</span></code> is renamed to
+<code class="docutils literal notranslate"><span class="pre">rte_vhost_avail_entries</span></code>.</li>
+<li>All existing vhost APIs and callbacks with <code class="docutils literal notranslate"><span class="pre">virtio_net</span></code> struct pointer
+as the parameter have been changed due to the ABI refactoring described
+below. It is replaced by <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">vid</span></code>.</li>
+<li>The function <code class="docutils literal notranslate"><span class="pre">rte_vhost_enqueue_burst</span></code> no longer supports concurrent enqueuing
+packets to the same queue.</li>
+<li>The function <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_set_mtu</span></code> adds a new return value <code class="docutils literal notranslate"><span class="pre">-EBUSY</span></code>, which
+indicates the operation is forbidden because the port is running.</li>
+<li>The script <code class="docutils literal notranslate"><span class="pre">dpdk_nic_bind.py</span></code> is renamed to <code class="docutils literal notranslate"><span class="pre">dpdk-devbind.py</span></code>.
+And the script <code class="docutils literal notranslate"><span class="pre">setup.sh</span></code> is renamed to <code class="docutils literal notranslate"><span class="pre">dpdk-setup.sh</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="abi-changes">
+<h2>5.5. ABI Changes</h2>
+<ul class="simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">rte_port_source_params</span></code> structure has new fields to support PCAP files.
+It was already in release 16.04 with <code class="docutils literal notranslate"><span class="pre">RTE_NEXT_ABI</span></code> flag.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_info</span></code> structure has new fields <code class="docutils literal notranslate"><span class="pre">nb_rx_queues</span></code> and <code class="docutils literal notranslate"><span class="pre">nb_tx_queues</span></code>
+to support the number of queues configured by software.</li>
+<li>A Vhost ABI refactoring has been made: the <code class="docutils literal notranslate"><span class="pre">virtio_net</span></code> structure is no
+longer exported directly to the application. Instead, a handle, <code class="docutils literal notranslate"><span class="pre">vid</span></code>, has
+been used to represent this structure internally.</li>
+</ul>
+</div>
+<div class="section" id="shared-library-versions">
+<h2>5.6. Shared Library Versions</h2>
+<p>The libraries prepended with a plus sign were incremented in this version.</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gi">+ libethdev.so.4</span>
+  librte_acl.so.2
+  librte_cfgfile.so.2
+  librte_cmdline.so.2
+  librte_cryptodev.so.1
+  librte_distributor.so.1
+  librte_eal.so.2
+  librte_hash.so.2
+  librte_ip_frag.so.1
+  librte_ivshmem.so.1
+  librte_jobstats.so.1
+  librte_kni.so.2
+  librte_kvargs.so.1
+  librte_lpm.so.2
+  librte_mbuf.so.2
+<span class="gi">+ librte_mempool.so.2</span>
+  librte_meter.so.1
+  librte_pdump.so.1
+  librte_pipeline.so.3
+  librte_pmd_bond.so.1
+  librte_pmd_ring.so.2
+<span class="gi">+ librte_port.so.3</span>
+  librte_power.so.1
+  librte_reorder.so.1
+  librte_ring.so.1
+  librte_sched.so.1
+  librte_table.so.2
+  librte_timer.so.1
+<span class="gi">+ librte_vhost.so.3</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tested-platforms">
+<h2>5.7. Tested Platforms</h2>
+<ol class="arabic simple">
+<li>SuperMicro 1U<ul>
+<li>BIOS: 1.0c</li>
+<li>Processor: Intel(R) Atom(TM) CPU C2758 &#64; 2.40GHz</li>
+</ul>
+</li>
+<li>SuperMicro 1U<ul>
+<li>BIOS: 1.0a</li>
+<li>Processor: Intel(R) Xeon(R) CPU D-1540 &#64; 2.00GHz</li>
+<li>Onboard NIC: Intel(R) X552/X557-AT (2x10G)<ul>
+<li>Firmware-version: 0x800001cf</li>
+<li>Device ID (PF/VF): 8086:15ad /8086:15a8</li>
+</ul>
+</li>
+<li>kernel driver version: 4.2.5 (ixgbe)</li>
+</ul>
+</li>
+<li>SuperMicro 2U<ul>
+<li>BIOS: 1.0a</li>
+<li>Processor: Intel(R) Xeon(R) CPU E5-4667 v3 &#64; 2.00GHz</li>
+</ul>
+</li>
+<li>Intel(R) Server board S2600GZ<ul>
+<li>BIOS: SE5C600.86B.02.02.0002.122320131210</li>
+<li>Processor: Intel(R) Xeon(R) CPU E5-2680 v2 &#64; 2.80GHz</li>
+</ul>
+</li>
+<li>Intel(R) Server board W2600CR<ul>
+<li>BIOS: SE5C600.86B.02.01.0002.082220131453</li>
+<li>Processor: Intel(R) Xeon(R) CPU E5-2680 v2 &#64; 2.80GHz</li>
+</ul>
+</li>
+<li>Intel(R) Server board S2600CWT<ul>
+<li>BIOS: SE5C610.86B.01.01.0009.060120151350</li>
+<li>Processor: Intel(R) Xeon(R) CPU E5-2699 v3 &#64; 2.30GHz</li>
+</ul>
+</li>
+<li>Intel(R) Server board S2600WTT<ul>
+<li>BIOS: SE5C610.86B.01.01.0005.101720141054</li>
+<li>Processor: Intel(R) Xeon(R) CPU E5-2699 v3 &#64; 2.30GHz</li>
+</ul>
+</li>
+<li>Intel(R) Server board S2600WTT<ul>
+<li>BIOS: SE5C610.86B.11.01.0044.090120151156</li>
+<li>Processor: Intel(R) Xeon(R) CPU E5-2695 v4 &#64; 2.10GHz</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="tested-nics">
+<h2>5.8. Tested NICs</h2>
+<ol class="arabic simple">
+<li>Intel(R) Ethernet Controller X540-AT2<ul>
+<li>Firmware version: 0x80000389</li>
+<li>Device id (pf): 8086:1528</li>
+<li>Driver version: 3.23.2 (ixgbe)</li>
+</ul>
+</li>
+<li>Intel(R) 82599ES 10 Gigabit Ethernet Controller<ul>
+<li>Firmware version: 0x61bf0001</li>
+<li>Device id (pf/vf): 8086:10fb / 8086:10ed</li>
+<li>Driver version: 4.0.1-k (ixgbe)</li>
+</ul>
+</li>
+<li>Intel(R) Corporation Ethernet Connection X552/X557-AT 10GBASE-T<ul>
+<li>Firmware version: 0x800001cf</li>
+<li>Device id (pf/vf): 8086:15ad / 8086:15a8</li>
+<li>Driver version: 4.2.5 (ixgbe)</li>
+</ul>
+</li>
+<li>Intel(R) Ethernet Converged Network Adapter X710-DA4 (4x10G)<ul>
+<li>Firmware version: 5.04</li>
+<li>Device id (pf/vf): 8086:1572 / 8086:154c</li>
+<li>Driver version: 1.4.26 (i40e)</li>
+</ul>
+</li>
+<li>Intel(R) Ethernet Converged Network Adapter X710-DA2 (2x10G)<ul>
+<li>Firmware version: 5.04</li>
+<li>Device id (pf/vf): 8086:1572 / 8086:154c</li>
+<li>Driver version: 1.4.25 (i40e)</li>
+</ul>
+</li>
+<li>Intel(R) Ethernet Converged Network Adapter XL710-QDA1 (1x40G)<ul>
+<li>Firmware version: 5.04</li>
+<li>Device id (pf/vf): 8086:1584 / 8086:154c</li>
+<li>Driver version: 1.4.25 (i40e)</li>
+</ul>
+</li>
+<li>Intel(R) Ethernet Converged Network Adapter XL710-QDA2 (2X40G)<ul>
+<li>Firmware version: 5.04</li>
+<li>Device id (pf/vf): 8086:1583 / 8086:154c</li>
+<li>Driver version: 1.4.25 (i40e)</li>
+</ul>
+</li>
+<li>Intel(R) Corporation I350 Gigabit Network Connection<ul>
+<li>Firmware version: 1.48, 0x800006e7</li>
+<li>Device id (pf/vf): 8086:1521 / 8086:1520</li>
+<li>Driver version: 5.2.13-k (igb)</li>
+</ul>
+</li>
+<li>Intel(R) Ethernet Multi-host Controller FM10000<ul>
+<li>Firmware version: N/A</li>
+<li>Device id (pf/vf): 8086:15d0</li>
+<li>Driver version: 0.17.0.9 (fm10k)</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="tested-oses">
+<h2>5.9. Tested OSes</h2>
+<ul class="simple">
+<li>CentOS 7.0</li>
+<li>Fedora 23</li>
+<li>Fedora 24</li>
+<li>FreeBSD 10.3</li>
+<li>Red Hat Enterprise Linux 7.2</li>
+<li>SUSE Enterprise Linux 12</li>
+<li>Ubuntu 15.10</li>
+<li>Ubuntu 16.04 LTS</li>
+<li>Wind River Linux 8</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="release_16_04.html" class="btn btn-neutral float-right" title="6. DPDK Release 16.04" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="release_16_11.html" class="btn btn-neutral" title="4. DPDK Release 16.11" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contributor&#39;s Guidelines &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="1. DPDK Coding Style" href="coding_style.html" />
+    <link rel="prev" title="1. DPDK Xen Based Packet-Switching Solution" href="../xen/pkt_switch.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributor's Guidelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html">1. DPDK Coding Style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html">2. Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html">3. Managing ABI updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html">4. DPDK Documentation Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html">5. Contributing Code to DPDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable.html">6. DPDK Stable Releases and Long Term Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cheatsheet.html">7. Patch Cheatsheet</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rel_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Contributor's Guidelines</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/contributing/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="contributor-s-guidelines">
+<h1>Contributor's Guidelines</h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="coding_style.html">1. DPDK Coding Style</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#description">1.1. Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#general-guidelines">1.2. General Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#c-comment-style">1.3. C Comment Style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#c-preprocessor-directives">1.4. C Preprocessor Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#c-types">1.5. C Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#c-indentation">1.6. C Indentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#c-function-definition-declaration-and-use">1.7. C Function Definition, Declaration and Use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#c-statement-style-and-conventions">1.8. C Statement Style and Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coding_style.html#python-code">1.9. Python Code</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">2. Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design.html#environment-or-architecture-specific-sources">2.1. Environment or Architecture-specific Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#library-statistics">2.2. Library Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design.html#pf-and-vf-considerations">2.3. PF and VF Considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="versioning.html">3. Managing ABI updates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#description">3.1. Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#general-guidelines">3.2. General Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#what-is-an-abi">3.3. What is an ABI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#the-dpdk-abi-policy">3.4. The DPDK ABI policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#examples-of-deprecation-notices">3.5. Examples of Deprecation Notices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#versioning-macros">3.6. Versioning Macros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#setting-a-major-abi-version">3.7. Setting a Major ABI version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#examples-of-abi-macro-use">3.8. Examples of ABI Macro use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="versioning.html#running-the-abi-validator">3.9. Running the ABI Validator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">4. DPDK Documentation Guidelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#structure-of-the-documentation">4.1. Structure of the Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#role-of-the-documentation">4.2. Role of the Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#building-the-documentation">4.3. Building the Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#document-guidelines">4.4. Document Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#rst-guidelines">4.5. RST Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#doxygen-guidelines">4.6. Doxygen Guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="patches.html">5. Contributing Code to DPDK</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#the-dpdk-development-process">5.1. The DPDK Development Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#maintainers-and-sub-trees">5.2. Maintainers and Sub-trees</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#getting-the-source-code">5.3. Getting the Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#make-your-changes">5.4. Make your Changes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#commit-messages-subject-line">5.5. Commit Messages: Subject Line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#commit-messages-body">5.6. Commit Messages: Body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#creating-patches">5.7. Creating Patches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#checking-the-patches">5.8. Checking the Patches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#checking-compilation">5.9. Checking Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#sending-patches">5.10. Sending Patches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="patches.html#the-review-process">5.11. The Review Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">6. DPDK Stable Releases and Long Term Support</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#introduction">6.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#stable-releases">6.2. Stable Releases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#lts-release">6.3. LTS Release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#what-changes-should-be-backported">6.4. What changes should be backported</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#the-stable-mailing-list">6.5. The Stable Mailing List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#releasing">6.6. Releasing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#abi">6.7. ABI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cheatsheet.html">7. Patch Cheatsheet</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="coding_style.html" class="btn btn-neutral float-right" title="1. DPDK Coding Style" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../xen/pkt_switch.html" class="btn btn-neutral" title="1. DPDK Xen Based Packet-Switching Solution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

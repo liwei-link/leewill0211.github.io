@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>13. ABI and API Deprecation &mdash; Data Plane Development Kit 17.05.0-rc4 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="FAQ" href="../faq/index.html" />
+    <link rel="prev" title="12. Known Issues and Limitations in Legacy Releases" href="known_issues.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Data Plane Development Kit
+          
+
+          
+            
+            <img src="../_static/DPDK_logo_vertical_rev_small.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                17.05.0-rc4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../linux_gsg/index.html">Getting Started Guide for Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../freebsd_gsg/index.html">Getting Started Guide for FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_app_ug/index.html">Sample Applications User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prog_guide/index.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/index.html">HowTo Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">DPDK Tools User Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testpmd_app_ug/index.html">Testpmd Application User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nics/index.html">Network Interface Controller Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cryptodevs/index.html">Crypto Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eventdevs/index.html">Event Device Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xen/index.html">Xen Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributor's Guidelines</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Release Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="rel_description.html">1. Description of Release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_17_05.html">2. DPDK Release 17.05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_17_02.html">3. DPDK Release 17.02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_16_11.html">4. DPDK Release 16.11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_16_07.html">5. DPDK Release 16.07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_16_04.html">6. DPDK Release 16.04</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_2.html">7. DPDK Release 2.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_1.html">8. DPDK Release 2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_2_0.html">9. DPDK Release 2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_1_8.html">10. DPDK Release 1.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="supported_os.html">11. Supported Operating Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="known_issues.html">12. Known Issues and Limitations in Legacy Releases</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">13. ABI and API Deprecation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deprecation-notices">13.1. Deprecation Notices</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/index.html">FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Data Plane Development Kit</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Release Notes</a> &raquo;</li>
+        
+      <li>13. ABI and API Deprecation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/rel_notes/deprecation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="abi-and-api-deprecation">
+<h1>13. ABI and API Deprecation</h1>
+<p>See the <a class="reference internal" href="../contributing/versioning.html"><span class="doc">guidelines document for details of the ABI policy</span></a>.
+API and ABI deprecation notices are to be posted here.</p>
+<div class="section" id="deprecation-notices">
+<h2>13.1. Deprecation Notices</h2>
+<ul>
+<li><p class="first">eal: the following functions are deprecated starting from 17.05 and will
+be removed in 17.08:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">rte_set_log_level</span></code>, replaced by <code class="docutils literal notranslate"><span class="pre">rte_log_set_global_level</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_get_log_level</span></code>, replaced by <code class="docutils literal notranslate"><span class="pre">rte_log_get_global_level</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_set_log_type</span></code>, replaced by <code class="docutils literal notranslate"><span class="pre">rte_log_set_level</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_get_log_type</span></code>, replaced by <code class="docutils literal notranslate"><span class="pre">rte_log_get_level</span></code></li>
+</ul>
+</li>
+<li><p class="first">igb_uio: iomem mapping and sysfs files created for iomem and ioport in
+igb_uio will be removed, because we are able to detect these from what Linux
+has exposed, like the way we have done with uio-pci-generic. This change
+targets release 17.05.</p>
+</li>
+<li><p class="first">vfio: Some functions are planned to be exported outside librte_eal in 17.05.
+VFIO APIs like <code class="docutils literal notranslate"><span class="pre">vfio_setup_device</span></code>, <code class="docutils literal notranslate"><span class="pre">vfio_get_group_fd</span></code> can be used by
+subsystem other than EAL/PCI. For that, these need to be exported symbols.
+Such APIs are planned to be renamed according to <code class="docutils literal notranslate"><span class="pre">rte_*</span></code> naming convention
+and exported from librte_eal.</p>
+</li>
+<li><p class="first">The VDEV subsystem will be converted as driver of the new bus model.
+It will imply some EAL API changes in 17.05.</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">eth_driver</span></code> is planned to be removed in 17.05. This currently serves as
+a placeholder for PMDs to register themselves. Changes for <code class="docutils literal notranslate"><span class="pre">rte_bus</span></code> will
+provide a way to handle device initialization currently being done in
+<code class="docutils literal notranslate"><span class="pre">eth_driver</span></code>. Similarly, <code class="docutils literal notranslate"><span class="pre">rte_pci_driver</span></code> is planned to be removed from
+<code class="docutils literal notranslate"><span class="pre">rte_cryptodev_driver</span></code> in 17.05.</p>
+</li>
+<li><p class="first">ethdev: An API change is planned for 17.05 for the function
+<code class="docutils literal notranslate"><span class="pre">_rte_eth_dev_callback_process</span></code>. In 17.05 the function will return an <code class="docutils literal notranslate"><span class="pre">int</span></code>
+instead of <code class="docutils literal notranslate"><span class="pre">void</span></code> and a fourth parameter <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*ret_param</span></code> will be added.</p>
+</li>
+<li><p class="first">ethdev: for 17.05 it is planned to deprecate the following nine rte_eth_dev_*
+functions and move them into the ixgbe PMD:</p>
+<p><code class="docutils literal notranslate"><span class="pre">rte_eth_dev_bypass_init</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_bypass_state_set</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rte_eth_dev_bypass_state_show</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_bypass_event_store</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rte_eth_dev_bypass_event_show</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_wd_timeout_store</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rte_eth_dev_bypass_wd_timeout_show</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_bypass_ver_show</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rte_eth_dev_bypass_wd_reset</span></code>.</p>
+<p>The following fields will be removed from <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">eth_dev_ops</span></code>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">bypass_init_t</span></code>, <code class="docutils literal notranslate"><span class="pre">bypass_state_set_t</span></code>, <code class="docutils literal notranslate"><span class="pre">bypass_state_show_t</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bypass_event_set_t</span></code>, <code class="docutils literal notranslate"><span class="pre">bypass_event_show_t</span></code>, <code class="docutils literal notranslate"><span class="pre">bypass_wd_timeout_set_t</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bypass_wd_timeout_show_t</span></code>, <code class="docutils literal notranslate"><span class="pre">bypass_ver_show_t</span></code>, <code class="docutils literal notranslate"><span class="pre">bypass_wd_reset_t</span></code>.</p>
+<p>The functions will be renamed to the following, and moved to the <code class="docutils literal notranslate"><span class="pre">ixgbe</span></code> PMD:</p>
+<p><code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_init</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_state_set</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_state_show</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_event_set</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_event_show</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_wd_timeout_set</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_wd_timeout_show</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_ver_show</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rte_pmd_ixgbe_bypass_wd_reset</span></code>.</p>
+</li>
+<li><p class="first">The mbuf flags PKT_RX_VLAN_PKT and PKT_RX_QINQ_PKT are deprecated and
+are respectively replaced by PKT_RX_VLAN_STRIPPED and
+PKT_RX_QINQ_STRIPPED, that are better described. The old flags and
+their behavior will be kept until 17.02 and will be removed in 17.05.</p>
+</li>
+<li><p class="first">ethdev: the legacy filter API, including
+<code class="docutils literal notranslate"><span class="pre">rte_eth_dev_filter_supported()</span></code>, <code class="docutils literal notranslate"><span class="pre">rte_eth_dev_filter_ctrl()</span></code> as well
+as filter types MACVLAN, ETHERTYPE, FLEXIBLE, SYN, NTUPLE, TUNNEL, FDIR,
+HASH and L2_TUNNEL, is superseded by the generic flow API (rte_flow) in
+PMDs that implement the latter.
+Target release for removal of the legacy API will be defined once most
+PMDs have switched to rte_flow.</p>
+</li>
+<li><p class="first">crypto/scheduler: the following two functions are deprecated starting
+from 17.05 and will be removed in 17.08:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">rte_crpytodev_scheduler_mode_get</span></code>, replaced by <code class="docutils literal notranslate"><span class="pre">rte_cryptodev_scheduler_mode_get</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">rte_crpytodev_scheduler_mode_set</span></code>, replaced by <code class="docutils literal notranslate"><span class="pre">rte_cryptodev_scheduler_mode_set</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../faq/index.html" class="btn btn-neutral float-right" title="FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="known_issues.html" class="btn btn-neutral" title="12. Known Issues and Limitations in Legacy Releases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'17.05.0-rc4',
+            LANGUAGE:'zh',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
